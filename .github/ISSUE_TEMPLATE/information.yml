@@ -1,9 +1,0 @@
-name: Information request
-description: Request information from others
-title: "Information: <title>"
-labels: [c-information]
-body:
-  - type: textarea
-    attributes:
-      label: Information
-      description: Describe what information is needed

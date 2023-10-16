@@ -1,52 +1,86 @@
-from bs4 import BeautifulSoup
-# from notify_run import Notify
-import time
+from datetime import datetime
+import csv
+import json
 import requests
-import datetime
 
+location_to_batch = {
+	"newyork": "3-0-360-0-0",
+	"philadelphia": "17-0-360-0-0",
+	"dallas": "21-0-360-0-0",
+	# Add more locations and their batch values as needed
+}
 
-def findFirstPost():
-	source = requests.get('https://dallas.craigslist.org/search/cta').text
-	soup = BeautifulSoup(source, 'lxml')
-	row = soup.find('li', class_='result-row')
-	firstPostName = row.p.a.text
-	firstPostPrice = row.a.span.text
-	badDate = row.find('time', class_='result-date')['title']
-	firstPostDate = convertToDateItem(badDate)
-	return firstPostDate
+def fetch_job_postings(location, category):
+	base_url = "https://sapi.craigslist.org/web/v8/postings/search/full"
 
-def convertToDateItem(badDate):
-	splitDate = badDate.split(' ')
-	formattedDate = (splitDate[2] + ' ' + splitDate[1] + ' ' + str(datetime.date.today().year) + ' ' + splitDate[3] + ' ' + splitDate[4])
-	LastComparedItem = datetime.datetime.strptime(formattedDate, '%b %d %Y %I:%M:%S %p')
-	return LastComparedItem
+	# Get the batch value and category abbreviation from the mappings
+	# Default to New York if location not found
+	batch = location_to_batch.get(location)
 
-def findAllPost():
-	# notify = Notify()
-	latestDateItem = findFirstPost()
-	while True:
-		mostRecentItem = findFirstPost()
-		source = requests.get('https://dallas.craigslist.org/search/cta').text
-		soup = BeautifulSoup(source, 'lxml')
-		try:
-			print('Im running')
-			for row in soup.find_all('li', class_='result-row'):
-				badDate = row.find('time', class_='result-date')['title']
-				postDate = convertToDateItem(badDate)
-				postName = row.p.a.text
-				postPrice = row.a.span.text
-				if(postDate > latestDateItem):
-					print(postName)
-					# notify.send(postName)
-					print('condition is true')
-		except Exception as e:
-			pass
-		latestDateItem = mostRecentItem
-		time.sleep(300)
-	
-def main():
-	findAllPost()
-	
+	params = {
+		'batch': batch,
+		'cc': 'US',
+		'lang': 'en',
+		'searchPath': "cta",
+		"id": "0",
+  	"collectContactInfo": True,
+	}
+
+	headers = {
+		'sec-ch-ua': '"Google Chrome";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
+		'Referer': f'https://{location}.craigslist.org/',
+		'sec-ch-ua-mobile': '?0',
+		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+		'sec-ch-ua-platform': '"Windows"',
+		'Cookie': f'cl_b=COOKIE VALUE'
+	}
+
+	response = requests.get(base_url, params=params, headers=headers)
+
+	if response.status_code == 200:
+		data = response.json()
+	else:
+		print("Failed to retrieve data. Status code:", response.status_code)
+		data = None
+
+	job_postings = []
+	with open('file.txt', 'w') as f:
+		json.dump(data, f, indent=2)
+
+	if data:
+		for item in data["data"]["items"]:
+			job_title = None
+			commission = None
+			for element in item:
+				if isinstance(element, str):
+					job_title = element
+				elif isinstance(element, list) and len(element) > 0 and element[0] == 7:
+					commission = element[1]
+			if job_title and commission:
+				job_postings.append((job_title, commission))
+		return job_postings
+							
+	else:
+		print("No data available.")
 
 if __name__ == "__main__":
-	main()
+	location = "dallas"
+	category = "cta"
+	
+	job_postings = fetch_job_postings(location, category)
+
+	if job_postings:
+		current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+		category = category.replace("/", "&")
+		csv_filename = f"{location}_{category}_openings_{current_datetime}.csv"
+
+		with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
+			writer = csv.writer(file)
+
+			writer.writerow(["Job Title", "Commission"])
+			for job in job_postings:
+				writer.writerow([job[0], job[1]])
+	
+		print(f"Job postings have been saved to {csv_filename}")
+	else:
+		print("No data available.")

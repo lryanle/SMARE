@@ -10,6 +10,10 @@ location_to_batch = {
 	# Add more locations and their batch values as needed
 }
 
+def clean_price_str(str):
+	price_str = str.replace("$", "").replace(",", "")
+	return float(price_str)
+
 def fetch_job_postings(location, category):
 	base_url = "https://sapi.craigslist.org/web/v8/postings/search/full"
 
@@ -23,7 +27,7 @@ def fetch_job_postings(location, category):
 		'lang': 'en',
 		'searchPath': "cta",
 		"id": "0",
-  	"collectContactInfo": True,
+  		"collectContactInfo": True,
 	}
 
 	headers = {
@@ -39,27 +43,35 @@ def fetch_job_postings(location, category):
 
 	if response.status_code == 200:
 		data = response.json()
+
+		with open('file.txt', 'w') as f:
+			json.dump(data["data"]["items"], f, indent=2)
 	else:
 		print("Failed to retrieve data. Status code:", response.status_code)
 		data = None
 
-	job_postings = []
-	with open('file.txt', 'w') as f:
-		json.dump(data, f, indent=2)
 
+	car_posts = []
 	if data:
-		for item in data["data"]["items"]:
-			job_title = None
-			commission = None
-			for element in item:
+		# For each car post found
+		for post in data["data"]["items"]:
+			title = None
+			price = None
+			mileage = None
+			partial_link = None
+
+			for element in post:
 				if isinstance(element, str):
-					job_title = element
-				elif isinstance(element, list) and len(element) > 0 and element[0] == 7:
-					commission = element[1]
-			if job_title and commission:
-				job_postings.append((job_title, commission))
-		return job_postings
-							
+					title = element
+				elif isinstance(element, list) and len(element) > 0 and element[0] == 10:
+					price = clean_price_str(element[1])
+				elif isinstance(element, list) and len(element) > 0 and element[0] == 9:
+					mileage = element[1]
+				elif isinstance(element, list) and len(element) > 0 and element[0] == 6:
+					partial_link = element[1]
+			if title and price and mileage and partial_link:
+				car_posts.append((title, price, mileage, partial_link))
+		return car_posts
 	else:
 		print("No data available.")
 
@@ -67,9 +79,10 @@ if __name__ == "__main__":
 	location = "dallas"
 	category = "cta"
 	
-	job_postings = fetch_job_postings(location, category)
+	car_posts = fetch_job_postings(location, category)
 
-	if job_postings:
+	if car_posts:
+		print("we have results")
 		current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 		category = category.replace("/", "&")
 		csv_filename = f"{location}_{category}_openings_{current_datetime}.csv"
@@ -77,10 +90,10 @@ if __name__ == "__main__":
 		with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
 			writer = csv.writer(file)
 
-			writer.writerow(["Job Title", "Commission"])
-			for job in job_postings:
-				writer.writerow([job[0], job[1]])
+			writer.writerow(["Title", "Price", "Mileage", "Partial HTML Path"])
+			for car in car_posts:
+				writer.writerow([car[0], car[1], car[2], car[3]])
 	
-		print(f"Job postings have been saved to {csv_filename}")
+		print(f"Car posts have been saved to {csv_filename}")
 	else:
-		print("No data available.")
+		print(car_posts)

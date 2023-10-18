@@ -82,7 +82,6 @@ if __name__ == "__main__":
 	car_posts = fetch_job_postings(location, category)
 
 	if car_posts:
-		print("we have results")
 		current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 		category = category.replace("/", "&")
 		csv_filename = f"{location}_{category}_openings_{current_datetime}.csv"
@@ -96,4 +95,4 @@ if __name__ == "__main__":
 	
 		print(f"Car posts have been saved to {csv_filename}")
 	else:
-		print(car_posts)
+		print("No car posts were found. Nothing was saved")

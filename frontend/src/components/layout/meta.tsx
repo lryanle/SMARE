@@ -2,11 +2,11 @@
 import Head from 'next/head';
 
 export const defaultMetaProps = {
-  title: 'MongoDB Starter Kit',
+  title: 'Statefarm SMARE',
   description:
-    'MongoDB Starter Kit built with Next.js, Vercel, and MongoDB Atlas.',
-  ogImage: `https://assets.vercel.com/image/upload/v1654626375/twitter-cards/mongo-integration-starter.png`,
-  ogUrl: 'https://mongodb.vercel.app'
+    'Statefarm SMARE: A University of Texas at Arlington Senior Design Project in collaboration with Statefarm.',
+  ogImage: `/logos/smaresquare.png`,
+  ogUrl: 'https://smare.lryanle.com'
 };
 
 export interface MetaProps {
@@ -23,7 +23,7 @@ export default function Meta({ props }: { props: MetaProps }) {
       <link rel="icon" href="/favicon.ico" />
       <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
       <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
-      <meta name="theme-color" content="#7b46f6" />
+      <meta name="theme-color" content="#f01716" />
 
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />

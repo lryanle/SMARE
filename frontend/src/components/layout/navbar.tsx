@@ -35,7 +35,7 @@ export default function Navbar({
             <a className="w-8 h-8 rounded-full overflow-hidden">
               <Image
                 src={
-                  session.user?.image ??
+                  decodeURI(session.user?.image as string) ??
                   `https://avatar.tobi.sh/${session.user.name}`
                 }
                 alt={session.user?.name ?? 'User'}

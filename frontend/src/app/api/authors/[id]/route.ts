@@ -1,9 +1,9 @@
 import authorsData from "@/assets/fakedata/authors.json";
 import type { Author } from "@/lib/models/author";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function GET(
-  request: Request,
+export async function GET (
+  request: NextRequest,
   {
     params,
   }: {

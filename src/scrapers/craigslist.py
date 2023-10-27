@@ -1,98 +1,120 @@
-from datetime import datetime
-import csv
-import json
-import requests
+from selenium import webdriver
+from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+from datetime import date
 
-location_to_batch = {
-	"newyork": "3-0-360-0-0",
-	"philadelphia": "17-0-360-0-0",
-	"dallas": "21-0-360-0-0",
-	# Add more locations and their batch values as needed
-}
+def scrollTo(x, driver):
+    driver.execute_script(f"window.scrollTo({{top: {x}, left: 100, behavior: 'smooth'}})")
 
-def clean_price_str(str):
-	price_str = str.replace("$", "").replace(",", "")
-	return float(price_str)
+def loadPageResources(driver):
+    scroll = 100
 
-def fetch_job_postings(location, category):
-	base_url = "https://sapi.craigslist.org/web/v8/postings/search/full"
+    print("Waiting to load...")
+    time.sleep(2)
 
-	# Get the batch value and category abbreviation from the mappings
-	# Default to New York if location not found
-	batch = location_to_batch.get(location)
+    scrollTo(scroll, driver)
 
-	params = {
-		'batch': batch,
-		'cc': 'US',
-		'lang': 'en',
-		'searchPath': "cta",
-		"id": "0",
-  		"collectContactInfo": True,
-	}
+    loadImgButtons = driver.find_elements("class name", "slider-back-arrow")
 
-	headers = {
-		'sec-ch-ua': '"Google Chrome";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
-		'Referer': f'https://{location}.craigslist.org/',
-		'sec-ch-ua-mobile': '?0',
-		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
-		'sec-ch-ua-platform': '"Windows"',
-		'Cookie': f'cl_b=COOKIE VALUE'
-	}
+    time.sleep(2)
 
-	response = requests.get(base_url, params=params, headers=headers)
+    # Emulate a user scrolling
+    for i in range(len(loadImgButtons)):
+        scroll += 100
+        scrollTo(scroll, driver)
 
-	if response.status_code == 200:
-		data = response.json()
+        driver.execute_script("arguments[0].click();", loadImgButtons[i])
 
-		with open('file.txt', 'w') as f:
-			json.dump(data["data"]["items"], f, indent=2)
-	else:
-		print("Failed to retrieve data. Status code:", response.status_code)
-		data = None
+        time.sleep(.5)
 
 
-	car_posts = []
-	if data:
-		# For each car post found
-		for post in data["data"]["items"]:
-			title = None
-			price = None
-			mileage = None
-			partial_link = None
+def setupURLs():
+    #list of cities to scrape; can be expanded
+    cities = ["abilene", "amarillo", "austin", "beaumont", "brownsville", "collegestation", "corpuschristi", "dallas", "nacogdoches", "delrio", "elpaso", "galveston", "houston", "killeen", "laredo", "lubbock", "mcallen", "odessa", "sanangelo", "sanantonio", "sanmarcos", "bigbend", "texoma", "easttexas", "victoriatx", "waco", "wichitafalls"]
 
-			for element in post:
-				if isinstance(element, str):
-					title = element
-				elif isinstance(element, list) and len(element) > 0 and element[0] == 10:
-					price = clean_price_str(element[1])
-				elif isinstance(element, list) and len(element) > 0 and element[0] == 9:
-					mileage = element[1]
-				elif isinstance(element, list) and len(element) > 0 and element[0] == 6:
-					partial_link = element[1]
-			if title and price and mileage and partial_link:
-				car_posts.append((title, price, mileage, partial_link))
-		return car_posts
-	else:
-		print("No data available.")
+    oldestAllowedCars = 2011
 
-if __name__ == "__main__":
-	location = "dallas"
-	category = "cta"
-	
-	car_posts = fetch_job_postings(location, category)
+    # Set the URL of the Facebook Marketplace automotive category
+    base_url = 'https://{}.craigslist.org/search/cta?min_auto_year={}#search=1~gallery~0~0'
+    return [base_url.format(city, oldestAllowedCars) for city in cities]
 
-	if car_posts:
-		current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
-		category = category.replace("/", "&")
-		csv_filename = f"{location}_{category}_openings_{current_datetime}.csv"
+def setupBrowser():
+    print("Setting up headless browser")
 
-		with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
-			writer = csv.writer(file)
+    options = Options()
+    # options.add_argument("--headless=new")
 
-			writer.writerow(["Title", "Price", "Mileage", "Partial HTML Path"])
-			for car in car_posts:
-				writer.writerow([car[0], car[1], car[2], car[3]])
-	
-		print(f"Car posts have been saved to {csv_filename}")
-	else:
-		print("No car posts were found. Nothing was saved")
+    print("Creating a new Selenium WebDriver instance")
+    return webdriver.Chrome(options=options)
+
+def getAllPosts(browser):
+    # Create a BeautifulSoup object from the HTML of the page
+    html = browser.page_source
+    soup = BeautifulSoup(browser.page_source, 'html.parser')
+
+    # Find all of the car listings on the page
+    return soup.find_all('div', class_='gallery-card')
+
+def getCarImages():
+    return "TODO"
+
+def scrapeCarInfo(post):
+    title = post.find('span', class_='label').text
+
+    print(f'Scraping "{title}"')
+
+    price = post.find('span', class_='priceinfo').text
+    metadata = post.find('div', class_="meta").text.split('·')
+
+    miles = metadata[1]
+    if (len(metadata) >= 3):
+        location = metadata[2]
+    
+    link = post.find('a', class_='posting-title', href=True)["href"]
+    
+    imageElements = post.findAll('img')
+    images = [img["src"] for img in imageElements]
+
+    return {
+        "title": title, 
+        "price": price, 
+        "location": location, 
+        "miles": miles, 
+        "link": link,
+        "images": images,
+        "scrapeDate": date.today()
+    }
+
+def scrapeCraigslist():
+    cityURLs = setupURLs()
+    browser = setupBrowser()
+
+    # Create a list to store the scraped data
+    print("Started scraping...")
+
+    for url in cityURLs:
+        # Navigate to the URL
+        print(f"Going to {url}")
+        browser.get(url) 
+
+        print(f"Loading cars from {url}")
+
+        loadPageResources(browser)
+
+        carPosts = getAllPosts(browser)
+
+        # Iterate over the listings and scrape the data
+        for post in carPosts:
+            try:
+                car = scrapeCarInfo(post)
+                print(car)
+            except:
+                print("Incomplete listing info")
+                
+    # Close the Selenium WebDriver instance
+    browser.quit()
+
+if (__name__ == "__main__"):
+    scrapeCraigslist()

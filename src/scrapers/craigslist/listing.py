@@ -29,7 +29,11 @@ def scrapeListing(url):
 		description = soup.find('section', id='postingbody').text
 		attributes = processAttributes([attr.text for attr in soup.findAll('p', class_="attrgroup")[1].findAll('span')])
 		
-		print([attributes, description])
+		map = soup.find('div', id='map')
+		longitude = map["data-longitude"]
+		latitude = map["data-latitude"]
+
+		print([attributes, description, longitude, latitude])
 	except:
 		print(f"Failed scraping {url}")		
 	

@@ -19,20 +19,12 @@ def get_conn(db):
   # use a database named "Test"
   return {"success" : True, "db": client.get_database(db)}
 
-def post_one(db, collection, title, price, location, miles, link):
-  car = {
-    "title": title, 
-    "price": price, 
-    "location": location, 
-    "miles": miles, 
-    "link": link
-  }
-  
+def post_raw(car):
   # insert into collection called "scrape_test"
-  conn = get_conn(db)
+  conn = get_conn("scrape")
 
   if (conn["success"]):
-    result = conn["db"][collection].insert_one(car)
+    result = conn["db"]["scraped_raw"].insert_one(car)
     return result.acknowledged
   else:
     return False

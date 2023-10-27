@@ -32,17 +32,18 @@ export default function Navbar({
       {status !== 'loading' &&
         (session?.user ? (
           <Link href={`/${session.user?.name}`} legacyBehavior>
-            <a className="w-8 h-8 rounded-full overflow-hidden">
-              <Image
+            <a className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center gap-2">
+              <span className="text-md">${session.user?.name}</span>
+              <img
                 src={
-                  decodeURI(session.user?.image as string) ??
+                  session.user?.image ||
                   `https://avatar.tobi.sh/${session.user.name}`
                 }
-                alt={session.user?.name ?? 'User'}
+                alt={session.user?.name || 'User'}
                 width={300}
                 height={300}
-                placeholder="blur"
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2PYsGHDfwAHNAMQumvbogAAAABJRU5ErkJggg=="
+                // placeholder="blur"
+                // blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2PYsGHDfwAHNAMQumvbogAAAABJRU5ErkJggg=="
               />
             </a>
           </Link>

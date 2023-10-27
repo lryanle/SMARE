@@ -3,7 +3,7 @@ export default function ExpandingArrow({ className }: { className?: string }) {
     <div className="relative flex items-center group">
       <svg
         className={`${
-          className ? className : 'w-4 h-4'
+          className ? className : "w-4 h-4"
         } absolute group-hover:opacity-0 group-hover:translate-x-1 transition-all`}
         xmlns="http://www.w3.org/2000/svg"
         fill="currentColor"
@@ -18,7 +18,7 @@ export default function ExpandingArrow({ className }: { className?: string }) {
       </svg>
       <svg
         className={`${
-          className ? className : 'w-4 h-4'
+          className ? className : "w-4 h-4"
         } absolute opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all`}
         xmlns="http://www.w3.org/2000/svg"
         fill="currentColor"

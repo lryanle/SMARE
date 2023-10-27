@@ -1,10 +1,10 @@
-import { LoadingDots } from '@/components/icons';
-import ClusterProvisioning from '@/components/layout/cluster-provisioning';
-import Meta, { MetaProps } from '@/components/layout/meta';
-import { ResultProps } from '@/lib/api/user';
-import { useRouter } from 'next/router';
-import { ReactNode, useState } from 'react';
-import Navbar from './navbar';
+import { LoadingDots } from "@/components/icons";
+import ClusterProvisioning from "@/components/layout/cluster-provisioning";
+import Meta, { MetaProps } from "@/components/layout/meta";
+import { ResultProps } from "@/lib/api/user";
+import { useRouter } from "next/router";
+import { ReactNode, useState } from "react";
+import Navbar from "./navbar";
 
 export default function Layout({
   meta,
@@ -12,7 +12,7 @@ export default function Layout({
   totalUsers,
   username,
   clusterStillProvisioning,
-  children
+  children,
 }: {
   meta: MetaProps;
   results: ResultProps[];

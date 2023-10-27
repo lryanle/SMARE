@@ -1,8 +1,8 @@
 /* eslint-disable new-cap */
-import clientPromise from '@/lib/mongodb';
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import NextAuth from 'next-auth';
-import GitHubProvider from 'next-auth/providers/github';
+import clientPromise from "@/lib/mongodb";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import NextAuth from "next-auth";
+import GitHubProvider from "next-auth/providers/github";
 
 export default NextAuth({
   adapter: MongoDBAdapter(clientPromise),
@@ -18,10 +18,10 @@ export default NextAuth({
           email: profile.email,
           image: profile.avatar_url,
           followers: profile.followers,
-          verified: true
+          verified: true,
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async session({ session, user }) {
@@ -30,6 +30,6 @@ export default NextAuth({
         session.user.name = user.name;
       }
       return session;
-    }
-  }
+    },
+  },
 });

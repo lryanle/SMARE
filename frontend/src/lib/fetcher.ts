@@ -5,7 +5,7 @@ export default async function fetcher<JSON = any>(
   const res = await fetch(input, init);
 
   if (!res.ok && res.status === 401) {
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
 
   return res.json();

@@ -1,21 +1,21 @@
-import { LoadingDots, AlertCircleIcon } from '@/components/icons';
-import { MouseEvent, useState } from 'react';
+import { LoadingDots, AlertCircleIcon } from "@/components/icons";
+import { MouseEvent, useState } from "react";
 
 export default function ClusterProvisioning() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const onClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     setIsSubmitting(true);
 
-    const res = await fetch('/api/seed');
+    const res = await fetch("/api/seed");
 
     if (res.ok) {
       window.location.reload();
       setIsSubmitting(false);
-      setError('');
+      setError("");
     } else {
       const json = await res.json();
 
@@ -38,7 +38,7 @@ export default function ClusterProvisioning() {
           className="mt-4 text-white text-[13px] font-mono bg-black border border-[#333333] hover:border-white transition-all rounded-md w-full h-[40px] flex items-center justify-center whitespace-nowrap"
           disabled={isSubmitting}
         >
-          {isSubmitting ? <LoadingDots color="white" /> : 'Seed Database'}
+          {isSubmitting ? <LoadingDots color="white" /> : "Seed Database"}
         </button>
 
         <div className="text-center">

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import type { RefObject } from 'react';
+import { useState, useEffect } from "react";
+import type { RefObject } from "react";
 
 interface IntersectionObserverArgs extends IntersectionObserverInit {
   freezeOnceVisible?: boolean;
@@ -13,8 +13,8 @@ export function useIntersectionObserver(
   {
     threshold = 0,
     root = null,
-    rootMargin = '0%',
-    freezeOnceVisible = false
+    rootMargin = "0%",
+    freezeOnceVisible = false,
   }: IntersectionObserverArgs
 ): IntersectionObserverEntry | undefined {
   const [entry, setEntry] = useState<IntersectionObserverEntry>();

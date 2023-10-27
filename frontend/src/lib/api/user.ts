@@ -1,8 +1,8 @@
-import clientPromise from '@/lib/mongodb';
-import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { serialize } from 'next-mdx-remote/serialize';
-import { remark } from 'remark';
-import remarkMdx from 'remark-mdx';
+import clientPromise from "@/lib/mongodb";
+import type { MDXRemoteSerializeResult } from "next-mdx-remote";
+import { serialize } from "next-mdx-remote/serialize";
+import { remark } from "remark";
+import remarkMdx from "remark-mdx";
 
 export interface UserProps {
   name: string;
@@ -43,7 +43,7 @@ Et vivamus lorem pulvinar nascetur non. Pulvinar a sed platea rhoncus ac mauris 
 
 export async function getUser(username: string): Promise<UserProps | null> {
   const client = await clientPromise;
-  const collection = client.db('Test').collection('users');
+  const collection = client.db("Test").collection("users");
   const results = await collection.findOne<UserProps>(
     { username },
     { projection: { _id: 0, emailVerified: 0 } }
@@ -51,7 +51,7 @@ export async function getUser(username: string): Promise<UserProps | null> {
   if (results) {
     return {
       ...results,
-      bioMdx: await getMdxSource(results.bio || placeholderBio)
+      bioMdx: await getMdxSource(results.bio || placeholderBio),
     };
   } else {
     return null;
@@ -60,17 +60,17 @@ export async function getUser(username: string): Promise<UserProps | null> {
 
 export async function getFirstUser(): Promise<UserProps | null> {
   const client = await clientPromise;
-  const collection = client.db('Test').collection('users');
+  const collection = client.db("Test").collection("users");
   const results = await collection.findOne<UserProps>(
     {},
     {
-      projection: { _id: 0, emailVerified: 0 }
+      projection: { _id: 0, emailVerified: 0 },
     }
   );
   if (results) {
     return {
       ...results,
-      bioMdx: await getMdxSource(results.bio || placeholderBio)
+      bioMdx: await getMdxSource(results.bio || placeholderBio),
     };
   } else {
     return null;
@@ -79,54 +79,54 @@ export async function getFirstUser(): Promise<UserProps | null> {
 
 export async function getAllUsers(): Promise<ResultProps[]> {
   const client = await clientPromise;
-  const collection = client.db('Test').collection('users');
+  const collection = client.db("Test").collection("users");
   return await collection
     .aggregate<ResultProps>([
       {
         // sort by follower count
         $sort: {
-          followers: -1
-        }
+          followers: -1,
+        },
       },
       {
-        $limit: 100
+        $limit: 100,
       },
       {
         $group: {
           _id: {
-            $toLower: { $substrCP: ['$name', 0, 1] }
+            $toLower: { $substrCP: ["$name", 0, 1] },
           },
           users: {
             $push: {
-              name: '$name',
-              username: '$username',
-              email: '$email',
-              image: '$image',
-              followers: '$followers',
-              verified: '$verified'
-            }
+              name: "$name",
+              username: "$username",
+              email: "$email",
+              image: "$image",
+              followers: "$followers",
+              verified: "$verified",
+            },
           },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
         // sort alphabetically
         $sort: {
-          _id: 1
-        }
-      }
+          _id: 1,
+        },
+      },
     ])
     .toArray();
 }
 
 export async function searchUser(query: string): Promise<UserProps[]> {
   const client = await clientPromise;
-  const collection = client.db('Test').collection('users');
+  const collection = client.db("Test").collection("users");
   return await collection
     .aggregate<UserProps>([
       {
         $search: {
-          index: 'name-index',
+          index: "name-index",
           /* 
           name-index is a search index as follows:
 
@@ -152,7 +152,7 @@ export async function searchUser(query: string): Promise<UserProps[]> {
           text: {
             query: query,
             path: {
-              wildcard: '*' // match on both name and username
+              wildcard: "*", // match on both name and username
             },
             fuzzy: {},
             score: {
@@ -160,52 +160,52 @@ export async function searchUser(query: string): Promise<UserProps[]> {
               function: {
                 multiply: [
                   {
-                    score: 'relevance'
+                    score: "relevance",
                   },
                   {
                     log1p: {
                       path: {
-                        value: 'followers'
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
+                        value: "followers",
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
       },
       {
         // filter out users that are not verified
         $match: {
-          verified: true
-        }
+          verified: true,
+        },
       },
       // limit to 10 results
       {
-        $limit: 10
+        $limit: 10,
       },
       {
         $project: {
           _id: 0,
           emailVerified: 0,
           score: {
-            $meta: 'searchScore'
-          }
-        }
-      }
+            $meta: "searchScore",
+          },
+        },
+      },
     ])
     .toArray();
 }
 
 export async function getUserCount(): Promise<number> {
   const client = await clientPromise;
-  const collection = client.db('Test').collection('users');
+  const collection = client.db("Test").collection("users");
   return await collection.countDocuments();
 }
 
 export async function updateUser(username: string, bio: string) {
   const client = await clientPromise;
-  const collection = client.db('Test').collection('users');
+  const collection = client.db("Test").collection("users");
   return await collection.updateOne({ username }, { $set: { bio } });
 }

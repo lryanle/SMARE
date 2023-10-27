@@ -1,26 +1,26 @@
-import { DirectoryIcon, SearchIcon } from '@/components/icons';
-import { ResultProps, UserProps } from '@/lib/api/user';
-import fetcher from '@/lib/fetcher';
-import { useDebounce } from '@/lib/hooks/use-debounce';
-import Link from 'next/link';
-import { useState } from 'react';
-import useSWR from 'swr';
-import DirectoryResults from './directory-results';
+import { DirectoryIcon, SearchIcon } from "@/components/icons";
+import { ResultProps, UserProps } from "@/lib/api/user";
+import fetcher from "@/lib/fetcher";
+import { useDebounce } from "@/lib/hooks/use-debounce";
+import Link from "next/link";
+import { useState } from "react";
+import useSWR from "swr";
+import DirectoryResults from "./directory-results";
 
 export default function Directory({
   results,
-  totalUsers
+  totalUsers,
 }: {
   results: ResultProps[];
   totalUsers: number;
 }) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 200);
   const { data: searchedUsers } = useSWR<UserProps[] | null>(
     debouncedQuery.length > 0 && `api/user?query=${debouncedQuery}`,
     fetcher,
     {
-      keepPreviousData: true
+      keepPreviousData: true,
     }
   );
 
@@ -37,7 +37,9 @@ export default function Directory({
         <p className="mt-8 text-2xl text-white font-bold">Directory</p>
         <p className="mt-2 text-sm text-dark-accent-5">
           {/* eslint-disable-next-line new-cap */}
-          Search directory of {Intl.NumberFormat('en-us').format(totalUsers)}{' '}
+          Search directory of {Intl.NumberFormat("en-us").format(
+            totalUsers
+          )}{" "}
           developers
         </p>
         <form className="py-8 flex space-x-4" action="#">

@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import Head from 'next/head';
+import Head from "next/head";
 
 export const defaultMetaProps = {
-  title: 'Statefarm SMARE',
+  title: "Statefarm SMARE",
   description:
-    'Statefarm SMARE: A University of Texas at Arlington Senior Design Project in collaboration with Statefarm.',
-  ogImage: `/logos/smaresquare.png`,
-  ogUrl: 'https://smare.lryanle.com'
+    "Statefarm SMARE: A University of Texas at Arlington Senior Design Project in collaboration with Statefarm.",
+  ogImage: `/logos/smare3-4.png`,
+  ogUrl: "https://smare.lryanle.com",
 };
 
 export interface MetaProps {

@@ -1,27 +1,27 @@
-import { getMdxSource, searchUser, updateUser } from '@/lib/api/user';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import { getMdxSource, searchUser, updateUser } from "@/lib/api/user";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/react";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     try {
       const result = await searchUser(req.query.query as string);
       return res.status(200).json(result);
     } catch (e: any) {
       console.log(e);
       return res.status(500).json({
-        error: e.toString()
+        error: e.toString(),
       });
     }
-  } else if (req.method === 'PUT') {
+  } else if (req.method === "PUT") {
     const { username, bio } = req.body;
     const session = await getSession({ req });
     if (!session || session.user?.name !== username) {
       return res.status(401).json({
-        error: 'Unauthorized'
+        error: "Unauthorized",
       });
     }
     try {
@@ -34,7 +34,7 @@ export default async function handler(
     } catch (e: any) {
       console.log(e);
       return res.status(500).json({
-        error: e.toString()
+        error: e.toString(),
       });
     }
   } else {

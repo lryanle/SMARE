@@ -1,7 +1,7 @@
-import { CheckInCircleIcon } from '@/components/icons';
-import { UserProps } from '@/lib/api/user';
-import Link from 'next/link';
-import BlurImage from '../blur-image';
+import { CheckInCircleIcon } from "@/components/icons";
+import { UserProps } from "@/lib/api/user";
+import Link from "next/link";
+import BlurImage from "../blur-image";
 
 export default function DirectoryResults({ users }: { users: UserProps[] }) {
   return (

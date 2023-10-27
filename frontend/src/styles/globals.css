@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-.directory-divide-y>li:not(:last-child):after {
-  content: '';
+.directory-divide-y > li:not(:last-child):after {
+  content: "";
   display: block;
   width: calc(100% - 24px);
   transform: translateX(24px);

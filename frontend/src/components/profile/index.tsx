@@ -5,23 +5,23 @@ import {
   GitHubIcon,
   LoadingDots,
   UploadIcon,
-  XIcon
-} from '@/components/icons';
-import { UserProps } from '@/lib/api/user';
-import { getGradient } from '@/lib/gradients';
-import { useSession } from 'next-auth/react';
-import { MDXRemote } from 'next-mdx-remote';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
-import BlurImage from '../blur-image';
+  XIcon,
+} from "@/components/icons";
+import { UserProps } from "@/lib/api/user";
+import { getGradient } from "@/lib/gradients";
+import { useSession } from "next-auth/react";
+import { MDXRemote } from "next-mdx-remote";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import TextareaAutosize from "react-textarea-autosize";
+import BlurImage from "../blur-image";
 
-export const profileWidth = 'max-w-5xl mx-auto px-4 sm:px-6 lg:px-8';
+export const profileWidth = "max-w-5xl mx-auto px-4 sm:px-6 lg:px-8";
 
 export default function Profile({
   settings,
-  user
+  user,
 }: {
   settings?: boolean;
   user: UserProps;
@@ -32,18 +32,18 @@ export default function Profile({
   const [data, setData] = useState({
     username: user.username,
     image: user.image,
-    bio: user.bio || '',
-    bioMdx: user.bioMdx
+    bio: user.bio || "",
+    bioMdx: user.bioMdx,
   });
 
   if (data.username !== user.username) {
     setData(user);
   }
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const settingsPage =
     settings ||
-    (router.query.settings === 'true' && router.asPath === '/settings');
+    (router.query.settings === "true" && router.asPath === "/settings");
 
   const handleDismiss = useCallback(() => {
     if (settingsPage) router.replace(`/${user.username}`);
@@ -51,27 +51,27 @@ export default function Profile({
   }, [router]);
 
   const handleSave = async () => {
-    setError('');
+    setError("");
     setSaving(true);
     try {
-      const response = await fetch('/api/user', {
-        method: 'PUT',
+      const response = await fetch("/api/user", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       if (response.ok) {
         const bioMdx = await response.json();
         setData({
           ...data,
-          bioMdx
+          bioMdx,
         }); // optimistically show updated state for bioMdx
         router.replace(`/${user.username}`, undefined, { shallow: true });
       } else if (response.status === 401) {
-        setError('Not authorized to edit this profile.');
+        setError("Not authorized to edit this profile.");
       } else {
-        setError('Error saving profile.');
+        setError("Error saving profile.");
       }
     } catch (error) {
       console.error(error);
@@ -81,16 +81,16 @@ export default function Profile({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onKeyDown = async (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       handleDismiss();
-    } else if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    } else if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
       await handleSave();
     }
   };
 
   useEffect(() => {
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [onKeyDown]);
 
   return (
@@ -108,7 +108,7 @@ export default function Profile({
               <button
                 className="absolute bg-gray-800 bg-opacity-50 hover:bg-opacity-70 w-full h-full z-10 transition-all flex items-center justify-center"
                 onClick={() =>
-                  alert('Image upload has been disabled for demo purposes.')
+                  alert("Image upload has been disabled for demo purposes.")
                 }
               >
                 <UploadIcon className="h-6 w-6 text-white" />
@@ -167,11 +167,11 @@ export default function Profile({
               {tabs.map((tab) => (
                 <button
                   key={tab.name}
-                  disabled={tab.name !== 'Profile'}
+                  disabled={tab.name !== "Profile"}
                   className={`${
-                    tab.name === 'Profile'
-                      ? 'border-white text-white'
-                      : 'border-transparent text-gray-400 cursor-not-allowed'
+                    tab.name === "Profile"
+                      ? "border-white text-white"
+                      : "border-transparent text-gray-400 cursor-not-allowed"
                   }
                     whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm font-mono`}
                 >
@@ -193,7 +193,7 @@ export default function Profile({
               onInput={(e) => {
                 setData({
                   ...data,
-                  bio: (e.target as HTMLTextAreaElement).value
+                  bio: (e.target as HTMLTextAreaElement).value,
                 });
               }}
               className="mt-1 w-full max-w-2xl px-0 text-sm tracking-wider leading-6 text-white bg-black font-mono border-0 border-b border-gray-800 focus:border-white resize-none focus:outline-none focus:ring-0"
@@ -219,7 +219,7 @@ export default function Profile({
           <p className="text-sm text-gray-500">{error}</p>
           <button
             className={`${
-              saving ? 'cursor-not-allowed' : ''
+              saving ? "cursor-not-allowed" : ""
             } rounded-full border border-[#0070F3] hover:border-2 w-12 h-12 flex justify-center items-center transition-all`}
             disabled={saving}
             onClick={handleSave}
@@ -230,7 +230,13 @@ export default function Profile({
               <CheckIcon className="h-4 w-4 text-white" />
             )}
           </button>
-          <Link href={`/${user.username}`} shallow replace scroll={false} legacyBehavior>
+          <Link
+            href={`/${user.username}`}
+            shallow
+            replace
+            scroll={false}
+            legacyBehavior
+          >
             <a className="rounded-full border border-gray-800 hover:border-white w-12 h-12 flex justify-center items-center transition-all">
               <XIcon className="h-4 w-4 text-white" />
             </a>
@@ -255,7 +261,7 @@ export default function Profile({
 }
 
 const tabs = [
-  { name: 'Profile' },
-  { name: 'Work History' },
-  { name: 'Contact' }
+  { name: "Profile" },
+  { name: "Work History" },
+  { name: "Contact" },
 ];

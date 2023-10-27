@@ -35,7 +35,7 @@
       // "@/data/*": ["data/*"],
       // "@/layouts/*": ["layouts/*"],
       // "@/lib/*": ["src/lib/*"],
-      "@/styles/*": ["./src/styles/*"],
+      "@/styles/*": ["./src/styles/*"]
       // "@/types": ["types/index"],
       // "@/types/*": ["types/*"]
     }

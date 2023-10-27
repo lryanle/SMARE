@@ -1,8 +1,8 @@
-import { defaultMetaProps } from '@/components/layout/meta';
-import Profile from '@/components/profile';
-import { UserProps, getAllUsers, getUser, getUserCount } from '@/lib/api/user';
-import { GetServerSideProps } from 'next';
-import { getSession } from 'next-auth/react';
+import { defaultMetaProps } from "@/components/layout/meta";
+import Profile from "@/components/profile";
+import { UserProps, getAllUsers, getUser, getUserCount } from "@/lib/api/user";
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
 
 export default function Settings({ user }: { user: UserProps }) {
   return <Profile settings={true} user={user} />;
@@ -14,8 +14,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     return {
       redirect: {
         permanent: false,
-        destination: '/'
-      }
+        destination: "/",
+      },
     };
   }
 
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   const meta = {
     ...defaultMetaProps,
-    title: `Settings | MongoDB Starter Kit`
+    title: `Settings | MongoDB Starter Kit`,
   };
 
   return {
@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       meta,
       results,
       totalUsers,
-      user
-    }
+      user,
+    },
   };
 };

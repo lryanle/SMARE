@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-import { MongoClient } from 'mongodb';
+import dotenv from "dotenv";
+import { MongoClient } from "mongodb";
 
 dotenv.config();
 const uri = process.env.MONGODB_URI as string; // your MongoDB connection string
@@ -22,7 +22,7 @@ class Singleton {
   private constructor() {
     this.client = new MongoClient(uri, options);
     this.clientPromise = this.client.connect();
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       // In development mode, use a global variable so that the value
       // is preserved across module reloads caused by HMR (Hot Module Replacement).
       globalThis._mongoClientPromise = this.clientPromise;

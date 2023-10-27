@@ -1,5 +1,5 @@
 export default function CheckInCircleIcon({
-  className
+  className,
 }: {
   className?: string;
 }) {

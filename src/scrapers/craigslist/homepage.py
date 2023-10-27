@@ -44,7 +44,7 @@ def setupBrowser():
     print("Setting up headless browser")
 
     options = Options()
-    # options.add_argument("--headless=new")
+    options.add_argument("--headless=new")
 
     print("Creating a new Selenium WebDriver instance")
     return webdriver.Chrome(options=options)
@@ -52,7 +52,7 @@ def setupBrowser():
 def getAllPosts(browser):
     # Create a BeautifulSoup object from the HTML of the page
     html = browser.page_source
-    soup = BeautifulSoup(browser.page_source, 'html.parser')
+    soup = BeautifulSoup(html, 'html.parser')
 
     # Find all of the car listings on the page
     return soup.find_all('div', class_='gallery-card')
@@ -60,7 +60,7 @@ def getAllPosts(browser):
 def getCarImages():
     return "TODO"
 
-def scrapeCarInfo(post):
+def getCarInfo(post):
     title = post.find('span', class_='label').text
 
     print(f'Scraping "{title}"')
@@ -91,9 +91,6 @@ def scrapeHomepage():
     cityURLs = setupURLs()
     browser = setupBrowser()
 
-    # Create a list to store the scraped data
-    print("Started scraping...")
-
     for url in cityURLs:
         # Navigate to the URL
         print(f"Going to {url}")
@@ -108,7 +105,7 @@ def scrapeHomepage():
         # Iterate over the listings and scrape the data
         for post in carPosts:
             try:
-                car = scrapeCarInfo(post)
+                car = getCarInfo(post)
                 print(car)
             except:
                 print("Incomplete listing info")

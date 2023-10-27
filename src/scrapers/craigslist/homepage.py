@@ -87,7 +87,7 @@ def scrapeCarInfo(post):
         "scrapeDate": date.today()
     }
 
-def scrapeCraigslist():
+def scrapeHomepage():
     cityURLs = setupURLs()
     browser = setupBrowser()
 
@@ -117,4 +117,4 @@ def scrapeCraigslist():
     browser.quit()
 
 if (__name__ == "__main__"):
-    scrapeCraigslist()
+    scrapeHomepage()

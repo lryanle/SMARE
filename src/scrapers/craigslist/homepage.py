@@ -68,7 +68,7 @@ def getCarInfo(post):
 	price = post.find('span', class_='priceinfo').text
 	metadata = post.find('div', class_="meta").text.split('·')
 
-	miles = metadata[1]
+	odometer = metadata[1]
 	if (len(metadata) >= 3):
 		location = metadata[2]
 	
@@ -78,13 +78,14 @@ def getCarInfo(post):
 	images = [img["src"] for img in imageElements]
 
 	return {
+		"_id": link,
 		"title": title, 
 		"price": price, 
 		"location": location, 
-		"miles": miles, 
+		"odometer": odometer, 
 		"link": link,
 		"images": images,
-		"scrapeDate": date.today()
+		"scrapeDate": str(date.today())
 	}
 
 def scrapeHomepage():

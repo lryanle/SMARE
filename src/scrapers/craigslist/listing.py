@@ -39,5 +39,3 @@ def scrapeListing(url):
 	
 	# Close the Selenium WebDriver instance
 	browser.quit()
-
-scrapeListing("https://abilene.craigslist.org/ctd/d/abilene-hyundai-elantra/7681061021.html")

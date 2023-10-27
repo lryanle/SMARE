@@ -35,10 +35,10 @@ export default function Navbar({
             <a className="w-8 h-8 rounded-full overflow-hidden">
               <Image
                 src={
-                  session.user?.image ||
+                  session.user?.image ??
                   `https://avatar.tobi.sh/${session.user.name}`
                 }
-                alt={session.user?.name || 'User'}
+                alt={session.user?.name ?? 'User'}
                 width={300}
                 height={300}
                 placeholder="blur"

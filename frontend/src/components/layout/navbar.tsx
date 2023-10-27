@@ -31,9 +31,9 @@ export default function Navbar({
       </button>
       {status !== 'loading' &&
         (session?.user ? (
-          <Link href={`/${session.user?.name}`} legacyBehavior>
-            <a className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center gap-2">
-              <span className="text-md">${session.user?.name}</span>
+          <Link href={`/${session.user?.name}`} className="flex items-center justify-center gap-2" legacyBehavior>
+            <span className="text-md">{session.user?.name}</span>
+            <a className="w-8 h-8 rounded-full overflow-hidden">
               <img
                 src={
                   session.user?.image ||

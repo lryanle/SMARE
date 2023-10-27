@@ -1,13 +1,10 @@
 import { LoadingDots } from '@/components/icons';
 import ClusterProvisioning from '@/components/layout/cluster-provisioning';
 import Meta, { MetaProps } from '@/components/layout/meta';
-import Toast from '@/components/layout/toast';
 import { ResultProps } from '@/lib/api/user';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
-import Directory from './directory';
 import Navbar from './navbar';
-import Sidebar from './sidebar';
 
 export default function Layout({
   meta,
@@ -42,15 +39,15 @@ export default function Layout({
   }
 
   return (
-    <div className="w-full mx-auto h-screen flex overflow-hidden bg-black">
+    <div className="w-full mx-auto h-screen flex overflow-hidden bg-white">
       <Meta props={meta} />
-      <Toast username={username} />
-      <Sidebar
+      {/* <Toast username={username} /> */}
+      {/* <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         results={results}
         totalUsers={totalUsers}
-      />
+      /> */}
 
       <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
         <div className="flex-1 relative z-0 flex overflow-hidden">
@@ -58,11 +55,11 @@ export default function Layout({
             {/* Navbar */}
             <Navbar setSidebarOpen={setSidebarOpen} />
 
-            {children}
+            {/* {children} */}
           </main>
-          <div className="hidden md:order-first h-screen md:flex md:flex-col">
+          {/* <div className="hidden md:order-first h-screen md:flex md:flex-col">
             <Directory results={results} totalUsers={totalUsers} />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

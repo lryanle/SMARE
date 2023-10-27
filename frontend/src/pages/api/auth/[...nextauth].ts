@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 import clientPromise from '@/lib/mongodb';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import NextAuth from 'next-auth';
@@ -25,7 +26,9 @@ export default NextAuth({
   callbacks: {
     async session({ session, user }) {
       // Send properties to the client, like an access_token from a provider.
-      session.username = user.username;
+      if (session.user) {
+        session.user.name = user.name;
+      }
       return session;
     }
   }

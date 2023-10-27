@@ -36,6 +36,7 @@ export default function Directory({
         </Link>
         <p className="mt-8 text-2xl text-white font-bold">Directory</p>
         <p className="mt-2 text-sm text-dark-accent-5">
+          {/* eslint-disable-next-line new-cap */}
           Search directory of {Intl.NumberFormat('en-us').format(totalUsers)}{' '}
           developers
         </p>

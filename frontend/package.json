@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development && next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint:eslint": "next lint",

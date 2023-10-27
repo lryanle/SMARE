@@ -4,7 +4,7 @@ import Meta, { MetaProps } from '@/components/layout/meta';
 import Toast from '@/components/layout/toast';
 import { ResultProps } from '@/lib/api/user';
 import { useRouter } from 'next/router';
-import React, { ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import Directory from './directory';
 import Navbar from './navbar';
 import Sidebar from './sidebar';

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Head from 'next/head';
 
 export const defaultMetaProps = {

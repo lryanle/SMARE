@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  nextjs-app:
+    image: ${NEXTJS_IMAGE}:${NEXTJS_IMAGE_VERSION}
+    build: # build if image not exist
+      context: ../
+      dockerfile: docker/Dockerfile
+      args:
+        DOT_ENV_PRODUCTION_FILE: ${NEXTJS_DOT_ENV_PRODUCTION_FILE}
+    ports:
+      - "${NEXTJS_APP_PORT}:3000"

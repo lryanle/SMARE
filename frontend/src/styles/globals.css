@@ -2,19 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+.directory-divide-y > li:not(:last-child):after {
+  content: "";
+  display: block;
+  width: calc(100% - 24px);
+  transform: translateX(24px);
+  height: 1px;
+  background: #333333;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+@tailwind components;
+@tailwind utilities;
 
-* {
-  box-sizing: border-box;
+@layer utilities {
+  .overflow-hidden {
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+  }
 }

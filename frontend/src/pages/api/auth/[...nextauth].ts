@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import clientPromise from "@/lib/mongodb";
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 
@@ -13,7 +13,7 @@ export default NextAuth({
       profile(profile) {
         return {
           id: profile.id.toString(),
-          name: profile.name || profile.login,
+          name: profile.name ?? profile.login,
           username: profile.login,
           email: profile.email,
           image: profile.avatar_url,

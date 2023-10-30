@@ -40,9 +40,9 @@ export default function Navbar({
             <div className="flex items-center justify-center gap-2">
               <span className="text-md">{session.user?.name}</span>
               <a className="w-8 h-8 rounded-full overflow-hidden">
-                <img
+                <Image
                   src={
-                    session.user?.image ||
+                    `${session.user?.image}` ||
                     `https://avatar.tobi.sh/${session.user.name}`
                   }
                   alt={session.user?.name || "User"}

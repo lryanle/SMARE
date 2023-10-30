@@ -1,7 +1,6 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.action_chains import ActionChains
 import time
 from datetime import date
 
@@ -31,7 +30,7 @@ def loadPageResources(driver):
 
 
 def setupURLs():
-	#list of cities to scrape; can be expanded
+	# List of TX cities to scrape; can be expanded
 	cities = ["abilene", "amarillo", "austin", "beaumont", "brownsville", "collegestation", "corpuschristi", "dallas", "nacogdoches", "delrio", "elpaso", "galveston", "houston", "killeen", "laredo", "lubbock", "mcallen", "odessa", "sanangelo", "sanantonio", "sanmarcos", "bigbend", "texoma", "easttexas", "victoriatx", "waco", "wichitafalls"]
 
 	oldestAllowedCars = 2011

@@ -10,6 +10,10 @@ module.exports = {
         hostname: "loremflickr.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com"
+      }
     ],
   },
 };

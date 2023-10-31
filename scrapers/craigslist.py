@@ -64,7 +64,7 @@ def processAttributes(attributes):
 	
 	for attr in attributes:
 		[label, value] = attr.split(": ")
-		processedAttributes.append({"label": label, "value": value})
+		processedAttributes.append({"label": label.replace(" ", "-").lower(), "value": value})
 
 	return processedAttributes
 
@@ -85,12 +85,18 @@ def scrapeListing(url):
 	try:
 		description = soup.find('section', id='postingbody').text
 		attributes = processAttributes([attr.text for attr in soup.findAll('p', class_="attrgroup")[1].findAll('span')])
-		
 		map = soup.find('div', id='map')
-		longitude = map["data-longitude"]
-		latitude = map["data-latitude"]
 
-		print([attributes, description, longitude, latitude])
+		car = {
+			"postBody": description,
+			"longitude": map["data-longitude"],
+			"latitude": map["data-latitude"]
+		}
+
+		for attr in attributes:
+			car[attr["label"]] = attr["value"]
+
+		return car
 	except:
 		print(f"Failed scraping {url}")		
 	

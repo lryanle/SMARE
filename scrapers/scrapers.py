@@ -1,7 +1,8 @@
 import typer
+import utils
 import craigslist as cl
 import facebook as fb
-import utils
+import database as db
 
 app = typer.Typer()
 
@@ -19,7 +20,8 @@ def facebook():
 @app.command()
 def link(link: str):
 	if (".craigslist.org" in link):
-		cl.scrapeListing(link)
+		newInfo = cl.scrapeListing(link)
+		db.update(link, newInfo)
 	elif("https://www.facebook.com/marketplace" in link):
 		fb.scrapeListing(link)
 	else:

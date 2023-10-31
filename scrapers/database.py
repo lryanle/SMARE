@@ -24,8 +24,8 @@ def post_raw(scraperVersion, source, title, price, location, miles, link, images
   car = {
     "_id": link,
     "source": source,
-    "scraperVersion": scraperVersion,
-    "scrapeDate": str(date.today()),
+    "scraper-version": scraperVersion,
+    "scrape-date": str(date.today()),
     "title": title, 
     "price": price, 
     "location": location, 
@@ -61,7 +61,7 @@ def post_raw(scraperVersion, source, title, price, location, miles, link, images
 def update(link, newFields):
   conn = get_conn("Test")
   if (conn["success"]):
-    result = conn["db"]["raw"].update(
+    result = conn["db"]["raw"].update_one(
       {'_id': link},
       {
         '$set': newFields

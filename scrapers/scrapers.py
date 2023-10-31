@@ -5,13 +5,16 @@ import utils
 
 app = typer.Typer()
 
+craigslistScraperVersion = 1
+facebookScraperVersion = 1
+
 @app.command()
 def craigslist():
-	utils.scrape(craigslist, "craigslist")
+	utils.scrape(craigslist, "craigslist", craigslistScraperVersion)
 
 @app.command()
 def facebook():
-	utils.scrape(facebook, "facebook")
+	utils.scrape(facebook, "facebook", facebookScraperVersion)
 
 @app.command()
 def link(link: str):

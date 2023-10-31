@@ -20,15 +20,16 @@ def get_conn(db):
   # use a database named "Test"
   return {"success" : True, "db": client.get_database(db)}
 
-def post_raw(source, title, price, location, miles, link, images = None, postBody = None, longitude = None, latitude = None, attributes = None):
+def post_raw(scraperVersion, source, title, price, location, miles, link, images = None, postBody = None, longitude = None, latitude = None, attributes = None):
   car = {
+    "source": source,
+    "scraperVersion": scraperVersion,
+    "scrapeDate": str(date.today()),
     "title": title, 
     "price": price, 
     "location": location, 
     "odometer": miles, 
-    "link": link,
-    "source": source,
-    "scrapeDate": str(date.today())
+    "link": link
   }
 
   if (images is not None):

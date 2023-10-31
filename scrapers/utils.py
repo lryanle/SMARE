@@ -15,7 +15,7 @@ def setupBrowser():
 	print("Creating a new Selenium WebDriver instance")
 	return webdriver.Chrome(options=options)
 
-def scrape(scraper, website):
+def scrape(scraper, website, scraperVersion):
 	cityURLs = scraper.setupURLs(2011)
 	browser = utils.setupBrowser()
 
@@ -31,7 +31,7 @@ def scrape(scraper, website):
 		for post in carPosts:
 			try:
 				title, price, location, odometer, link, images = scraper.getCarInfo(post)
-				db.post_raw(website, title, price, location, odometer, link, images)
+				db.post_raw(scraperVersion, website, title, price, location, odometer, link, images)
 			except Exception as error:
 				print(error)
 				

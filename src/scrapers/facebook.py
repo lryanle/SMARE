@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 import time
 
-import src.database as database
+import database
 
 
 #list of cities to scrape; can be expanded
@@ -98,7 +98,7 @@ for url in urls:
         # Add the data to the list
         if (title, price, location, miles, link) not in data:
             data[(title, price, location, miles, link)] = True
-            postSuccess = database.post_one("Test", "craigslist-test", title, price, location, miles, link)
+            postSuccess = database.post_raw("facebook", title, price, location, miles, link)
             if (postSuccess):
                 print("Save to DB")
             else:

@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import pymongo
 import os
+from datetime import date
 
 def get_conn(db):
   # load environment variable containing db uri (which includes username and password)
@@ -19,8 +20,34 @@ def get_conn(db):
   # use a database named "Test"
   return {"success" : True, "db": client.get_database(db)}
 
-def post_raw(car):
-  # insert into collection called "scrape_test"
+def post_raw(source, title, price, location, miles, link, images = None, postBody = None, longitude = None, latitude = None, attributes = None):
+  car = {
+    "title": title, 
+    "price": price, 
+    "location": location, 
+    "odometer": miles, 
+    "link": link,
+    "source": source,
+    "scrapeDate": str(date.today())
+  }
+
+  if (images is not None):
+    car["images"] = images
+  
+  if (postBody is not None):
+    car["postBody"] = postBody
+
+  if (longitude is not None):
+    car["longitude"] = longitude
+  
+  if (latitude is not None):
+    car["latitude"] = latitude
+  
+  if (attributes is not None):
+    for attr in attributes:
+      car[attr["label"]] = attr["value"]
+
+  # Insert into collection called "scrape_test"
   conn = get_conn("scrape")
 
   if (conn["success"]):

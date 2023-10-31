@@ -40,9 +40,6 @@ def getAllPosts(browser):
 	# Find all of the car listings on the page
 	return soup.find_all('div', class_='gallery-card')
 
-def getCarImages():
-	return "TODO"
-
 def getCarInfo(post):
 	title = post.find('span', class_='label').text
 

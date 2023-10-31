@@ -2,7 +2,6 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 import time
-from datetime import date
 
 def scrollTo(x, driver):
 	driver.execute_script(f"window.scrollTo({{top: {x}, left: 100, behavior: 'smooth'}})")
@@ -29,11 +28,9 @@ def loadPageResources(driver):
 		time.sleep(.5)
 
 
-def setupURLs():
+def setupURLs(oldestAllowedCars):
 	# List of TX cities to scrape; can be expanded
 	cities = ["abilene", "amarillo", "austin", "beaumont", "brownsville", "collegestation", "corpuschristi", "dallas", "nacogdoches", "delrio", "elpaso", "galveston", "houston", "killeen", "laredo", "lubbock", "mcallen", "odessa", "sanangelo", "sanantonio", "sanmarcos", "bigbend", "texoma", "easttexas", "victoriatx", "waco", "wichitafalls"]
-
-	oldestAllowedCars = 2011
 
 	# Set the URL of the Facebook Marketplace automotive category
 	base_url = 'https://{}.craigslist.org/search/cta?min_auto_year={}#search=1~gallery~0~0'
@@ -76,42 +73,42 @@ def getCarInfo(post):
 	imageElements = post.findAll('img')
 	images = [img["src"] for img in imageElements]
 
-	return {
-		"_id": link,
-		"title": title, 
-		"price": price, 
-		"location": location, 
-		"odometer": odometer, 
-		"link": link,
-		"images": images,
-		"scrapeDate": str(date.today())
-	}
+	return title, price, location, odometer, link, images
 
-def scrapeHomepage():
-	cityURLs = setupURLs()
+def processAttributes(attributes):
+	processedAttributes = []
+	
+	for attr in attributes:
+		[label, value] = attr.split(": ")
+		processedAttributes.append({"label": label, "value": value})
+
+	return processedAttributes
+
+def scrapeListing(url):
 	browser = setupBrowser()
 
-	for url in cityURLs:
-		# Navigate to the URL
-		print(f"Going to {url}")
-		browser.get(url) 
+	# Navigate to the URL
+	print(f"Going to {url}")
+	browser.get(url) 
 
-		print(f"Loading cars from {url}")
+	print(f"Loading page for {url}")
+	time.sleep(1)
 
-		loadPageResources(browser)
+	# Create a BeautifulSoup object from the HTML of the page
+	html = browser.page_source
+	soup = BeautifulSoup(html, 'html.parser')
 
-		carPosts = getAllPosts(browser)
+	try:
+		description = soup.find('section', id='postingbody').text
+		attributes = processAttributes([attr.text for attr in soup.findAll('p', class_="attrgroup")[1].findAll('span')])
+		
+		map = soup.find('div', id='map')
+		longitude = map["data-longitude"]
+		latitude = map["data-latitude"]
 
-		# Iterate over the listings and scrape the data
-		for post in carPosts:
-			try:
-				car = getCarInfo(post)
-				print(car)
-			except:
-				print("Incomplete listing info")
-				
+		print([attributes, description, longitude, latitude])
+	except:
+		print(f"Failed scraping {url}")		
+	
 	# Close the Selenium WebDriver instance
 	browser.quit()
-
-if (__name__ == "__main__"):
-	scrapeHomepage()

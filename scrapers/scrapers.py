@@ -10,8 +10,8 @@ import utils
 app = typer.Typer()
 
 @app.command()
-def craigslist(minYear: Annotated[Optional[int], typer.Argument()] = 2011):
-	cityURLs = cl.setupURLs(minYear)
+def craigslist():
+	cityURLs = cl.setupURLs(2011)
 	browser = utils.setupBrowser()
 
 	for url in cityURLs:
@@ -27,6 +27,29 @@ def craigslist(minYear: Annotated[Optional[int], typer.Argument()] = 2011):
 			try:
 				title, price, location, odometer, link, images = cl.getCarInfo(post)
 				db.post_raw("craigslist", title, price, location, odometer, link, images)
+			except Exception as error:
+				print(error)
+				
+	browser.quit()
+
+@app.command()
+def facebook():
+	cityURLs = fb.setupURLs(2011)
+	browser = utils.setupBrowser()
+
+	for url in cityURLs:
+		print(f"Going to {url}")
+		browser.get(url) 
+
+		print(f"Loading cars from {url}")
+		fb.loadPageResources(browser)
+
+		carPosts = fb.getAllPosts(browser)
+
+		for post in carPosts:
+			try:
+				title, price, location, odometer, link, images = fb.getCarInfo(post)
+				db.post_raw("facebook", title, price, location, odometer, link, images)
 			except Exception as error:
 				print(error)
 				

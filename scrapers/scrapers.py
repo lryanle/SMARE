@@ -1,7 +1,4 @@
-from typing import Optional
-from typing_extensions import Annotated
 import typer
-
 import craigslist
 import facebook
 import utils

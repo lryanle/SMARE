@@ -1,10 +1,6 @@
-from selenium import webdriver
 from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.options import Options
 import time
-
-def scrollTo(x, driver):
-	driver.execute_script(f"window.scrollTo({{top: {x}, left: 100, behavior: 'smooth'}})")
+import utils
 
 def loadPageResources(driver):
 	scroll = 100
@@ -12,7 +8,7 @@ def loadPageResources(driver):
 	print("Waiting to load...")
 	time.sleep(2)
 
-	scrollTo(scroll, driver)
+	utils.scrollTo(scroll, driver)
 
 	loadImgButtons = driver.find_elements("class name", "slider-back-arrow")
 
@@ -21,7 +17,7 @@ def loadPageResources(driver):
 	# Emulate a user scrolling
 	for i in range(len(loadImgButtons)):
 		scroll += 100
-		scrollTo(scroll, driver)
+		utils.scrollTo(scroll, driver)
 
 		driver.execute_script("arguments[0].click();", loadImgButtons[i])
 
@@ -35,15 +31,6 @@ def setupURLs(oldestAllowedCars):
 	# Set the URL of the Facebook Marketplace automotive category
 	base_url = 'https://{}.craigslist.org/search/cta?min_auto_year={}#search=1~gallery~0~0'
 	return [base_url.format(city, oldestAllowedCars) for city in cities]
-
-def setupBrowser():
-	print("Setting up headless browser")
-
-	options = Options()
-	options.add_argument("--headless=new")
-
-	print("Creating a new Selenium WebDriver instance")
-	return webdriver.Chrome(options=options)
 
 def getAllPosts(browser):
 	# Create a BeautifulSoup object from the HTML of the page

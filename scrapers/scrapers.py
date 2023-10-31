@@ -1,15 +1,18 @@
-import craigslist as cl
-import database as db
 from typing import Optional
-import typer
 from typing_extensions import Annotated
+import typer
+
+import craigslist as cl
+import facebook as fb
+import database as db
+import utils
 
 app = typer.Typer()
 
 @app.command()
 def craigslist(minYear: Annotated[Optional[int], typer.Argument()] = 2011):
 	cityURLs = cl.setupURLs(minYear)
-	browser = cl.setupBrowser()
+	browser = utils.setupBrowser()
 
 	for url in cityURLs:
 		print(f"Going to {url}")

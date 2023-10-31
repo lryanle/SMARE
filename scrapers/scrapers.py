@@ -1,6 +1,6 @@
 import typer
-import craigslist
-import facebook
+import craigslist as cl
+import facebook as fb
 import utils
 
 app = typer.Typer()
@@ -10,18 +10,18 @@ facebookScraperVersion = 1
 
 @app.command()
 def craigslist():
-	utils.scrape(craigslist, "craigslist", craigslistScraperVersion)
+	utils.scrape("craigslist", craigslistScraperVersion)
 
 @app.command()
 def facebook():
-	utils.scrape(facebook, "facebook", facebookScraperVersion)
+	utils.scrape("facebook", facebookScraperVersion)
 
 @app.command()
 def link(link: str):
 	if (".craigslist.org" in link):
-		craigslist.scrapeListing(link)
+		cl.scrapeListing(link)
 	elif("https://www.facebook.com/marketplace" in link):
-		facebook.scrapeListing(link)
+		fb.scrapeListing(link)
 	else:
 		print("Not a Craigslist nor a Facebook Marketplace link")
 

@@ -9,6 +9,9 @@ import facebook
 def scrollTo(x, driver):
 	driver.execute_script(f"window.scrollTo({{top: {x}, left: 100, behavior: 'smooth'}})")
 
+def clickOn(elem, driver):
+	driver.execute_script("arguments[0].click();", elem)
+
 def setupBrowser():
 	print("Setting up headless browser")
 

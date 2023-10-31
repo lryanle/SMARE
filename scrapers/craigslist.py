@@ -19,7 +19,7 @@ def loadPageResources(driver):
 		scroll += 100
 		utils.scrollTo(scroll, driver)
 
-		driver.execute_script("arguments[0].click();", loadImgButtons[i])
+		utils.clickOn(loadImgButtons[i], driver)
 
 		time.sleep(.5)
 

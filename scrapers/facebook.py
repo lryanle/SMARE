@@ -9,6 +9,10 @@ titleClass = "x1lliihq x6ikm8r x10wlt62 x1n2onr6"
 priceClass = "x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x1lkfr7t x1lbecb7 x1s688f xzsf02u"
 metaClass = "x1lliihq x6ikm8r x10wlt62 x1n2onr6 xlyipyv xuxw1ft"
 
+listingInfoClass = "x78zum5 xdt5ytf x1iyjqo2 x1n2onr6"
+listingSectionClass = "xod5an3"
+bodyClass = "x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u"
+
 def loadPageResources(driver):
 	scroll = 100
 
@@ -72,13 +76,13 @@ def processAttributes(attributes):
 	return processedAttributes
 
 def scrapeListing(url):
-	browser = setupBrowser()
+	browser = utils.setupBrowser()
 
 	# Navigate to the URL
-	print(f"Going to {url}")
-	browser.get(url) 
+	print(f"Going to {url[0:60]}")
+	browser.get(url[0:60]) 
 
-	print(f"Loading page for {url}")
+	print(f"Loading page for {url[0:60]}")
 	time.sleep(1)
 
 	# Create a BeautifulSoup object from the HTML of the page
@@ -86,16 +90,25 @@ def scrapeListing(url):
 	soup = BeautifulSoup(html, 'html.parser')
 
 	try:
-		description = soup.find('section', id='postingbody').text
-		attributes = processAttributes([attr.text for attr in soup.findAll('p', class_="attrgroup")[1].findAll('span')])
-		
-		map = soup.find('div', id='map')
-		longitude = map["data-longitude"]
-		latitude = map["data-latitude"]
+		seeMoreButton = browser.find_element("class name", "x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x6prxxf xvq8zen x1s688f xzsf02u".replace(" ", "."))
+		utils.clickOn(seeMoreButton, browser)
 
-		print([attributes, description, longitude, latitude])
-	except:
-		print(f"Failed scraping {url}")		
+		listingInfo = soup.find('div', class_=listingInfoClass)
+		# description = listingInfo.find('span', class_="x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m x6prxxf xvq8zen xo1l8bm xzsf02u")
+		print(listingInfo)
+
+		return 2
+
+		# attributes = processAttributes([attr.text for attr in soup.findAll('p', class_="attrgroup")[1].findAll('span')])
+		
+		# map = soup.find('div', id='map')
+		# longitude = map["data-longitude"]
+		# latitude = map["data-latitude"]
+
+		# print([attributes, description, longitude, latitude])
+	except Exception as error:
+		print(error)
+		return -1	
 	
 	# Close the Selenium WebDriver instance
 	browser.quit()

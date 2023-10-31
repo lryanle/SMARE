@@ -23,7 +23,8 @@ def link(link: str):
 		newInfo = cl.scrapeListing(link)
 		db.update(link, newInfo)
 	elif("https://www.facebook.com/marketplace" in link):
-		fb.scrapeListing(link)
+		newInfo = fb.scrapeListing(link)
+		print(newInfo)
 	else:
 		print("Not a Craigslist nor a Facebook Marketplace link")
 

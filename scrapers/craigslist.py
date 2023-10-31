@@ -69,7 +69,7 @@ def processAttributes(attributes):
 	return processedAttributes
 
 def scrapeListing(url):
-	browser = setupBrowser()
+	browser = utils.setupBrowser()
 
 	# Navigate to the URL
 	print(f"Going to {url}")

@@ -22,6 +22,7 @@ def get_conn(db):
 
 def post_raw(scraperVersion, source, title, price, location, miles, link, images = None, postBody = None, longitude = None, latitude = None, attributes = None):
   car = {
+    "_id": link,
     "source": source,
     "scraperVersion": scraperVersion,
     "scrapeDate": str(date.today()),
@@ -49,10 +50,24 @@ def post_raw(scraperVersion, source, title, price, location, miles, link, images
       car[attr["label"]] = attr["value"]
 
   # Insert into collection called "scrape_test"
-  conn = get_conn("scrape")
+  conn = get_conn("Test")
 
   if (conn["success"]):
-    result = conn["db"]["scraped_raw"].insert_one(car)
+    result = conn["db"]["raw"].insert_one(car)
     return result.acknowledged
   else:
     return False
+
+def update(link, newFields):
+  conn = get_conn("Test")
+  if (conn["success"]):
+    result = conn["db"]["raw"].update(
+      {'_id': link},
+      {
+        '$set': newFields
+      }
+    )
+    return result.acknowledged
+  else:
+    return False
+

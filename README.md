@@ -1,9 +1,9 @@
-# <img src="./frontend/public/logos/smare.png" alt="Statefarm SMARE" style="width:256px;"/>
-
-![GitHub Super-Linter](https://github.com/lryanle/seniordesign/actions/workflows/lint.yml/badge.svg)
-![Metrics](/github-metrics.svg)
-
+# <img src="./frontend/public/logos/smare.png" alt="Statefarm SMARE" style="width:384px;"/>
 Senior Design Repository for the Statefarm Automotive Fraud Project
+
+## Statistics
+
+![Metrics](/github-metrics.svg)
 
 ## Database Access
 

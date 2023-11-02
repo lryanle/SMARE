@@ -2,7 +2,10 @@
 import clientPromise from "@/lib/mongodb";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
+import DiscordProvider from "next-auth/providers/discord";
 import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import LinkedInProvider from "next-auth/providers/linkedin";
 
 export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -21,6 +24,58 @@ export const authOptions: NextAuthOptions = {
           verified: true,
         };
       },
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID as string,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name ?? profile.login,
+          username: profile.login,
+          email: profile.email,
+          image: profile.avatar_url,
+          followers: profile.followers,
+          verified: true,
+        };
+      },
+    }),
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_CLIENT_ID as string,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name ?? profile.login,
+          username: profile.login,
+          email: profile.email,
+          image: profile.avatar_url,
+          followers: profile.followers,
+          verified: true,
+        };
+      },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name ?? profile.login,
+          username: profile.login,
+          email: profile.email,
+          image: profile.avatar_url,
+          followers: profile.followers,
+          verified: true,
+        };
+      },
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
     // CredentialsProvider({
     //   name: "credentials",
@@ -59,29 +114,30 @@ export const authOptions: NextAuthOptions = {
     // }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    // Set it as jwt instead of database
-    strategy: "jwt",
-  },
+  // session: {
+  //   // Set it as jwt instead of database
+  //   strategy: "jwt",
+  // },
   callbacks: {
-    async jwt({ token, account }) {
-      // Persist the OAuth access_token and or the user id to the token right after signin
-      if (account) {
-        token.accessToken = account.access_token;
-        token.id = account.id as string;
-      }
-      return token;
-    },
+    // async jwt({ token, account }) {
+    //   // Persist the OAuth access_token and or the user id to the token right after signin
+    //   if (account) {
+    //     token.accessToken = account.access_token;
+    //     token.id = account.id as string;
+    //   }
+    //   return token;
+    // },
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
-      if (session.user) {
-        session.user.name = user.name;
-        session.user.email = user.email;
-        session.user.image = user.image;
 
-        session.user.accessToken = token.accessToken;
-        session.user.id = token.id;
-      }
+      session.user.name = user.name;
+      session.user.email = user.email;
+      session.user.image = user.image;
+
+      // session.accessToken = token.accessToken as string;
+      // session.user.id = token.id;
+      
+      console.log(session.user)
 
       return session;
     },

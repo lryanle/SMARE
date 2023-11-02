@@ -2,7 +2,6 @@
 import clientPromise from "@/lib/mongodb";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 
 export const authOptions: NextAuthOptions = {
@@ -23,24 +22,41 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        username: { label: "Email", type: "text", placeholder: "contact@smare.com" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        // Find your user in the database using MongoDBAdapter
-        const user = await authOptions.adapter.getUser(
-          "6471f710f772cf139bc5142e"
-        );
-        if (user) {
-          return user;
-        } else {
-          return null;
-        }
-      },
-    }),
+    // CredentialsProvider({
+    //   name: "credentials",
+    //   credentials: {
+    //     email: { label: "Email", type: "text", placeholder: "contact@smare.com" },
+    //     password: { label: "Password", type: "password" },
+    //   },
+    //   async authorize(credentials, req) {
+    //     // Find your user in the database using MongoDBAdapter
+    //     const client = await clientPromise;
+    //     const users = client.db("auth").collection("users");
+        
+    //     // Find user with the email  
+    //     const result = await users.findOne({
+    //         email: credentials?.email,
+    //     });
+
+    //     // Not found - send error res
+    //     if (!result) {
+    //         client.close();
+    //         throw new Error('No user found with the email');
+    //     }
+
+    //     // Check hased password with DB password
+    //     const checkPassword = await compare(credentials?.password, result.password);
+
+    //     // Incorrect password - send response
+    //     if (!checkPassword) {
+    //         client.close();
+    //         throw new Error('Password doesnt match');
+    //     }
+    //     // Else send success response
+    //     client.close();
+    //     return { email: result.email }
+    //   },
+    // }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
@@ -52,14 +68,20 @@ export const authOptions: NextAuthOptions = {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account) {
         token.accessToken = account.access_token;
-        token.id = account.id;
+        token.id = account.id as string;
       }
       return token;
     },
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token and user id from a provider.
-      session.accessToken = token.accessToken;
-      session.user.id = token.id;
+      if (session.user) {
+        session.user.name = user.name;
+        session.user.email = user.email;
+        session.user.image = user.image;
+
+        session.user.accessToken = token.accessToken;
+        session.user.id = token.id;
+      }
 
       return session;
     },

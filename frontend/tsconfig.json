@@ -31,13 +31,13 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/public/*": ["./public/*"],
-      // "@/components/*": ["src/components/*"],
+      "@/components/*": ["./src/components/*"],
       // "@/data/*": ["data/*"],
-      // "@/layouts/*": ["layouts/*"],
-      // "@/lib/*": ["src/lib/*"],
-      "@/styles/*": ["./src/styles/*"]
-      // "@/types": ["types/index"],
-      // "@/types/*": ["types/*"]
+      "@/layouts/*": ["./src/components/layout/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/types": ["./src/types/index"],
+      "@/types/*": ["./src/types/*"],
     }
   },
   "include": [

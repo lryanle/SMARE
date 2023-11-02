@@ -59,7 +59,7 @@ export default function Navbar({
             disabled={loading}
             onClick={() => {
               setLoading(true);
-              signIn("github", { callbackUrl: `/profile` });
+              signIn();
             }}
             className={`${
               loading

@@ -43,7 +43,7 @@ Et vivamus lorem pulvinar nascetur non. Pulvinar a sed platea rhoncus ac mauris 
 
 export async function getUser(username: string): Promise<UserProps | null> {
   const client = await clientPromise;
-  const collection = client.db("Test").collection("users");
+  const collection = client.db("test").collection("users");
   const results = await collection.findOne<UserProps>(
     { username },
     { projection: { _id: 0, emailVerified: 0 } }
@@ -60,7 +60,7 @@ export async function getUser(username: string): Promise<UserProps | null> {
 
 export async function getFirstUser(): Promise<UserProps | null> {
   const client = await clientPromise;
-  const collection = client.db("Test").collection("users");
+  const collection = client.db("test").collection("users");
   const results = await collection.findOne<UserProps>(
     {},
     {
@@ -79,7 +79,7 @@ export async function getFirstUser(): Promise<UserProps | null> {
 
 export async function getAllUsers(): Promise<ResultProps[]> {
   const client = await clientPromise;
-  const collection = client.db("Test").collection("users");
+  const collection = client.db("test").collection("users");
   return await collection
     .aggregate<ResultProps>([
       {
@@ -121,7 +121,7 @@ export async function getAllUsers(): Promise<ResultProps[]> {
 
 export async function searchUser(query: string): Promise<UserProps[]> {
   const client = await clientPromise;
-  const collection = client.db("Test").collection("users");
+  const collection = client.db("test").collection("users");
   return await collection
     .aggregate<UserProps>([
       {
@@ -200,12 +200,12 @@ export async function searchUser(query: string): Promise<UserProps[]> {
 
 export async function getUserCount(): Promise<number> {
   const client = await clientPromise;
-  const collection = client.db("Test").collection("users");
+  const collection = client.db("test").collection("users");
   return await collection.countDocuments();
 }
 
 export async function updateUser(username: string, bio: string) {
   const client = await clientPromise;
-  const collection = client.db("Test").collection("users");
+  const collection = client.db("test").collection("users");
   return await collection.updateOne({ username }, { $set: { bio } });
 }

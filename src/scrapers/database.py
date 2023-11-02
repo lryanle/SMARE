@@ -17,7 +17,7 @@ def get_conn(db):
     print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string (found the .env)?")
     return {"success" : False, "db": 0}
 
-  # use a database named "Test"
+  # use a database named "test"
   return {"success" : True, "db": client.get_database(db)}
 
 def post_raw(source, title, price, location, miles, link, images = None, postBody = None, longitude = None, latitude = None, attributes = None):

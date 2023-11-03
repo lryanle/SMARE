@@ -40,12 +40,3 @@ jobs:
           plugin_screenshot: yes
           plugin_screenshot_title: SMARE Site
           plugin_screenshot_url: https://smare.lryanle.com
-      - uses: lowlighter/metrics@latest
-        with:
-          filename: metrics.contributions.svg
-          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
-          base: ""
-          template: repository
-          repo: metrics
-          plugin_contributors: yes
-          plugin_contributors_contributions: yes

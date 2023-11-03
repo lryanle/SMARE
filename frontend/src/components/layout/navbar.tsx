@@ -26,14 +26,7 @@ export default function Navbar({
         height="28"
         alt="statefarm logo"
       />
-      <button
-        type="button"
-        className="inline-flex md:hidden items-center justify-center rounded-md text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-0"
-        onClick={() => setSidebarOpen(true)}
-      >
-        <span className="sr-only">Open sidebar</span>
-        <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-      </button>
+      <div className="flex justify-center items-center gap-2">
       {status !== "loading" &&
         (session?.user ? (
           <Link href={`/${session.user?.name}`} legacyBehavior>
@@ -67,9 +60,18 @@ export default function Navbar({
                 : "bg-red-600 hover:bg-white border-red-600"
             } w-36 h-8 py-1 text-white hover:text-red-600 border-2 rounded-md text-sm transition-all`}
           >
-            {loading ? <LoadingDots color="gray" /> : "Log in with GitHub"}
+            {loading ? <LoadingDots color="gray" /> : "Log in"}
           </button>
         ))}
+        <button
+          type="button"
+          className="inline-flex md:hidden items-center justify-center rounded-md text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-0"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <span className="sr-only">Open sidebar</span>
+          <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+        </button>
+      </div>
     </nav>
   );
 }

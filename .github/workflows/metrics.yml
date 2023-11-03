@@ -17,7 +17,6 @@ jobs:
           template: repository
           user: lryanle
           repo: seniordesign
-          filename: 
           config_timezone: US/Central
           token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           plugin_lines: yes
@@ -26,7 +25,7 @@ jobs:
           plugin_projects_repositories: lryanle/seniordesign/projects/2
       - uses: lowlighter/metrics@latest
         with:
-          filename: metrics.pagespeed.svg
+          filename: metrics.plugin.pagespeed.svg
           token: NOT_NEEDED
           base: ""
           plugin_pagespeed: yes
@@ -34,9 +33,18 @@ jobs:
           plugin_pagespeed_url: https://smare.lryanle.com
       - uses: lowlighter/metrics@latest
         with:
-          filename: metrics.smarescreenshot.svg
+          filename: metrics.plugin.screenshot.svg
           token: NOT_NEEDED
           base: ""
           plugin_screenshot: yes
           plugin_screenshot_title: SMARE Site
           plugin_screenshot_url: https://smare.lryanle.com
+      # - uses: lowlighter/metrics@latest
+      #   with:
+      #     filename: metrics.plugin.contributors.contributions.svg
+      #     token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+      #     base: ""
+      #     template: repository
+      #     repo: metrics
+      #     plugin_contributors: yes
+      #     plugin_contributors_contributions: yes

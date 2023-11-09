@@ -1,8 +1,8 @@
 import typer
-import utils
-import craigslist as cl
-import facebook as fb
-import database as db
+from src import utils
+from src import craigslist as cl
+from src import facebook as fb
+from src import database as db
 
 app = typer.Typer()
 

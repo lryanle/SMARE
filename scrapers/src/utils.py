@@ -1,10 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import utils
-import database as db
+from . import database as db
 
-import craigslist
-import facebook
+from . import craigslist
+from . import facebook
 
 def scrollTo(x, driver):
 	driver.execute_script(f"window.scrollTo({{top: {x}, left: 100, behavior: 'smooth'}})")
@@ -28,7 +27,7 @@ def scrape(website, scraperVersion):
 		scraper = facebook
 
 	cityURLs = scraper.setupURLs(2011)
-	browser = utils.setupBrowser()
+	browser = setupBrowser()
 
 	for url in cityURLs:
 		print(f"Going to {url}")

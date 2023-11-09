@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import time
-import utils
+from . import utils
 
 def loadPageResources(driver):
 	scroll = 100

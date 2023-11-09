@@ -25,11 +25,11 @@ pipenv install
 **Scraper Usage**
 ```bash
 # Scrape Craigsist homepage
-python3 scrapers.py craigslist
+pipenv run craigslist
 
 # Scrape Facebook Marketplace homepage
-python3 scrapers.py facebook
+pipenv run facebook
 
 # Scrape a specific carigslist or facebook car listing
-python3 scrapers.py link [LINK]
+pipenv run link [LINK]
 ```

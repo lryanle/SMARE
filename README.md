@@ -13,7 +13,11 @@ Make a copy of the ``.env.example`` file and make the following changes.
 - pipenv
 
 **Installing dependencies**
-Navigate to ``scrapers/`` and run
+Navigate to ``scrapers/`` and open the virtual environment using
+```bash
+pipenv shell
+```
+Then install dependencies using
 ```bash
 pipenv install
 ```

@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { signOut } from "next-auth/react";
-import { LayoutDashboard, LogOut } from "lucide-react";
 import Popover from "@/components/shared/popover";
-import Image from "next/image";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import { Session } from "next-auth";
+import { signOut } from "next-auth/react";
+import Image from "next/image";
+import { useState } from "react";
 
 export default function UserDropdown({ session }: { session: Session }) {
-  const { email, image } = session?.user || {};
+  const { email, image, name } = session?.user || {};
   const [openPopover, setOpenPopover] = useState(false);
 
   if (!email) return null;

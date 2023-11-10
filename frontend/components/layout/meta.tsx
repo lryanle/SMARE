@@ -40,7 +40,6 @@ export default function Meta({ props }: { props: MetaProps }) {
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@Vercel" />
-      <meta name="twitter:creator" content="@StevenTey" />
       <meta name="twitter:title" content={props.title} />
       <meta name="twitter:description" content={props.description} />
       <meta name="twitter:image" content={props.ogImage} />

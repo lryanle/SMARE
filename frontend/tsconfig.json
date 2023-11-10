@@ -38,6 +38,10 @@
       // "@/styles/*": ["./src/styles/*"],
       "@/types": ["types/index"],
       "@/types/*": ["types/*"],
+      "@/hooks/*": ["./lib/hooks/*"],
+      "@/app/*": ["./app/*"],
+      "@/api/*": ["./api/*"],
+      "@/icons": ["./components/shared/icons"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "lib/hooks/use-intersection-observer.ts"],

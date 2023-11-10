@@ -1,21 +1,17 @@
-import { useState, useEffect } from "react";
-import type { RefObject } from "react";
+import { RefObject, useEffect, useState } from "react";
 
-interface IntersectionObserverArgs extends IntersectionObserverInit {
+interface Args extends IntersectionObserverInit {
   freezeOnceVisible?: boolean;
 }
 
-/**
- * Returns an IntersectionObserver that checks if the provided ref is visible in the window.
- */
-export function useIntersectionObserver(
+function useIntersectionObserver(
   elementRef: RefObject<Element>,
   {
     threshold = 0,
     root = null,
     rootMargin = "0%",
     freezeOnceVisible = false,
-  }: IntersectionObserverArgs
+  }: Args,
 ): IntersectionObserverEntry | undefined {
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
 
@@ -27,7 +23,6 @@ export function useIntersectionObserver(
 
   useEffect(() => {
     const node = elementRef?.current; // DOM Ref
-    /* eslint-disable-next-line no-implicit-coercion -- TODO: Fix ESLint Error (#13355) */
     const hasIOSupport = !!window.IntersectionObserver;
 
     if (!hasIOSupport || frozen || !node) return;
@@ -38,7 +33,11 @@ export function useIntersectionObserver(
     observer.observe(node);
 
     return () => observer.disconnect();
-  }, [elementRef, threshold, root, rootMargin, frozen]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [threshold, root, rootMargin, frozen]);
 
   return entry;
 }
+
+export default useIntersectionObserver;

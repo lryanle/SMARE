@@ -31,20 +31,19 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/public/*": ["./public/*"],
-      "@/components/*": ["./src/components/*"],
+      "@/components/*": ["./components/*"],
       // "@/data/*": ["data/*"],
-      "@/layouts/*": ["./src/components/layout/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/types": ["./src/types/index"],
-      "@/types/*": ["./src/types/*"],
+      "@/layouts/*": ["./components/layout/*"],
+      "@/lib/*": ["./lib/*"],
+      // "@/styles/*": ["./src/styles/*"],
+      "@/types": ["types/index"],
+      "@/types/*": ["types/*"],
+      "@/hooks/*": ["./lib/hooks/*"],
+      "@/app/*": ["./app/*"],
+      "@/api/*": ["./api/*"],
+      "@/icons": ["./components/shared/icons"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "lib/hooks/use-intersection-observer.ts"],
   "exclude": ["node_modules"]
 }

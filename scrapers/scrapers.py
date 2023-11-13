@@ -10,11 +10,11 @@ craigslistScraperVersion = 1
 facebookScraperVersion = 1
 
 @app.command()
-def craigslist():
+def craigslist(event, context):
 	utils.scrape("craigslist", craigslistScraperVersion)
 
 @app.command()
-def facebook():
+def facebook(event, context):
 	utils.scrape("facebook", facebookScraperVersion)
 
 @app.command()

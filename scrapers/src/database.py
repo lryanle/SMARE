@@ -8,7 +8,7 @@ collection = "scraped_raw"
 def get_conn(db):
   # load environment variable containing db uri (which includes username and password)
   load_dotenv()
-  db_uri = os.getenv("DB_URI")
+  db_uri = os.environ.get("DB_URI")
 
   # create a mongodb connection
   try:

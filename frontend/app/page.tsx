@@ -27,9 +27,7 @@ export default async function Home() {
         >
           <Link
             className="group flex max-w-fit items-center justify-center space-x-2 rounded-full border border-black bg-black px-5 py-2 text-sm text-white transition-colors hover:bg-white hover:text-black"
-            href={"/dashboard"}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/dashboard"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +48,7 @@ export default async function Home() {
           </Link>
           <a
             className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-5 py-2 text-sm text-gray-600 shadow-md transition-colors hover:border-gray-800"
-            href="https://github.com/lryanle/seniordesign"
+            href="https://github.com/lryanle/SMARE"
             target="_blank"
             rel="noopener noreferrer"
           >

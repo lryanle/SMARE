@@ -16,13 +16,13 @@ jobs:
         with:
           template: repository
           user: lryanle
-          repo: seniordesign
+          repo: SMARE
           config_timezone: US/Central
           token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
           plugin_lines: yes
           plugin_followup: yes
           plugin_projects: yes
-          plugin_projects_repositories: lryanle/seniordesign/projects/2
+          plugin_projects_repositories: lryanle/SMARE/projects/2
       - uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.pagespeed.svg

@@ -25,7 +25,7 @@ module.exports = {
     return [
       {
         source: "/github",
-        destination: "https://github.com/lryanle/seniordesign",
+        destination: "https://github.com/lryanle/SMARE",
         permanent: false,
       },
     ];

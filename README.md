@@ -12,7 +12,7 @@ Make a copy of the ``.env.example`` file and make the following changes.
 - python3
 - pipenv
 
-**Installing dependencies**
+**Installing dependencies**  
 Navigate to ``scrapers/`` and open the virtual environment using
 ```bash
 pipenv shell
@@ -22,7 +22,7 @@ Then install dependencies using
 pipenv install
 ```
 
-**Scraper Usage**
+**Scraper Usage**  
 To create build a Docker Image use
 ```bash
 pipenv run build

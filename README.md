@@ -23,13 +23,19 @@ pipenv install
 ```
 
 **Scraper Usage**
+To create build a Docker Image use
+```bash
+pipenv run build
+```
+to run a docker container "smarecontainer" use
+```bash
+pipenv run cont
+```
+then
 ```bash
 # Scrape Craigsist homepage
 pipenv run craigslist
 
 # Scrape Facebook Marketplace homepage
 pipenv run facebook
-
-# Scrape a specific carigslist or facebook car listing
-pipenv run link [LINK]
 ```

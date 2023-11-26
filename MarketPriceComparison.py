@@ -741,4 +741,24 @@ output_csv_filename = 'price_comparison_results.csv'
 output_df.to_csv(output_csv_filename, index=False)
 print(f'Results have been saved to {output_csv_filename}')
 
+# %%
+# Create a new column 'model_frequency' to represent the frequency of each model
+cars['model_frequency'] = cars['model'].map(cars['model'].value_counts())
+
+# Iterate through each row in the DataFrame
+for index, row in cars.iterrows():
+    manufacturer = row['manufacturer']
+    model = row['model']
+    frequency = row['model_frequency']
+
+# Extract the first four letters of each model
+cars['model_short'] = cars['model'].str[:4]
+
+# Create a bar plot for the frequency of each scraped vehicle with wider bars
+plt.figure(figsize=(18, 6))  # Increase the figure width
+sns.barplot(data=cars, x='model_short', y='model_frequency').set(title='Frequency of Scraped Vehicles')
+plt.xticks(rotation=90, ha='right')  # Rotate the labels for better visibility
+plt.tight_layout()  # Adjust layout to prevent clipping
+plt.show()
+
 

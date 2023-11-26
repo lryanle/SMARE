@@ -596,11 +596,6 @@ fig, ax = plt.subplots(figsize=(20, 10))
 sns.barplot(data=cars, x='manufacturer', y='price', estimator=np.median, ax=ax).set(title='Median List Price by Manufacturer')
 plt.xticks(rotation=45)
 
-fig, ax = plt.subplots(figsize=(20, 10))
-sns.barplot(data = cars, x = 'manufacturer', y = 'price', estimator = np.median, ax = ax).set(title = 'Median List Price by Manufacturer')
-plt.xticks(rotation = 45)
-
-
 # %%
 cars.groupby(['manufacturer'])['price'].median().sort_values(ascending = False)
 
@@ -695,7 +690,7 @@ cars['kbb_price'] = kbb_prices
 cars = cars.dropna(subset=['kbb_price'])
 
 # Compare the actual market price with the dataset
-cars['price_difference'] = cars['price'] - cars['kbb_price'].astype(float)
+cars['price_difference'] = np.abs(cars['price'] - cars['kbb_price'].astype(float))
 
 # Print the results
 #print(cars[['manufacturer', 'model', 'year', 'price', 'kbb_price', 'price_difference']])

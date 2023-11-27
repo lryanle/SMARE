@@ -2,7 +2,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth/next";
-import Image from "next/image";
 
 import { CalendarDateRangePicker } from "@/components/dashboard/date-range-picker";
 import { Overview } from "@/components/dashboard/overview";
@@ -33,23 +32,7 @@ export default async function DashboardPage() {
   if (!session) { redirect('/api/auth/signin')  }
 
   return (session && (
-    <div className="py-24">
-      <div className="md:hidden">
-        <Image
-          src="/examples/dashboard-light.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="block dark:hidden"
-        />
-        <Image
-          src="/examples/dashboard-dark.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="hidden dark:block"
-        />
-      </div>
+    <div className="py-24 w-10/12">
       <div className="bg-whitehidden flex-col md:flex">
         {/* <div className="border-b">
           <div className="flex h-16 items-center px-4">
@@ -62,14 +45,14 @@ export default async function DashboardPage() {
           </div>
         </div> */}
         <div className="flex-1 space-y-4 p-8 pt-6">
-          <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Marketplace Listings</h2>
+          <div className="flex flex-col md:flex-row justify-center items-center md:justify-between text-center md:text-left space-y-2">
+            <h2 className="text-3xl font-bold tracking-tight">Marketplace Listings Dashboard</h2>
             <div className="flex items-center space-x-2">
               <CalendarDateRangePicker />
               <Button>Download</Button>
             </div>
           </div>
-          <Tabs defaultValue="overview" className="space-y-4">
+          <Tabs defaultValue="overview" className="space-y-4 flex-col md:flex-row">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="analytics" disabled>

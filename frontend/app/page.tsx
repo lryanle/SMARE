@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default async function Home() {
   return (
-    <>
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-red-100">
       <div className="z-10 w-full max-w-4xl px-5 xl:px-0">
         <h1
           className="animate-fade-up bg-gradient-to-br from-statefarm to-red-700 bg-clip-text text-center font-display text-4xl font-bold tracking-[-0.02em] text-transparent drop-shadow-sm [text-wrap:balance] md:text-7xl md:leading-[5rem]"
@@ -76,7 +76,7 @@ export default async function Home() {
           />
         ))} */}
       </div>
-    </>
+    </div>
   );
 }
 

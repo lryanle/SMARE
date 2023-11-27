@@ -1,10 +1,22 @@
+/* eslint-disable new-cap */
 import Footer from "@/layouts/footer";
 import Nav from "@/layouts/nav";
+import { cn } from "@/lib/utils";
 import { Analytics } from "@vercel/analytics/react";
 import cx from "classnames";
+
 import { Suspense } from "react";
-import { inter, sfPro } from "./fonts";
+import { sfPro } from "./fonts";
 import "./globals.css";
+
+import { Inter as FontSans } from "next/font/google";
+
+export const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
+
+
 
 export const metadata = {
   title: "SMARE - Social Marketplace Automotive Risk Engine",
@@ -20,17 +32,23 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={cx(sfPro.variable, inter.variable)}>
-        <div className="fixed h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-red-100" />
+    <html lang="en" >
+      <body className={cx(sfPro.variable)+" overscroll-y-none "+cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        
         <Suspense fallback="...">
           <Nav />
         </Suspense>
-        <main className="flex min-h-screen w-full flex-col items-center justify-center py-32">
+        <main className="flex min-h-screen w-full flex-col items-center justify-center">
           {children}
         </main>
+        
         <Footer />
         <Analytics />
+        
       </body>
     </html>
   );

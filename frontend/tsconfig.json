@@ -29,7 +29,7 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["./*"],
       "@/public/*": ["./public/*"],
       "@/components/*": ["./components/*"],
       // "@/data/*": ["data/*"],

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <div className="absolute w-full py-5 text-center">
+    <div className="absolute w-full py-5 text-center shadow drop-shadow-lg bg-opacity-10 backdrop-blur bg-slate-200">
       <p className="text-gray-500 inline-flex items-center gap-2">
         <Link
           className="font-semibold text-slate-500 hover:text-statefarm transition-colors inline-flex items-center gap-1"

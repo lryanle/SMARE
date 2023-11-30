@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import pymongo
 import os
 from datetime import date
+
 db = "scrape"
 collection = "scraped_raw"
 

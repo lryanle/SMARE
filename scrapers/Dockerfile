@@ -3,7 +3,8 @@ RUN yum install -y unzip && \
     curl -Lo "/tmp/chromedriver-linux64.zip" "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chromedriver-linux64.zip" && \
     curl -Lo "/tmp/chrome-linux64.zip" "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chrome-linux64.zip" && \
     unzip /tmp/chromedriver-linux64.zip -d /opt/ && \
-    unzip /tmp/chrome-linux64.zip -d /opt/
+    unzip /tmp/chrome-linux64.zip -d /opt/ && \
+    yup clean all
 
 FROM public.ecr.aws/lambda/python@sha256:f0c3116a56d167eba8021a5d7c595f969835fbe78826303326f80de00d044733
 RUN yum install atk cups-libs gtk3 libXcomposite alsa-lib \

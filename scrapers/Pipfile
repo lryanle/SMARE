@@ -18,6 +18,9 @@ typer = "*"
 python-dotenv = "*"
 
 [dev-packages]
+isort = "*"
+black = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.11"

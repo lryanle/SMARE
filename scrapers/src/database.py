@@ -1,7 +1,8 @@
-from dotenv import load_dotenv
-import pymongo
 import os
 from datetime import date
+
+import pymongo
+from dotenv import load_dotenv
 
 db = "scrape"
 collection = "scraped_raw"

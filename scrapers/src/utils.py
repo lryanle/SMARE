@@ -1,8 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from . import database as db
+
 from . import craigslist
+from . import database as db
 from . import facebook
+
 
 def scrollTo(x, driver):
 	driver.execute_script(f"window.scrollTo({{top: {x}, left: 100, behavior: 'smooth'}})")

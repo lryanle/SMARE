@@ -1,4 +1,5 @@
 import typer
+import re
 from src import utils
 from src import craigslist as cl
 from src import facebook as fb
@@ -19,10 +20,13 @@ def facebook(event, context):
 
 @app.command()
 def link(link: str):
-	if (".craigslist.org" in link):
+	clPattern = re.compile(r"^https://[a-zA-Z-]+\.craigslist\.org(?:/[^\s?]*)?(?:\?[^\s]*)?$")
+	fbPattern = re.compile(r"^https://www\.facebook\.com/marketplace(?:/[^\s?]*)?(?:\?[^\s]*)?$")
+
+	if (clPattern.match(link)):
 		newInfo = cl.scrapeListing(link)
 		db.update(link, newInfo)
-	elif("https://www.facebook.com/marketplace" in link):
+	elif(fbPattern.match(link)):
 		newInfo = fb.scrapeListing(link)
 		print(newInfo)
 	else:

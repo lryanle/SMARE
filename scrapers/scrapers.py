@@ -1,7 +1,6 @@
 import re
 
 import typer
-
 from src import craigslist as cl
 from src import database as db
 from src import facebook as fb

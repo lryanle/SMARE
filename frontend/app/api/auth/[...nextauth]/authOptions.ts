@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      allowDangerousEmailAccountLinking: true,
       // profile(profile) {
       //   return {
       //     id: profile.id.toString(),
@@ -25,6 +26,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      allowDangerousEmailAccountLinking: true,
       // profile(profile) {
       //   return {
       //     id: profile.id.toString(),
@@ -44,6 +46,7 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID as string,
       clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+      allowDangerousEmailAccountLinking: true,
       // profile(profile) {
       //   return {
       //     id: profile.id.toString(),
@@ -56,6 +59,7 @@ export const authOptions: NextAuthOptions = {
     LinkedInProvider({
       clientId: process.env.LINKEDIN_CLIENT_ID as string,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
+      allowDangerousEmailAccountLinking: true,
       // profile(profile) {
       //   return {
       //     id: profile.id.toString(),
@@ -136,11 +140,10 @@ export const authOptions: NextAuthOptions = {
       session.user.name = user.name;
       session.user.email = user.email;
       session.user.image = user.image;
+      session.user.id = user.id;
 
       // session.accessToken = token.accessToken as string;
       // session.user.id = token.id;
-      
-      console.log(session.user)
 
       return session;
     },

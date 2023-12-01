@@ -40,7 +40,7 @@
       "@/types/*": ["types/*"],
       "@/hooks/*": ["./lib/hooks/*"],
       "@/app/*": ["./app/*"],
-      "@/api/*": ["./api/*"],
+      "@/api/*": ["./app/api/*"],
       "@/icons": ["./components/shared/icons"]
     }
   },

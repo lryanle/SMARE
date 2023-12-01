@@ -17,7 +17,7 @@ export default function NavBar({ session }: { session: Session | null }) {
       <div
         className={`fixed top-0 w-full flex justify-center ${
           scrolled
-            ? "border-b border-gray-200 bg-white/50 backdrop-blur-xl"
+            ? "border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60"
             : "bg-white/0"
         } z-30 transition-all`}
       >
@@ -31,7 +31,14 @@ export default function NavBar({ session }: { session: Session | null }) {
               className="mr-2 rounded-sm"
             ></Image>
           </Link>
-          <div>
+          <div className="flex flex-row align-center justify-end items-center space-x-6 text-sm font-medium">
+            <Link href="/" className="align-middle text-gray-600 hover:text-gray-800 transition-all">
+              Home
+            </Link>
+            <Link href="/dashboard" className="align-middle text-gray-600 hover:text-gray-800 transition-all">
+              Dashboard
+            </Link>
+            <>
             {session ? (
               <UserDropdown session={session} />
             ) : (
@@ -42,6 +49,7 @@ export default function NavBar({ session }: { session: Session | null }) {
                 Sign In
               </button>
             )}
+            </>
           </div>
         </div>
       </div>

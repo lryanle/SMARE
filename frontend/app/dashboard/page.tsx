@@ -27,8 +27,8 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Example dashboard app built using the components.",
+  title: "Dashboard | Statefarm SMARE",
+  description: "Listing Dashboard to view and manage risky marketplace listings.",
 };
 
 export default async function DashboardPage() {

@@ -2,11 +2,11 @@ import { Metadata } from "next";
 import Image from "next/image";
 
 import { Separator } from "@/components/ui/separator";
-import { SidebarNav } from "@/app/settings/components/sidebar-nav";
+import { SidebarNav } from "@/components/settings/sidebar-nav";
 
 export const metadata: Metadata = {
-  title: "Forms",
-  description: "Advanced form example using react-hook-form and Zod.",
+  title: "Settings | Statefarm SMARE ",
+  description: "Update user settings and preferences.",
 };
 
 const sidebarNavItems = [
@@ -35,7 +35,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
         <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
           <p className="text-muted-foreground">
-            Manage your account settings and set e-mail preferences.
+            Manage your account settings and set notification preferences.
           </p>
         </div>
         <Separator className="my-6" />

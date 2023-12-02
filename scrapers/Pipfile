@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[scripts]
+build = "docker build --platform linux/amd64 -t smare ."
+cont = "docker run --name smarecontainer -d smare:latest"
+exec = "docker exec -it smarecontainer"
+craigslist = "pipenv run exec python3 -c 'import scrapers; scrapers.craigslist(\"\",\"\")'"
+facebook = "pipenv run exec python3 -c 'import scrapers; scrapers.facebook(\"\",\"\")'"
+
+[packages]
+selenium = "*"
+bs4 = "*"
+pymongo = "*"
+typer = "*"
+python-dotenv = "*"
+
+[dev-packages]
+isort = "*"
+black = "*"
+flake8 = "*"
+
+[requires]
+python_version = "3.11"

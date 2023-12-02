@@ -7,6 +7,14 @@ import Link from "next/link";
 import { useSignInModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Bell } from "lucide-react";
+import { Notifications } from "../notifications/notifications";
+
 export default function NavBar({ session }: { session: Session | null }) {
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
@@ -44,6 +52,10 @@ export default function NavBar({ session }: { session: Session | null }) {
             >
               Dashboard
             </Link>
+            <Popover>
+              <PopoverTrigger><Bell size={16} /></PopoverTrigger>
+              <PopoverContent><Notifications /></PopoverContent>
+            </Popover>
             <>
               {session ? (
                 <UserDropdown session={session} />

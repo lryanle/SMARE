@@ -20,15 +20,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/use-toast";
 import { getProviders, getSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -216,14 +217,16 @@ export function ProfileForm() {
                     Connected Accounts
                   </FormLabel>
                   <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Add links to your website, blog, or social media profiles.
+                    Connect your account to other authentication providers. This
+                    only works if you are logging into a provider using the same
+                    email as your current account.
                   </FormDescription>
                   <FormControl>
                     {!isDataReady ? (
                       <Skeleton key={provfield.type} className="h-9 w-36" />
                     ) : (
-                      <Dialog>
-                        <DialogTrigger asChild>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
                           <Button
                             variant={
                               field.value === provfield.type
@@ -251,41 +254,38 @@ export function ProfileForm() {
                               )}
                             </span>
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                          <DialogHeader>
-                            <DialogTitle>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="sm:max-w-[425px]">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
                               Continue to{" "}
                               {provfield.type.charAt(0).toUpperCase() +
                                 provfield.type.slice(1)}
                               ?
-                            </DialogTitle>
-                            <DialogDescription>
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
                               Any unsaved changes will be lost. Are you sure you
                               want to continue?
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter>
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
                             <div className="flex flex-row justify-between items-center w-full">
-                              <Button
-                                type="submit"
-                                variant="secondary"
-                                onClick={() => {
-                                  signIn(provfield.type);
-                                }}
-                              >
-                                Connect to{" "}
-                                {provfield.type.charAt(0).toUpperCase() +
-                                  provfield.type.slice(1)}
-                              </Button>
-
-                              <DialogClose asChild>
-                                <Button type="submit">Go back</Button>
-                              </DialogClose>
+                              <AlertDialogCancel>
+                                Go back
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                  onClick={() => {
+                                    signIn(provfield.type);
+                                  }}
+                                >
+                                  Connect to{" "}
+                                  {provfield.type.charAt(0).toUpperCase() +
+                                    provfield.type.slice(1)}
+                              </AlertDialogAction>
                             </div>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     )}
                   </FormControl>
                   <FormMessage />

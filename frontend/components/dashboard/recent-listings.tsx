@@ -1,8 +1,4 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function RecentListings() {
   return (
@@ -14,9 +10,7 @@ export function RecentListings() {
         </Avatar>
         <div className="ml-4 space-y-1">
           <p className="text-sm font-medium leading-none">Toyota Camry 2010</p>
-          <p className="text-sm text-muted-foreground">
-            Date
-          </p>
+          <p className="text-sm text-muted-foreground">Date</p>
         </div>
         <div className="ml-auto font-medium">0.0/100</div>
       </div>
@@ -38,9 +32,7 @@ export function RecentListings() {
         </Avatar>
         <div className="ml-4 space-y-1">
           <p className="text-sm font-medium leading-none">Honda Civic 2015</p>
-          <p className="text-sm text-muted-foreground">
-            Date
-          </p>
+          <p className="text-sm text-muted-foreground">Date</p>
         </div>
         <div className="ml-auto font-medium">0.0/100</div>
       </div>
@@ -50,7 +42,9 @@ export function RecentListings() {
           <AvatarFallback>CL</AvatarFallback>
         </Avatar>
         <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Chevrolet Silverado 2020</p>
+          <p className="text-sm font-medium leading-none">
+            Chevrolet Silverado 2020
+          </p>
           <p className="text-sm text-muted-foreground">Date</p>
         </div>
         <div className="ml-auto font-medium">0.0/100</div>
@@ -67,5 +61,5 @@ export function RecentListings() {
         <div className="ml-auto font-medium">0.0/100</div>
       </div>
     </div>
-  )
+  );
 }

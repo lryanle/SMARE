@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
@@ -11,7 +11,7 @@ const data = [
     name: "Nov",
     total: 153,
   },
-]
+];
 
 export function Overview() {
   return (
@@ -34,5 +34,5 @@ export function Overview() {
         <Bar dataKey="total" fill="#f01716" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
-  )
+  );
 }

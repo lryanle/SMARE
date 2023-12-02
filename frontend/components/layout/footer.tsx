@@ -11,18 +11,17 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Uta className="h-4 w-4 inline" />{" "}
-          University of Texas at Arlington CSE
-        </Link>
-        {" "}×{" "}
+          <Uta className="h-4 w-4 inline" /> University of Texas at Arlington
+          CSE
+        </Link>{" "}
+        ×{" "}
         <Link
           className="font-semibold text-slate-500 hover:text-statefarm transition-colors inline-flex items-center gap-1"
           href="https://statefarm.com"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Statefarm className="h-4 w-4 inline" />{" "}
-          Statefarm
+          <Statefarm className="h-4 w-4 inline" /> Statefarm
         </Link>
       </p>
     </div>

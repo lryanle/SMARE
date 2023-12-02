@@ -52,6 +52,6 @@ export function useDemoModal() {
 
   return useMemo(
     () => ({ setShowDemoModal, DemoModal: DemoModalCallback }),
-    [setShowDemoModal, DemoModalCallback],
+    [setShowDemoModal, DemoModalCallback]
   );
 }

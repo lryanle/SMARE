@@ -1,4 +1,4 @@
-'use client' // Error components must be Client Components
+"use client"; // Error components must be Client Components
 
 import Meta, { defaultMetaProps } from "@/components/layout/meta";
 import { useEffect } from "react";

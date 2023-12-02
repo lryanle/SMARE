@@ -9,4 +9,3 @@ export { default as LoadingSpinner } from "./loading-spinner";
 export { default as Statefarm } from "./statefarm";
 export { default as Twitter } from "./twitter";
 export { default as Uta } from "./uta";
-

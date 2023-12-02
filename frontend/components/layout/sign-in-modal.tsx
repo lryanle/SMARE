@@ -37,12 +37,14 @@ const SignInModal = ({
           </a>
           <h3 className="font-display text-2xl font-bold">Log In</h3>
           <p className="text-sm text-gray-500">
-            Log in or create an account to view your social marketplace risky listings dashboard - only your email and profile picture will be stored.
+            Log in or create an account to view your social marketplace risky
+            listings dashboard - only your email and profile picture will be
+            stored.
           </p>
         </div>
 
         <div className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 md:px-16">
-        <button
+          <button
             disabled={signInClickedGithub}
             className={`${
               signInClickedGithub
@@ -51,7 +53,7 @@ const SignInModal = ({
             } flex h-10 w-full items-center justify-center space-x-3 rounded-md border text-sm shadow-sm transition-all duration-75 focus:outline-none`}
             onClick={() => {
               setSignInClickedGithub(true);
-              signIn("github"); 
+              signIn("github");
             }}
           >
             {signInClickedGithub ? (
@@ -72,7 +74,7 @@ const SignInModal = ({
             } flex h-10 w-full items-center justify-center space-x-3 rounded-md border text-sm shadow-sm transition-all duration-75 focus:outline-none`}
             onClick={() => {
               setSignInClickedGoogle(true);
-              signIn("google"); 
+              signIn("google");
             }}
           >
             {signInClickedGoogle ? (
@@ -146,6 +148,6 @@ export function useSignInModal() {
 
   return useMemo(
     () => ({ setShowSignInModal, SignInModal: SignInModalCallback }),
-    [setShowSignInModal, SignInModalCallback],
+    [setShowSignInModal, SignInModalCallback]
   );
 }

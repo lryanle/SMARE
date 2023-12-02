@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-"use client"
+"use client";
 
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
@@ -21,7 +21,7 @@ export function CalendarDateRangePicker({
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(2023, 9, 27),
     to: addDays(new Date(2023, 9, 27), 31),
-  })
+  });
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -62,5 +62,5 @@ export function CalendarDateRangePicker({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

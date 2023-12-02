@@ -39,9 +39,9 @@ export const authOptions: NextAuthOptions = {
         params: {
           prompt: "consent",
           access_type: "offline",
-          response_type: "code"
-        }
-      }
+          response_type: "code",
+        },
+      },
     }),
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID as string,
@@ -69,13 +69,13 @@ export const authOptions: NextAuthOptions = {
       //   };
       // },
       authorization: {
-        params: { scope: 'openid profile email' },
+        params: { scope: "openid profile email" },
       },
-      issuer: 'https://www.linkedin.com',
-      jwks_endpoint: 'https://www.linkedin.com/oauth/openid/jwks',
+      issuer: "https://www.linkedin.com",
+      jwks_endpoint: "https://www.linkedin.com/oauth/openid/jwks",
       profile(profile, tokens) {
         const defaultImage =
-          'https://cdn-icons-png.flaticon.com/512/174/174857.png';
+          "https://cdn-icons-png.flaticon.com/512/174/174857.png";
         return {
           id: profile.sub,
           name: profile.name,
@@ -94,8 +94,8 @@ export const authOptions: NextAuthOptions = {
     //     // Find your user in the database using MongoDBAdapter
     //     const client = await clientPromise;
     //     const users = client.db("auth").collection("users");
-        
-    //     // Find user with the email  
+
+    //     // Find user with the email
     //     const result = await users.findOne({
     //         email: credentials?.email,
     //     });

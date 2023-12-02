@@ -28,27 +28,33 @@ export default function NavBar({ session }: { session: Session | null }) {
               alt="SMARE logo"
               width="156"
               height="50"
-              className="mr-2 rounded-sm"
+              className="mr-2 rounded-sm w-auto h-auto"
             ></Image>
           </Link>
           <div className="flex flex-row align-center justify-end items-center space-x-6 text-sm font-medium">
-            <Link href="/" className="align-middle text-gray-600 hover:text-gray-800 transition-all">
+            <Link
+              href="/"
+              className="align-middle text-gray-600 hover:text-gray-800 transition-all"
+            >
               Home
             </Link>
-            <Link href="/dashboard" className="align-middle text-gray-600 hover:text-gray-800 transition-all">
+            <Link
+              href="/dashboard"
+              className="align-middle text-gray-600 hover:text-gray-800 transition-all"
+            >
               Dashboard
             </Link>
             <>
-            {session ? (
-              <UserDropdown session={session} />
-            ) : (
-              <button
-                className="rounded-full border-2 border-statefarm bg-statefarm p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-statefarm"
-                onClick={() => setShowSignInModal(true)}
-              >
-                Sign In
-              </button>
-            )}
+              {session ? (
+                <UserDropdown session={session} />
+              ) : (
+                <button
+                  className="rounded-full border-2 border-statefarm bg-statefarm p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-statefarm"
+                  onClick={() => setShowSignInModal(true)}
+                >
+                  Sign In
+                </button>
+              )}
             </>
           </div>
         </div>

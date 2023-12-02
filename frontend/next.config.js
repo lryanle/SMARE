@@ -13,12 +13,12 @@ module.exports = {
       },
       {
         protocol: "https",
-        hostname: "avatars.githubusercontent.com"
+        hostname: "avatars.githubusercontent.com",
       },
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com"
-      }
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
   async redirects() {

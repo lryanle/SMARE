@@ -3,13 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { FaLinkedin } from "react-icons/fa";
-import { FaGoogle } from "react-icons/fa";
-import { FaDiscord } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa";
+import { FaLinkedin, FaGoogle, FaDiscord, FaGithub } from "react-icons/fa";
 
+import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
   FormControl,
@@ -21,13 +20,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -38,12 +30,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
-import { getProviders, getSession, signIn, useSession } from "next-auth/react";
+import { getProviders, getSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
-import { redirect } from "next/navigation";
 import { Session } from "next-auth";
 import useSWR from "swr";
+import { is } from "date-fns/locale";
+import { Check, SendHorizontal } from "lucide-react";
 
 const providers = [
   { type: "github", icon: <FaGithub size="1.25rem" /> },
@@ -87,35 +79,64 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-const fetcher = (url: string) => fetch(url, { next: { revalidate: 60 }}).then((res) => res.json());
+const fetcher = (url: string) =>
+  fetch(url, { next: { revalidate: 60 } }).then((res) => res.json());
 
 export function ProfileForm() {
-  // if (!session) { redirect('/api/auth/signin')  }
-  const [defaultValues, setDefaultValues] = useState<Partial<ProfileFormValues>>({ name: "", email: "", connected_accounts: [""] })
+  const { data: session, isValidating: isSessionLoading } = useSWR(
+    "/api/auth/session",
+    fetcher
+  );
+  const { data: userData, isValidating: isUserDataLoading } = useSWR(
+    () =>
+      `/api/user?userId=${session.user.id}&email=${encodeURI(
+        session.user.email
+      )}&name=${encodeURI(session.user.name)}`,
+    fetcher
+  );
 
+  // exit if session doesnt have a valid email if session is not loading
+  useEffect(() => {
+    if (!session?.user?.email && !isSessionLoading) {
+      redirect("/api/auth/signin");
+    }
+  }, [session, isSessionLoading]);
+
+  const [isDataReady, setIsDataReady] = useState(false);
+  const [defaultValues, setDefaultValues] = useState<
+    Partial<ProfileFormValues>
+  >({
+    name: "",
+    email: "",
+    connected_accounts: [],
+  });
+
+  // set default values once userData is loaded
+  useEffect(() => {
+    if (userData && !isUserDataLoading) {
+      const newDefaultValues = {
+        name: userData.name,
+        email: userData.email,
+        connected_accounts: userData.providers,
+      };
+      setDefaultValues(newDefaultValues);
+      setIsDataReady(true);
+    }
+  }, [userData, isUserDataLoading]);
+
+  // set default values once userData is loaded
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  // const { data } = useSWR(`/api/user?userId=${session}`, fetcher);
 
   useEffect(() => {
-    // const { data } = useSWR(`/api/user?userId=${session}`, fetcher);
-    const getSesh = async () => {
-      const provs = Object.keys(await getProviders() as Object);
-      const session = await getSession() as Session;
-      console.log(provs)
-      const newDefaultValues = { 
-        name: session?.user?.name || '', 
-        email: session?.user?.email || '', 
-        connected_accounts: provs || [''] 
-      };
-      setDefaultValues(newDefaultValues);
-      form.reset(newDefaultValues); // Reset the form with new default values
+    if (isDataReady) {
+      form.reset(defaultValues); // Reset the form with new default values
     }
-    getSesh();
-  }, [form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDataReady, defaultValues]);
 
   function onSubmit(data: ProfileFormValues) {
     toast({
@@ -128,10 +149,10 @@ export function ProfileForm() {
     });
   }
 
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* NAME FIELD */}
         <FormField
           control={form.control}
           name="name"
@@ -139,7 +160,11 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Full display name" {...field} />
+                {!isDataReady ? (
+                  <Skeleton className="h-9 w-full" /> // Skeleton Loader
+                ) : (
+                  <Input placeholder="Full display name" {...field} disabled />
+                )}
               </FormControl>
               <FormDescription>
                 This is should be your real name. This data is only used for
@@ -149,6 +174,8 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
+
+        {/* EMAIL FIELD */}
         <FormField
           control={form.control}
           name="email"
@@ -156,7 +183,15 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Select a verified email to display" {...field} disabled/>
+                {!isDataReady ? (
+                  <Skeleton className="h-9 w-full" /> // Skeleton Loader
+                ) : (
+                  <Input
+                    placeholder="Select a verified email to display"
+                    {...field}
+                    disabled
+                  />
+                )}
               </FormControl>
               <FormDescription>
                 Your email is linked to the provider you signed in with. To sign
@@ -167,85 +202,91 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
+
+        {/* CONNECTED ACCOUNTS FIELD */}
         <div>
           {providers.map((provfield, index) => (
             <FormField
-              control={form.control}
               key={provfield.type}
               name={`connected_accounts.${index}`}
+              control={form.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    URLs
+                    Connected Accounts
                   </FormLabel>
                   <FormDescription className={cn(index !== 0 && "sr-only")}>
                     Add links to your website, blog, or social media profiles.
                   </FormDescription>
                   <FormControl>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant={
-                            field.value === provfield.type
-                              ? "outline"
-                              : "secondary"
-                          }
-                          className="gap-4"
-                          {...field}
-                          disabled={field.value === provfield.type}
-                        >
-                          {provfield.icon}
-                          <span className="text-left">
-                            {provfield.type.charAt(0).toUpperCase() +
-                              provfield.type.slice(1)}
-                            {field.value === provfield.type ? (
-                              <p className="text-green-500 text-xs leading-none">
-                                {" "}
-                                Connected
-                              </p>
-                            ) : (
-                              <p className="text-red-500 text-xs leading-none">
-                                {" "}
-                                Disconnected
-                              </p>
-                            )}
-                          </span>
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                          <DialogTitle>
-                            Continue to{" "}
-                            {provfield.type.charAt(0).toUpperCase() +
-                              provfield.type.slice(1)}
-                            ?
-                          </DialogTitle>
-                          <DialogDescription>
-                            Any unsaved changes will be lost. Are you sure you
-                            want to continue?
-                          </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                          <div className="flex flex-row justify-between items-center w-full">
-                            <Button
-                              type="submit"
-                              variant="secondary"
-                              onClick={() => {
-                                signIn(provfield.type);
-                              }}
-                            >
-                              Connect to{" "}
+                    {!isDataReady ? (
+                      <Skeleton key={provfield.type} className="h-9 w-36" />
+                    ) : (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant={
+                              field.value === provfield.type
+                                ? "outline"
+                                : "secondary"
+                            }
+                            className="gap-4 w-36 justify-start"
+                            {...field}
+                            disabled={field.value === provfield.type}
+                          >
+                            {provfield.icon}
+                            <span className="text-left">
                               {provfield.type.charAt(0).toUpperCase() +
                                 provfield.type.slice(1)}
-                            </Button>
+                              {field.value === provfield.type ? (
+                                <p className="text-green-500 text-xs leading-none">
+                                  {" "}
+                                  Connected
+                                </p>
+                              ) : (
+                                <p className="text-red-500 text-xs leading-none">
+                                  {" "}
+                                  Disconnected
+                                </p>
+                              )}
+                            </span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>
+                              Continue to{" "}
+                              {provfield.type.charAt(0).toUpperCase() +
+                                provfield.type.slice(1)}
+                              ?
+                            </DialogTitle>
+                            <DialogDescription>
+                              Any unsaved changes will be lost. Are you sure you
+                              want to continue?
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter>
+                            <div className="flex flex-row justify-between items-center w-full">
+                              <Button
+                                type="submit"
+                                variant="secondary"
+                                onClick={() => {
+                                  signIn(provfield.type);
+                                }}
+                              >
+                                Connect to{" "}
+                                {provfield.type.charAt(0).toUpperCase() +
+                                  provfield.type.slice(1)}
+                              </Button>
 
-                            <DialogClose asChild>
-                              <Button type="submit">Go back</Button>
-                            </DialogClose>
-                          </div>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                              <DialogClose asChild>
+                                <Button type="submit">Go back</Button>
+                              </DialogClose>
+                            </div>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -253,7 +294,7 @@ export function ProfileForm() {
             />
           ))}
         </div>
-        <Button type="submit">Update account</Button>
+        {/* <Button type="submit" className="gap-2">Update account<Check size={16} strokeWidth={2} className="text-white group-hover:text-statefarm" /></Button> */}
       </form>
     </Form>
   );

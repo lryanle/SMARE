@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: "https://smare.lryanle.com",
       lastModified: new Date(),
     },
-    ...users.map((user: { id: any; }) => ({
+    ...users.map((user: { id: any }) => ({
       url: `https://smare.lryanle.com/${user.id}`,
       lastModified: new Date(),
     })),

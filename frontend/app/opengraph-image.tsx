@@ -7,8 +7,8 @@ export const contentType = "image/png";
 
 export default async function OG() {
   const sfPro = await fetch(
-    new URL("./fonts/SF-Pro-Display-Medium.otf", import.meta.url),
-  ).then((res) => res.arrayBuffer())
+    new URL("./fonts/SF-Pro-Display-Medium.otf", import.meta.url)
+  ).then((res) => res.arrayBuffer());
 
   return new ImageResponse(
     (
@@ -26,7 +26,9 @@ export default async function OG() {
         }}
       >
         <img
-          src={`https://${process.env.VERCEL_URL || "smare.lryanle.com"}/favicon.ico`}
+          src={`https://${
+            process.env.VERCEL_URL || "smare.lryanle.com"
+          }/favicon.ico`}
           alt="SMARE Logo"
           className="w-20 h-20 mb-4 opacity-95"
         />
@@ -55,6 +57,6 @@ export default async function OG() {
           data: sfPro,
         },
       ],
-    },
+    }
   );
 }

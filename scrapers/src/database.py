@@ -1,5 +1,6 @@
 import os
 from datetime import date
+from urllib.parse import quote, unquote
 
 import pymongo
 from dotenv import load_dotenv
@@ -74,7 +75,7 @@ def post_raw(
     conn = get_conn(db)
 
     if conn["success"]:
-        result = conn["db"][collection].insert_one(car)
+        result = conn["db"][collection].insert_one(encode(car))
         return result.acknowledged
     else:
         return False
@@ -87,3 +88,15 @@ def update(link, newFields):
         return result.acknowledged
     else:
         return False
+
+
+def encode(obj):
+    for field, value in obj.items():
+        if isinstance(value, str):
+            obj[field] = quote(value)
+
+
+def decode(obj):
+    for field, value in obj.items():
+        if isinstance(value, str):
+            obj[field] = unquote(value)

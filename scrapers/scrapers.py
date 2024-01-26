@@ -8,8 +8,8 @@ from src import utils
 
 app = typer.Typer()
 
-craigslistScraperVersion = 1
-facebookScraperVersion = 1
+craigslistScraperVersion = 4
+facebookScraperVersion = 4
 
 
 @app.command()

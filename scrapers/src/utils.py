@@ -1,4 +1,5 @@
 from selenium import webdriver
+from pymongo.errors import DuplicateKeyError
 
 from . import craigslist
 from . import database as db
@@ -42,7 +43,7 @@ def setupBrowser():
     return webdriver.Chrome(options=options, service=service)
 
 
-def scrape(website, scraperVersion):
+def scrape(website, scraperVersion, duplicateThreshold):
     if website == "craigslist":
         scraper = craigslist
     elif website == "facebook":
@@ -60,7 +61,13 @@ def scrape(website, scraperVersion):
 
         carPosts = scraper.getAllPosts(browser)
 
+        duplicatePostCount = 0
+
         for post in carPosts:
+            if (duplicatePostCount >= duplicateThreshold):
+                print(f"Reached duplicate threshold of {duplicateThreshold}")
+                break
+
             try:
                 title, price, location, odometer, link, images = scraper.getCarInfo(
                     post
@@ -79,6 +86,9 @@ def scrape(website, scraperVersion):
                     print("posted to db")
                 else:
                     print("failed to post to db")
+            except DuplicateKeyError:
+                duplicatePostCount += 1
+                print(f"Duplicate post found ({duplicatePostCount} / {duplicateThreshold})")
             except Exception as error:
                 print(error)
 

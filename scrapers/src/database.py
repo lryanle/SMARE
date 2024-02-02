@@ -1,5 +1,6 @@
 import os
 from datetime import date
+import re
 from urllib.parse import quote, unquote
 
 import pymongo
@@ -27,6 +28,24 @@ def get_conn(db):
         return {"success": False, "db": 0}
 
     return {"success": True, "db": client.get_database(db)}
+
+
+def extract_id_from_link(link):
+    facebook = re.search(r'facebook\.com/marketplace/item/(\d+)/', link)
+    craigslist = re.search(r'/(\d+)\.html$', link)
+
+    if facebook:
+        return facebook.group(1)
+    elif craigslist:
+        return craigslist.group(1)
+    else:
+        raise Exception("Not a valid Craigslist nor Facebook link")
+
+
+def find_post_with_link(link):
+    conn = get_conn(db)
+
+    return conn["db"][collection].find_one({"_id": extract_id_from_link(link)})
 
 
 def post_raw(
@@ -71,32 +90,50 @@ def post_raw(
         for attr in attributes:
             car[attr["label"]] = attr["value"]
 
-    # Insert into collection called "scrape_raw"
+    print("Connecting to DB...")
+
+    # Insert into collection called "scraped_raw"
     conn = get_conn(db)
 
-    if conn["success"]:
-        result = conn["db"][collection].insert_one(encode(car))
-        return result.acknowledged
-    else:
+    if not conn["success"]:
+        print("Failed to connect to DB...")
         return False
+
+    print("Connected to DB")
+
+    result = conn["db"][collection].insert_one(encode(car))
+    return result.acknowledged
 
 
 def update(link, newFields):
     conn = get_conn(db)
-    if conn["success"]:
-        result = conn["db"][collection].update_one({"_id": link}, {"$set": newFields})
-        return result.acknowledged
-    else:
+    if not conn["success"]:
+        print("Failed to connect to DB...")
         return False
+
+    result = conn["db"][collection].update_one({"_id": link}, {"$set": newFields})
+    return result.acknowledged
 
 
 def encode(obj):
+    encodedObj = {}
+
     for field, value in obj.items():
         if isinstance(value, str):
-            obj[field] = quote(value)
+            encodedObj[field] = quote(value)
+        else:
+            encodedObj[field] = value
+
+    return encodedObj
 
 
 def decode(obj):
+    decodedObj = {}
+
     for field, value in obj.items():
         if isinstance(value, str):
-            obj[field] = unquote(value)
+            decodedObj[field] = unquote(value)
+        else:
+            decodedObj[field] = value
+
+    return decodedObj

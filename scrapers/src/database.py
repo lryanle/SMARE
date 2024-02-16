@@ -63,7 +63,7 @@ def post_raw(
     attributes=None,
 ):
     car = {
-        "_id": link,
+        "_id": extract_id_from_link(link),
         "source": source,
         "scraper-version": scraperVersion,
         "scrape-date": str(date.today()),
@@ -111,7 +111,7 @@ def update(link, newFields):
         print("Failed to connect to DB...")
         return False
 
-    result = conn["db"][collection].update_one({"_id": link}, {"$set": newFields})
+    result = conn["db"][collection].update_one({"_id": extract_id_from_link(link)}, {"$set": newFields})
     return result.acknowledged
 
 
@@ -119,7 +119,8 @@ def encode(obj):
     encodedObj = {}
 
     for field, value in obj.items():
-        if isinstance(value, str):
+        # the urls in the images field will not be encoded because they are an array
+        if isinstance(value, str) and field != "link":
             encodedObj[field] = quote(value)
         else:
             encodedObj[field] = value
@@ -131,7 +132,8 @@ def decode(obj):
     decodedObj = {}
 
     for field, value in obj.items():
-        if isinstance(value, str):
+        # the urls in the images field will not be decoded because they are an array
+        if isinstance(value, str) and field != "link":
             decodedObj[field] = unquote(value)
         else:
             decodedObj[field] = value

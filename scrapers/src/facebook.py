@@ -110,47 +110,31 @@ def scrapeListing(url):
     print(f"Loading page for {url[0:60]}")
     time.sleep(1)
 
+    # Find div with the current listing's info
+    listing = browser.find_elements("class name", "x1jx94hy x78zum5 xdt5ytf x1lytzrv x6ikm8r x10wlt62 xiylbte xtxwg39".replace(" ", "."))[0]
+    seeMoreButton = listing.find_elements("class name", "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x6prxxf xvq8zen x1s688f xzsf02u".replace(" ", "."))[0]
+
+    utils.clickOn(seeMoreButton, browser)
+
     # Create a BeautifulSoup object from the HTML of the page
     html = browser.page_source
     soup = BeautifulSoup(html, "html.parser")
 
     try:
-        seeMoreButton = browser.find_element(
-            "class name",
-            "x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x6prxxf xvq8zen x1s688f xzsf02u".replace(
-                " ", "."
-            ),
-        )
-        utils.clickOn(seeMoreButton, browser)
+        listing = soup.find("div", class_="x1jx94hy x78zum5 xdt5ytf x1lytzrv x6ikm8r x10wlt62 xiylbte xtxwg39")
 
-        listingInfo = soup.find("div", class_=listingInfoClass)
-        # description = listingInfo.find(
-        #     "span",
-        #     class_=(
-        #         "x193iq5w xeuugli x13faqbe x1vvkbs xlh3980 xvmahel x1n0sxbx x1lliihq"
-        #         " x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x3x7a5m"
-        #         " x6prxxf xvq8zen xo1l8bm xzsf02u"
-        #     ),
-        # )
-        print(listingInfo)
+        images = listing.find_all("img")
 
-        return 2
+        print(f"found {len(images)} images:")
+        for img in images:
+            print(img["src"].replace("amp;", ""))
 
-        # attributes = processAttributes(
-        #     [
-        #         attr.text
-        #         for attr in soup.findAll("p", class_="attrgroup")[1].findAll("span")
-        #     ]
-        # )
-
-        # map = soup.find('div', id='map')
-        # longitude = map["data-longitude"]
-        # latitude = map["data-latitude"]
-
-        # print([attributes, description, longitude, latitude])
-    except Exception as error:
-        print(error)
+        description = listing.find("div", class_="xz9dl7a x4uap5 xsag5q8 xkhd6sd x126k92a")
+        description = description.find("span", class_="x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x1lliihq x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x41vudc x6prxxf xvq8zen xo1l8bm xzsf02u").text
+    except Exception as err:
+        print(err)
         return -1
 
     # Close the Selenium WebDriver instance
     browser.quit()
+    return description

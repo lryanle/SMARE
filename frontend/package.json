@@ -17,7 +17,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@auth/mongodb-adapter": "^2.0.10",
+    "@auth/mongodb-adapter": "^2.3.0",
     "@faker-js/faker": "^8.3.1",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.1.1",

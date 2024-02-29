@@ -12,8 +12,7 @@ from pymongo import MongoClient
 import pymongo
 # MongoDB Atlas connection string
 # Replace '<your_connection_string>' with your actual connection string
-#connection_string = '<your_connection_string>'
-connection_string = 'mongodb+srv://python:khWMzYnYOVEjn9TK@cluster0.bzu9mpg.mongodb.net/auth?retryWrites=true&w=majority'
+connection_string = '<your_connection_string>'
 
 try:
     # Connect to MongoDB Atlas

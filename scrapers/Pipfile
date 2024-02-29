@@ -10,6 +10,7 @@ cont = "docker run --name smarecontainer -d smare:latest"
 exec = "docker exec -it smarecontainer"
 craigslist = "pipenv run exec python3 -c 'import scrapers; scrapers.craigslist(\"\",\"\")'"
 facebook = "pipenv run exec python3 -c 'import scrapers; scrapers.facebook(\"\",\"\")'"
+link = "pipenv run exec python3 -c 'import scrapers; scrapers.link(\"https://www.facebook.com/marketplace/item/6672575212818732\")'"
 
 [packages]
 selenium = "*"

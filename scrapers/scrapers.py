@@ -35,7 +35,9 @@ def link(link: str):
 
     if clPattern.match(link):
         newInfo = cl.scrapeListing(link)
-        db.update(link, newInfo)
+
+        print(newInfo)
+        # db.update(link, newInfo)
     elif fbPattern.match(link):
         newInfo = fb.scrapeListing(link)
         print(newInfo)

@@ -5,6 +5,8 @@ from . import craigslist
 from . import database as db
 from . import facebook
 
+import time
+
 
 def scrollTo(x, driver):
     driver.execute_script(
@@ -43,6 +45,15 @@ def setupBrowser():
     return webdriver.Chrome(options=options, service=service)
 
 
+def loadPageResources(driver):
+    scroll = 1000
+
+    print("Waiting to load...")
+    time.sleep(2)
+    scrollTo(scroll, driver)
+    time.sleep(2)
+
+
 def scrape(website, scraperVersion, duplicateThreshold):
     if website == "craigslist":
         scraper = craigslist
@@ -57,7 +68,7 @@ def scrape(website, scraperVersion, duplicateThreshold):
         browser.get(url)
 
         print(f"Loading cars from {url}")
-        scraper.loadPageResources(browser)
+        loadPageResources(browser)
 
         carPosts = scraper.getAllPosts(browser)
 
@@ -69,19 +80,28 @@ def scrape(website, scraperVersion, duplicateThreshold):
                 break
 
             try:
-                title, price, location, odometer, link, images = scraper.getCarInfo(
-                    post
-                )
-                success = db.post_raw(
-                    scraperVersion,
-                    website,
-                    title,
-                    price,
-                    location,
-                    odometer,
-                    link,
-                    images,
-                )
+                # title, price, location, odometer, link, images = scraper.getCarInfo(
+                #     post
+                # )
+
+                stage1 = scraper.getCarInfo(post)
+                stage2 = scraper.scrapeListing(stage1["link"], browser)
+
+                stage1.update(stage2)
+                print(stage1)
+
+                # success = db.post_raw(
+                #     scraperVersion,
+                #     website,
+                #     title,
+                #     price,
+                #     location,
+                #     odometer,
+                #     link,
+                #     images,
+                # )
+
+                success = True
                 if success:
                     print("posted to db")
                 else:

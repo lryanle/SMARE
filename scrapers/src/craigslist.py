@@ -37,10 +37,10 @@ def setupURLs(oldestAllowedCars):
     ]
 
     # Set the URL of the Facebook Marketplace automotive category
-    base_url = (
+    baseURL = (
         "https://{}.craigslist.org/search/cta?min_auto_year={}&min_price=1#search=1~gallery~0~0"
     )
-    return [base_url.format(city, oldestAllowedCars) for city in cities]
+    return [baseURL.format(city, oldestAllowedCars) for city in cities]
 
 
 def getAllPosts(browser):

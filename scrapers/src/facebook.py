@@ -29,8 +29,8 @@ def setupURLs(oldestAllowedCars):
     cities = ["houston", "dallas", "austin", "fortworth", "elpaso", "sanantonio"]
 
     # Set the URL of the Facebook Marketplace automotive category
-    base_url = "https://www.facebook.com/marketplace/{}/vehicles?minYear={}&exact=false"
-    return [base_url.format(city, oldestAllowedCars) for city in cities]
+    baseURL = "https://www.facebook.com/marketplace/{}/vehicles?minYear={}&exact=false"
+    return [baseURL.format(city, oldestAllowedCars) for city in cities]
 
 
 def getAllPosts(browser):

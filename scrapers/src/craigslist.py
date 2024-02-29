@@ -114,7 +114,6 @@ def scrapeListing(url, browser):
             img["src"]
             for img in imgThumbnails.find_all("img")
         ]
-        print(F"Checkpoint 7 {images}")
 
         map = soup.find("div", id="map")
         longitude = map["data-longitude"]

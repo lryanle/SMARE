@@ -80,28 +80,12 @@ def scrape(website, scraperVersion, duplicateThreshold):
                 break
 
             try:
-                # title, price, location, odometer, link, images = scraper.getCarInfo(
-                #     post
-                # )
+                post = scraper.getCarInfo(post)
+                stage2 = scraper.scrapeListing(post["link"], setupBrowser())
 
-                stage1 = scraper.getCarInfo(post)
-                stage2 = scraper.scrapeListing(stage1["link"], setupBrowser())
+                post.update(stage2)
 
-                stage1.update(stage2)
-                print(stage1)
-
-                # success = db.post_raw(
-                #     scraperVersion,
-                #     website,
-                #     title,
-                #     price,
-                #     location,
-                #     odometer,
-                #     link,
-                #     images,
-                # )
-
-                success = True
+                success = db.postRaw(scraperVersion, website, post)
                 if success:
                     print("posted to db")
                 else:

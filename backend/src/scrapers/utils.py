@@ -4,7 +4,7 @@ from pymongo.errors import DuplicateKeyError
 from selenium import webdriver
 
 from . import craigslist
-from . import database as db
+from .. import database as db
 from . import facebook
 
 

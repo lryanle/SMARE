@@ -16,11 +16,11 @@ COPY --from=build /opt/chrome-linux64 /opt/chrome
 COPY --from=build /opt/chromedriver-linux64 /opt/
 
 WORKDIR /var/task
-COPY scrapers.py ./
+COPY app.py ./
 COPY src ./src
 COPY requirements.txt ./
 COPY .env ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD [ "scrapers.craigslist" ]
+CMD [ "app.craigslist" ]

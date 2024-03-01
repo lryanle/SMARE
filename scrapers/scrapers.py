@@ -1,5 +1,4 @@
 import typer
-
 from src import utils
 
 app = typer.Typer()

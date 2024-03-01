@@ -148,6 +148,4 @@ def scrapeListing(url, browser):
         print(f"Failed scraping {url}: \n{err}")
         return None
 
-    # Close the Selenium WebDriver instance
-    browser.quit()
     return {"postBody": description, "attributes": attributes, "images": images}

@@ -121,8 +121,6 @@ def scrapeListing(url, browser):
         print(f"Failed scraping {url}: \n{e}")
         return None
 
-    # Close the Selenium WebDriver instance
-    browser.quit()
     return {
         "postBody": description,
         "year": year,

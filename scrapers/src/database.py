@@ -1,6 +1,6 @@
 import os
-from datetime import date
 import re
+from datetime import date
 from urllib.parse import quote, unquote
 
 import pymongo
@@ -31,8 +31,8 @@ def getConn(db):
 
 
 def extractIdFromLink(link):
-    facebook = re.search(r'facebook\.com/marketplace/item/(\d+)/', link)
-    craigslist = re.search(r'/(\d+)\.html$', link)
+    facebook = re.search(r"facebook\.com/marketplace/item/(\d+)/", link)
+    craigslist = re.search(r"/(\d+)\.html$", link)
 
     if facebook:
         return facebook.group(1)
@@ -47,6 +47,7 @@ def findPostWithLink(link):
 
     return conn["db"][collection].find_one({"_id": extractIdFromLink(link)})
 
+
 def postRaw(scraperVersion, source, car):
     print("Connecting to DB...")
     conn = getConn(db)
@@ -54,7 +55,7 @@ def postRaw(scraperVersion, source, car):
     if not conn["success"]:
         print("Failed to connect to DB...")
         return False
-    
+
     print("Connected to DB")
 
     # Encode car listing
@@ -83,7 +84,9 @@ def update(link, newFields):
         print("Failed to connect to DB...")
         return False
 
-    result = conn["db"][collection].update_one({"_id": extractIdFromLink(link)}, {"$set": newFields})
+    result = conn["db"][collection].update_one(
+        {"_id": extractIdFromLink(link)}, {"$set": newFields}
+    )
     return result.acknowledged
 
 
@@ -115,15 +118,16 @@ def decode(obj):
 
 def encodeArr(arr):
     encodedArr = []
-    
+
     for elem in arr:
         encodedArr.append(quote(elem))
 
     return encodedArr
 
+
 def deencodeArr(arr):
     dencodedArr = []
-    
+
     for elem in arr:
         dencodedArr.append(unquote(elem))
 

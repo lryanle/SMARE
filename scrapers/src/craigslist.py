@@ -1,5 +1,4 @@
 import time
-import re
 
 from bs4 import BeautifulSoup
 
@@ -37,9 +36,7 @@ def setupURLs(oldestAllowedCars):
     ]
 
     # Set the URL of the Facebook Marketplace automotive category
-    baseURL = (
-        "https://{}.craigslist.org/search/cta?min_auto_year={}&min_price=1#search=1~gallery~0~0"
-    )
+    baseURL = "https://{}.craigslist.org/search/cta?min_auto_year={}&min_price=1#search=1~gallery~0~0"
     return [baseURL.format(city, oldestAllowedCars) for city in cities]
 
 
@@ -71,7 +68,7 @@ def getCarInfo(post):
         "price": price,
         "location": location,
         "odometer": odometer,
-        "link": link
+        "link": link,
     }
 
 
@@ -79,7 +76,12 @@ def processAttributes(attributes):
     processedAttributes = []
 
     for attr in attributes:
-        label = attr.find("span", class_="labl").text.replace(":", "").replace(" ", "-").lower()
+        label = (
+            attr.find("span", class_="labl")
+            .text.replace(":", "")
+            .replace(" ", "-")
+            .lower()
+        )
         value = attr.find("span", class_="valu").text
 
         processedAttributes.append({"label": label, "value": value})
@@ -110,10 +112,7 @@ def scrapeListing(url, browser):
 
         imgThumbnails = soup.find("div", id="thumbs")
 
-        images = [
-            img["src"]
-            for img in imgThumbnails.find_all("img")
-        ]
+        images = [img["src"] for img in imgThumbnails.find_all("img")]
 
         map = soup.find("div", id="map")
         longitude = map["data-longitude"]
@@ -129,7 +128,7 @@ def scrapeListing(url, browser):
         "year": year,
         "makeModel": makeModel,
         "latitude": latitude,
-        "longitude":longitude,
+        "longitude": longitude,
         "attributes": attributes,
-        "images": images
+        "images": images,
     }

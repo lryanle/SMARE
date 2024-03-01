@@ -1,11 +1,11 @@
-from selenium import webdriver
+import time
+
 from pymongo.errors import DuplicateKeyError
+from selenium import webdriver
 
 from . import craigslist
 from . import database as db
 from . import facebook
-
-import time
 
 
 def scrollTo(x, driver):
@@ -75,7 +75,7 @@ def scrape(website, scraperVersion, duplicateThreshold):
         duplicatePostCount = 0
 
         for post in carPosts:
-            if (duplicatePostCount >= duplicateThreshold):
+            if duplicatePostCount >= duplicateThreshold:
                 print(f"Reached duplicate threshold of {duplicateThreshold}")
                 break
 
@@ -92,7 +92,9 @@ def scrape(website, scraperVersion, duplicateThreshold):
                     print("failed to post to db")
             except DuplicateKeyError:
                 duplicatePostCount += 1
-                print(f"Duplicate post found ({duplicatePostCount} / {duplicateThreshold})")
+                print(
+                    f"Duplicate post found ({duplicatePostCount} / {duplicateThreshold})"
+                )
             except Exception as error:
                 print(error)
 

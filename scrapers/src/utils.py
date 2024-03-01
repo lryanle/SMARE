@@ -1,3 +1,6 @@
+import time
+
+from pymongo.errors import DuplicateKeyError
 from selenium import webdriver
 
 from . import craigslist
@@ -42,7 +45,16 @@ def setupBrowser():
     return webdriver.Chrome(options=options, service=service)
 
 
-def scrape(website, scraperVersion):
+def loadPageResources(driver):
+    scroll = 1000
+
+    print("Waiting to load...")
+    time.sleep(2)
+    scrollTo(scroll, driver)
+    time.sleep(2)
+
+
+def scrape(website, scraperVersion, duplicateThreshold):
     if website == "craigslist":
         scraper = craigslist
     elif website == "facebook":
@@ -56,29 +68,33 @@ def scrape(website, scraperVersion):
         browser.get(url)
 
         print(f"Loading cars from {url}")
-        scraper.loadPageResources(browser)
+        loadPageResources(browser)
 
         carPosts = scraper.getAllPosts(browser)
 
+        duplicatePostCount = 0
+
         for post in carPosts:
+            if duplicatePostCount >= duplicateThreshold:
+                print(f"Reached duplicate threshold of {duplicateThreshold}")
+                break
+
             try:
-                title, price, location, odometer, link, images = scraper.getCarInfo(
-                    post
-                )
-                success = db.post_raw(
-                    scraperVersion,
-                    website,
-                    title,
-                    price,
-                    location,
-                    odometer,
-                    link,
-                    images,
-                )
+                post = scraper.getCarInfo(post)
+                stage2 = scraper.scrapeListing(post["link"], setupBrowser())
+
+                post.update(stage2)
+
+                success = db.postRaw(scraperVersion, website, post)
                 if success:
                     print("posted to db")
                 else:
                     print("failed to post to db")
+            except DuplicateKeyError:
+                duplicatePostCount += 1
+                print(
+                    f"Duplicate post found ({duplicatePostCount} / {duplicateThreshold})"
+                )
             except Exception as error:
                 print(error)
 

@@ -4,11 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [scripts]
-build = "docker build --platform linux/amd64 -t smare ."
+build = "docker build -f Dockerfile.prod --platform linux/amd64 -t smare ."
+dev = "docker build -f Dockerfile.dev --platform linux/amd64 -t smare ."
+stop = "docker rm -f smarecontainer"
 cont = "docker run --name smarecontainer -d smare:latest"
 exec = "docker exec -it smarecontainer"
 craigslist = "pipenv run exec python3 -c 'import scrapers; scrapers.craigslist(\"\",\"\")'"
 facebook = "pipenv run exec python3 -c 'import scrapers; scrapers.facebook(\"\",\"\")'"
+link = "pipenv run exec python3 -c 'import scrapers; scrapers.link(\"https://www.facebook.com/marketplace/item/6672575212818732\")'"
 
 [packages]
 selenium = "*"

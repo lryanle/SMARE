@@ -33,11 +33,16 @@ pipenv install
 ```
 
 **Scraper Usage**  
-To create build a Docker Image use
+To create build a **production-ready** Docker Image use
 ```bash
 pipenv run build
 ```
-to run a docker container "smarecontainer" use
+To create build a **development** Docker Image use
+```bash
+pipenv run dev
+```
+
+To run a docker container "smarecontainer" use (Note: delete any containers with the same name before running)
 ```bash
 pipenv run cont
 ```

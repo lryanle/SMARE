@@ -1,5 +1,7 @@
 import os
+import re
 from datetime import date
+from urllib.parse import quote, unquote
 
 import pymongo
 from dotenv import load_dotenv
@@ -8,14 +10,14 @@ db = "scrape"
 collection = "scraped_raw"
 
 
-def get_conn(db):
+def getConn(db):
     # load environment variable containing db uri (which includes username and password)
     load_dotenv()
-    db_uri = os.environ.get("DB_URI")
+    dbURI = os.environ.get("DB_URI")
 
     # create a mongodb connection
     try:
-        client = pymongo.MongoClient(db_uri)
+        client = pymongo.MongoClient(dbURI)
 
     # return a friendly error if a URI error is thrown
     except pymongo.errors.ConfigurationError:
@@ -28,62 +30,105 @@ def get_conn(db):
     return {"success": True, "db": client.get_database(db)}
 
 
-def post_raw(
-    scraperVersion,
-    source,
-    title,
-    price,
-    location,
-    miles,
-    link,
-    images=None,
-    postBody=None,
-    longitude=None,
-    latitude=None,
-    attributes=None,
-):
-    car = {
-        "_id": link,
+def extractIdFromLink(link):
+    facebook = re.search(r"facebook\.com/marketplace/item/(\d+)/", link)
+    craigslist = re.search(r"/(\d+)\.html$", link)
+
+    if facebook:
+        return facebook.group(1)
+    elif craigslist:
+        return craigslist.group(1)
+    else:
+        raise Exception("Not a valid Craigslist nor Facebook link")
+
+
+def findPostWithLink(link):
+    conn = getConn(db)
+
+    return conn["db"][collection].find_one({"_id": extractIdFromLink(link)})
+
+
+def postRaw(scraperVersion, source, car):
+    print("Connecting to DB...")
+    conn = getConn(db)
+
+    if not conn["success"]:
+        print("Failed to connect to DB...")
+        return False
+
+    print("Connected to DB")
+
+    # Encode car listing
+    encodedCar = encode(car)
+    if source == "facebook":
+        encodedCar["attributes"] = encodeArr(encodedCar["attributes"])
+
+    metadata = {
+        "_id": extractIdFromLink(car["link"]),
         "source": source,
         "scraper-version": scraperVersion,
         "scrape-date": str(date.today()),
-        "title": title,
-        "price": price,
-        "location": location,
-        "odometer": miles,
-        "link": link,
     }
 
-    if images is not None:
-        car["images"] = images
+    # attach metadata to car before pushing to db
+    encodedCar.update(metadata)
 
-    if postBody is not None:
-        car["postBody"] = postBody
-
-    if longitude is not None:
-        car["longitude"] = longitude
-
-    if latitude is not None:
-        car["latitude"] = latitude
-
-    if attributes is not None:
-        for attr in attributes:
-            car[attr["label"]] = attr["value"]
-
-    # Insert into collection called "scrape_raw"
-    conn = get_conn(db)
-
-    if conn["success"]:
-        result = conn["db"][collection].insert_one(car)
-        return result.acknowledged
-    else:
-        return False
+    # push encoded car (with metadata) to db
+    result = conn["db"][collection].insert_one(encodedCar)
+    return result.acknowledged
 
 
 def update(link, newFields):
-    conn = get_conn(db)
-    if conn["success"]:
-        result = conn["db"][collection].update_one({"_id": link}, {"$set": newFields})
-        return result.acknowledged
-    else:
+    conn = getConn(db)
+    if not conn["success"]:
+        print("Failed to connect to DB...")
         return False
+
+    result = conn["db"][collection].update_one(
+        {"_id": extractIdFromLink(link)}, {"$set": newFields}
+    )
+    return result.acknowledged
+
+
+def encode(obj):
+    encodedObj = {}
+
+    for field, value in obj.items():
+        # the urls in the images field will not be encoded because they are an array
+        if isinstance(value, str) and field != "link":
+            encodedObj[field] = quote(value)
+        else:
+            encodedObj[field] = value
+
+    return encodedObj
+
+
+def decode(obj):
+    decodedObj = {}
+
+    for field, value in obj.items():
+        # the urls in the images field will not be decoded because they are an array
+        if isinstance(value, str) and field != "link":
+            decodedObj[field] = unquote(value)
+        else:
+            decodedObj[field] = value
+
+    return decodedObj
+
+
+def encodeArr(arr):
+    encodedArr = []
+
+    for elem in arr:
+        encodedArr.append(quote(elem))
+
+    return encodedArr
+
+
+def deencodeArr(arr):
+    dencodedArr = []
+
+    for elem in arr:
+        dencodedArr.append(unquote(elem))
+
+    return dencodedArr

@@ -2,7 +2,9 @@
 import pandas as pd
 import datetime
 import re
+from .. import database as db
 
+"""
 from pymongo import MongoClient
 import pymongo
 # MongoDB Atlas connection string
@@ -21,9 +23,9 @@ db = client[database_name]
 
 collection_name = 'scraped_raw'
 collection = db[collection_name]
-
+"""
 # Fetch data from MongoDB and convert it to a DataFrame
-cursor = collection.find()
+cursor = db.findAllCars()
 data = list(cursor)
 cars = pd.DataFrame(data)
 
@@ -32,7 +34,7 @@ csv_filename = 'output_data.csv'
 cars.to_csv(csv_filename, index=False)
 
 # Close the MongoDB connection
-client.close()
+#client.close()
 
 print(f'Data has been successfully exported to {csv_filename}')
 

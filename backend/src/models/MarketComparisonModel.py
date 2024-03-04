@@ -54,13 +54,13 @@ cars_df['kbb_price'] = kbb_prices
 # Convert 'price' and 'kbb_price' columns to numerical types
 cars_df['price'] = pd.to_numeric(cars_df['price'], errors='coerce')
 cars_df['kbb_price'] = pd.to_numeric(cars_df['kbb_price'], errors='coerce')
-print(cars_df.columns)
+#print(cars_df.columns)
 
 # Drop rows where 'price' or 'kbb_price' is NaN after conversion
 cars_df = cars_df.dropna(subset=['price', 'kbb_price'])
 
 # Calculate price difference
-cars_df['price_difference'] = np.abs(cars_df['price'] - cars_df['kbb_price'].astype(float))
+cars_df.loc[:,'price_difference'] = np.abs(cars_df['price'] - cars_df['kbb_price'].astype(float))
 
 # Function to calculate reasonable price difference (rd_kbb)
 def calculate_reasonable_difference(kbb_price):
@@ -87,7 +87,7 @@ def calculate_risk_score(listed_price, kbb_price):
     return y
 
 # Calculate risk score
-cars_df['risk_score'] = cars_df.apply(lambda row: calculate_risk_score(row['price'], row['kbb_price']), axis=1)
+cars_df.loc[:,'risk_score'] = cars_df.apply(lambda row: calculate_risk_score(row['price'], row['kbb_price']), axis=1)
 
 # Print the results
 output_df = cars_df[['manufacturer', 'model', 'year', 'price', 'kbb_price', 'price_difference','risk_score']]

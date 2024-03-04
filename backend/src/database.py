@@ -48,6 +48,18 @@ def findPostWithLink(link):
     return conn["db"][collection].find_one({"_id": extractIdFromLink(link)})
 
 
+def findCarsInStage(stage):
+    conn = getConn(db)
+
+    return conn["db"][collection].find({"stage": stage})
+
+
+def findAllCars():
+    conn = getConn(db)
+
+    return conn["db"][collection].find()
+
+
 def postRaw(scraperVersion, source, car):
     print("Connecting to DB...")
     conn = getConn(db)

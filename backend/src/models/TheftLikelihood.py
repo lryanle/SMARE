@@ -1,15 +1,18 @@
 # import necessary libraries
 import pandas as pd
 import numpy as np
-import car_data
-
-#THEFT LIKELIHOOD MODEL
-import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.impute import SimpleImputer
 from fuzzywuzzy import fuzz
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error
+
+import car_data
+
+#THEFT LIKELIHOOD MODEL
 
 # Step 1: Load the datasets
 car_df = car_data.cars
@@ -97,11 +100,6 @@ print(f'Mean Squared Error has been saved to {output_csv_filename}')
 new_data_features = X_test.head(9)  # Use the first row of the test set as an example
 new_data_theft_rate = model.predict(new_data_features)
 print("Predicted theft rate for new data:", new_data_theft_rate)
-
-
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error
 
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)

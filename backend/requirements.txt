@@ -21,3 +21,5 @@ typer==0.9.0; python_version >= '3.6'
 typing-extensions==4.8.0; python_version >= '3.8'
 urllib3[socks]==2.1.0; python_version >= '3.8'
 wsproto==1.2.0; python_full_version >= '3.7.0'
+requests==2.25.0
+openai==24.0

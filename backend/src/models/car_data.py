@@ -1,12 +1,7 @@
 # import necessary libraries
 import pandas as pd
-import numpy as np
 import datetime
 import re
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import WhiteKernel, DotProduct, RBF
-from sklearn.metrics import mean_squared_error
-from sklearn.neighbors import KNeighborsRegressor
 
 from pymongo import MongoClient
 import pymongo

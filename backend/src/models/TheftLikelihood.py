@@ -1,8 +1,6 @@
 # import necessary libraries
 import pandas as pd
 import numpy as np
-import datetime
-import re
 import car_data
 
 #THEFT LIKELIHOOD MODEL
@@ -10,10 +8,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import OneHotEncoder
 from sklearn.impute import SimpleImputer
 from fuzzywuzzy import fuzz
-import Levenshtein
 
 # Step 1: Load the datasets
 car_df = car_data.cars

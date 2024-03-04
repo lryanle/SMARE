@@ -1,13 +1,10 @@
 # import necessary libraries
 import numpy as np
 import pandas as pd
-import datetime
-import math
 import re
 import requests
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
-from difflib import get_close_matches
 import car_data
 
 # MARKET PRICE COMPARISION

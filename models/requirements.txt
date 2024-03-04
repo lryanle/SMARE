@@ -1,4 +1,0 @@
--i https://pypi.org/simple
-python-dotenv==1.0.0; python_version >= '3.8'
-requests==2.25.0
-openai==24.0

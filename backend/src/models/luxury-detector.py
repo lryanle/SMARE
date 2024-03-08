@@ -1,10 +1,10 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import make_pipeline
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
 
 # Load the dataset
 data = pd.read_csv("model_data_with_anomalies.csv")  # Replace with your file path

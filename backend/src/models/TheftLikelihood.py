@@ -1,14 +1,12 @@
 # import necessary libraries
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
-from sklearn.impute import SimpleImputer
-from fuzzywuzzy import fuzz
-from sklearn.ensemble import GradientBoostingRegressor
-
 import car_data
+import numpy as np
+import pandas as pd
+from fuzzywuzzy import fuzz
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
 
 # THEFT LIKELIHOOD MODEL
 

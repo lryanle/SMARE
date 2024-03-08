@@ -1,10 +1,11 @@
 # import necessary libraries
+import re
+from concurrent.futures import ThreadPoolExecutor
+
+import car_data
 import numpy as np
 import pandas as pd
-import re
 import requests
-from concurrent.futures import ThreadPoolExecutor
-import car_data
 
 # MARKET PRICE COMPARISION
 cars_df = car_data.cars

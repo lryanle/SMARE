@@ -1,5 +1,4 @@
 # import necessary libraries
-import pandas as pd
 import car_data
 
 # VEHICLE FREQUENCY MODEL

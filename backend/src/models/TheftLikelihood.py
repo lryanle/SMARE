@@ -6,9 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.impute import SimpleImputer
 from fuzzywuzzy import fuzz
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error
 
 import car_data
 
@@ -102,6 +100,9 @@ for theft_occurrence in unique_theft_occurrences:
     matched_make_models = car_df.loc[
         car_df["theft_occurrences"] == theft_occurrence, "make_model"
     ].unique()
+
+    output_df = []
+
     for make_model in matched_make_models:
         # Find the corresponding thefts value from top10theft
         top10_row = top10theft[
@@ -109,7 +110,7 @@ for theft_occurrence in unique_theft_occurrences:
         ]
         if not top10_row.empty:
             thefts_value = top10_row.iloc[0]["Thefts"]
-            output_df = output_df.append(
+            output_df.append(
                 {
                     "Theft_Occurrence": theft_occurrence,
                     "Make_Model": make_model,

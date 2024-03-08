@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import re
 import requests
-from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import car_data
 
@@ -25,7 +24,7 @@ def get_kbb_price(row):
         # print(search_url)
         try:
             response = requests.get(search_url)
-            soup = BeautifulSoup(response.text, "html.parser")
+            # soup = BeautifulSoup(response.text, "html.parser")
             # Extract relevant information (adjust based on the actual HTML structure)
             # Extract the price information from the HTML code
             # price_field = soup.find('div', {'class': 'nationalBaseDefaultPrice'})

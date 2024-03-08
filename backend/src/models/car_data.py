@@ -2,28 +2,9 @@
 import pandas as pd
 import datetime
 import re
+from difflib import get_close_matches
 from .. import database as db
 
-"""
-from pymongo import MongoClient
-import pymongo
-# MongoDB Atlas connection string
-# Replace '<your_connection_string>' with your actual connection string
-connection_string = '<your_connection_string>'
-
-try:
-    # Connect to MongoDB Atlas
-    client = MongoClient(connection_string)
-# return a friendly error if a URI error is thrown 
-except pymongo.errors.ConfigurationError:
-    print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string (found the .env)?")
-
-database_name = 'scrape'
-db = client[database_name]
-
-collection_name = 'scraped_raw'
-collection = db[collection_name]
-"""
 # Fetch data from MongoDB and convert it to a DataFrame
 cursor = db.findAllCars()
 data = list(cursor)
@@ -64,8 +45,6 @@ cars = cars.drop(
 # drop NA values
 cars = cars.dropna()
 
-import re
-
 cars["odometer"] = cars["odometer"].apply(
     lambda x: (
         int(re.search(r"\d+", str(x)).group(0)) if re.search(r"\d+", str(x)) else None
@@ -84,7 +63,7 @@ cars = cars[cars.year >= 2005]
 ars = cars[cars.odometer <= 300]
 # Clean up the 'price' column by replacing non-numeric values with NaN
 cars["price"] = pd.to_numeric(
-    cars["price"].replace("[\$,]", "", regex=True), errors="coerce"
+    cars["price"].replace("[$,]", "", regex=True), errors="coerce"
 )
 
 # Fill NaN values in the 'price' column with a placeholder (you can choose a value that makes sense)
@@ -906,7 +885,6 @@ kbb_models = {
         "MP4-12C Spider",
         "P1",
     ],
-    "mclaren": ["570S", "600LT", "720S", "765LT", "GT"],
     "mercedes-benz": [
         "A-Class",
         "C-Class",
@@ -1373,8 +1351,6 @@ kbb_models = {
     ],
 }
 
-from difflib import get_close_matches
-
 title = cars["title"]
 
 
@@ -1390,8 +1366,6 @@ def extract_make(title):
 
 
 def extract_model_wreg(title, make):
-    title_lower = title.lower()
-
     # Check if the make is in the kbb_models dictionary
     make_models = kbb_models.get(make, [])
 

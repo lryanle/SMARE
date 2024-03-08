@@ -19,11 +19,15 @@ pymongo = "*"
 typer = "*"
 python-dotenv = "*"
 requests = "*"
+pandas = "*"
+imblearn = "*"
+fuzzywuzzy = "*"
 
 [dev-packages]
 isort = "*"
 black = "*"
 flake8 = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.11"

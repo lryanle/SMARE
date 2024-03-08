@@ -81,7 +81,7 @@ def scrape(website, scraperVersion, duplicateThreshold):
 
             try:
                 post = scraper.getCarInfo(post)
-                stage2 = scraper.scrapeListing(post["link"], setupBrowser())
+                stage2 = scraper.scrapeListing(post["link"], browser)
 
                 post.update(stage2)
 

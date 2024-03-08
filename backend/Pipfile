@@ -18,6 +18,7 @@ bs4 = "*"
 pymongo = "*"
 typer = "*"
 python-dotenv = "*"
+requests = "*"
 
 [dev-packages]
 isort = "*"

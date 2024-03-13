@@ -71,11 +71,6 @@ def getCarInfo(post):
     }
 
 
-def processAttributes(attributes):
-    # TODO:
-    return None
-
-
 def scrapeListing(url, browser):
     # Navigate to the URL
     print(f"Going to {url}")

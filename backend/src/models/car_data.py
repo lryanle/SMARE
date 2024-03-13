@@ -2,7 +2,6 @@
 import datetime
 import re
 from difflib import get_close_matches
-
 import pandas as pd
 
 from .. import database as db
@@ -16,15 +15,11 @@ cars = pd.DataFrame(data)
 csv_filename = "output_data.csv"
 cars.to_csv(csv_filename, index=False)
 
-# Close the MongoDB connection
-# client.close()
-
 print(f"Data has been successfully exported to {csv_filename}")
 
 cars = pd.read_csv("output_data.csv")
 
 # DATA CLEANING
-
 # drop unnecessary variables: id, url
 cars = cars.drop(
     columns=[
@@ -42,8 +37,6 @@ cars = cars.drop(
     ]
 )
 
-# cars = cars.drop(columns = ['scraper-version','scrape-date','images'])
-
 # drop NA values
 cars = cars.dropna()
 
@@ -53,7 +46,7 @@ cars["odometer"] = cars["odometer"].apply(
     )
 )
 cars["year"] = cars["title"].str.extract(r"(\d{4})")
-# Fill NaN values in the 'year' column with a placeholder (you can choose a value that makes sense)
+# Fill NaN values in the 'year' column with a placeholder
 cars["year"].fillna(-1, inplace=True)
 cars = cars.astype({"year": "int", "odometer": "int"})
 
@@ -73,7 +66,6 @@ cars["price"].fillna(-1, inplace=True)
 
 # Convert 'price' column to integers
 cars["price"] = cars["price"].astype(int)
-
 cars = cars[cars.price <= 100000]
 
 
@@ -1355,7 +1347,6 @@ kbb_models = {
 
 title = cars["title"]
 
-
 # Function to extract make from title
 def extract_make(title):
     title_lower = title.lower()
@@ -1366,47 +1357,37 @@ def extract_make(title):
             return make
     return None
 
-
 def extract_model_wreg(title, make):
     # Check if the make is in the kbb_models dictionary
     make_models = kbb_models.get(make, [])
-
     # Use regex to find patterns like "2021 RAM 3500" in the title
     match = re.search(r"\b\d{4}\s*[a-zA-Z0-9-]+\s*([a-zA-Z0-9-]+)\b", title)
-
     if match:
         # Extracted model is in the first capturing group
         model = match.group(1)
-
         if model is not None:
             # Handle models with dashes
             model = model.replace("-", "")
-
             # Compare with the kbb_models dictionary
             matched_model = get_close_matches(model, make_models, n=1)
-
             if matched_model:
                 return matched_model[0]
             else:
                 # If no direct match, try finding a close match using pieces of words
                 title_words = re.findall(r"\b\w+\b", title)
                 extracted_model_pieces = []
-
                 for word in title_words:
                     # Check if the word is part of the make name, if yes, skip it
                     if make is not None and word.lower() in make.lower():
                         continue
-
                     extracted_model_pieces.append(word)
                     current_model_attempt = " ".join(extracted_model_pieces)
-
                     # Check if the current attempt is a close match
                     matched_model = get_close_matches(
                         current_model_attempt, make_models, n=1
                     )
                     if matched_model:
                         return matched_model[0]
-
                 # If still no match, return the original extracted model
                 return model
         else:
@@ -1421,17 +1402,7 @@ cars["model"] = cars.apply(
     lambda row: extract_model_wreg(row["title"], row["manufacturer"]), axis=1
 )
 
-# Print the DataFrame with 'manufacturer' and 'model'
-result_df = cars[["manufacturer", "model"]]
-
-# Save the selected columns to CSV
-result_df.to_csv("output.csv", index=False)
-
 # Drop rows where either 'manufacturer' or 'model' is empty
 cars.dropna(subset=["manufacturer", "model"], inplace=True)
-
-# Print the DataFrame with 'manufacturer' and 'model'
-result_df = cars[["manufacturer", "model"]]
-# print(result_df)
 
 numeric_columns = ["price", "year", "odometer", "age"]

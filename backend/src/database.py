@@ -11,7 +11,8 @@ COLLECTION = "scraped_raw"
 
 
 def getConn(db):
-    # load environment variable containing db uri (which includes username and password)
+    # load environment variable containing db uri
+    # (which includes username and password)
     load_dotenv()
     dbURI = os.environ.get("DB_URI")
 

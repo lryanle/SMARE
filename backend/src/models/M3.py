@@ -45,10 +45,8 @@ def M3_riskscores():
     # Drop rows where 'price' or 'kbb_price' is NaN after conversion
     cars_df = cars_df.dropna(subset=["price", "kbb_price"])
 
-    # Calculate price difference
-    cars_df.loc[:, "price_difference"] = np.abs(
-        cars_df["price"] - cars_df["kbb_price"].astype(float)
-    )
+    # Calculate price difference using .loc accessor
+    cars_df.loc[:, "price_difference"] = np.abs(cars_df["price"].astype(float) - cars_df["kbb_price"].astype(float))
 
     # Function to calculate reasonable price difference (rd_kbb)
     def calculate_reasonable_difference(kbb_price):
@@ -66,9 +64,10 @@ def M3_riskscores():
         y = np.clip(y, 0, 1)
         return y
 
-    # Calculate risk score
+    # Calculate risk score using .apply and .loc accessor to avoid warning
     cars_df["risk_score_M3"] = cars_df.apply(
         lambda row: calculate_risk_score(row["price"], row["kbb_price"]), axis=1
     )
+
     return cars_df
 

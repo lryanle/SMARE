@@ -1,23 +1,14 @@
-import typer
 from src.scrapers import utils as scrapeUtil
 
-app = typer.Typer()
+CL_SCRAPER_VERSION = 4
+FB_SCRAPER_VERSION = 4
 
-craigslistScraperVersion = 4
-facebookScraperVersion = 4
-
-duplicateTerminationLimit = 5
+DUPLICATE_TERMINATION_LIMIT = 5
 
 
-@app.command()
-def craigslist(event, context):
-    scrapeUtil.scrape("craigslist", craigslistScraperVersion, duplicateTerminationLimit)
+def craigslist():
+    scrapeUtil.scrape("craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
-@app.command()
-def facebook(event, context):
-    scrapeUtil.scrape("facebook", facebookScraperVersion, duplicateTerminationLimit)
-
-
-if __name__ == "__main__":
-    app()
+def facebook():
+    scrapeUtil.scrape("facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)

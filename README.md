@@ -42,6 +42,11 @@ To create build a **development** Docker Image use
 pipenv run dev
 ```
 
+If there is an existing smarecontainer, run the following:
+```bash
+pipenv run stop
+```
+
 To run a docker container "smarecontainer" use (Note: delete any containers with the same name before running)
 ```bash
 pipenv run cont

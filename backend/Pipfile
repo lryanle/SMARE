@@ -9,8 +9,8 @@ dev = "docker build -f Dockerfile.dev --platform linux/amd64 -t smare ."
 stop = "docker rm -f smarecontainer"
 cont = "docker run --name smarecontainer -d smare:latest"
 exec = "docker exec -it smarecontainer"
-craigslist = "pipenv run exec python3 -c 'import app; app.craigslist(\"\",\"\")'"
-facebook = "pipenv run exec python3 -c 'import app; app.facebook(\"\",\"\")'"
+craigslist = "pipenv run exec python3 -c 'import app; app.craigslist()'"
+facebook = "pipenv run exec python3 -c 'import app; app.facebook()'"
 
 [packages]
 selenium = "*"
@@ -28,6 +28,7 @@ isort = "*"
 black = "*"
 flake8 = "*"
 mypy = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.11"

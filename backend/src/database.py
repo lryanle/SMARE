@@ -6,12 +6,13 @@ from urllib.parse import quote, unquote
 import pymongo
 from dotenv import load_dotenv
 
-db = "scrape"
-collection = "scraped_raw"
+DATABASE = "scrape"
+COLLECTION = "scraped_raw"
 
 
 def getConn(db):
-    # load environment variable containing db uri (which includes username and password)
+    # load environment variable containing db uri
+    # (which includes username and password)
     load_dotenv()
     dbURI = os.environ.get("DB_URI")
 
@@ -36,21 +37,32 @@ def extractIdFromLink(link):
 
     if facebook:
         return facebook.group(1)
-    elif craigslist:
+
+    if craigslist:
         return craigslist.group(1)
-    else:
-        raise Exception("Not a valid Craigslist nor Facebook link")
 
 
 def findPostWithLink(link):
-    conn = getConn(db)
+    conn = getConn(DATABASE)
 
-    return conn["db"][collection].find_one({"_id": extractIdFromLink(link)})
+    return conn["db"][COLLECTION].find_one({"_id": extractIdFromLink(link)})
+
+
+def findCarsInStage(stage):
+    conn = getConn(DATABASE)
+
+    return conn["db"][COLLECTION].find({"stage": stage})
+
+
+def findAllCars():
+    conn = getConn(DATABASE)
+
+    return conn["db"][COLLECTION].find()
 
 
 def postRaw(scraperVersion, source, car):
     print("Connecting to DB...")
-    conn = getConn(db)
+    conn = getConn(DATABASE)
 
     if not conn["success"]:
         print("Failed to connect to DB...")
@@ -74,17 +86,17 @@ def postRaw(scraperVersion, source, car):
     encodedCar.update(metadata)
 
     # push encoded car (with metadata) to db
-    result = conn["db"][collection].insert_one(encodedCar)
+    result = conn["db"][COLLECTION].insert_one(encodedCar)
     return result.acknowledged
 
 
 def update(link, newFields):
-    conn = getConn(db)
+    conn = getConn(DATABASE)
     if not conn["success"]:
         print("Failed to connect to DB...")
         return False
 
-    result = conn["db"][collection].update_one(
+    result = conn["db"][COLLECTION].update_one(
         {"_id": extractIdFromLink(link)}, {"$set": newFields}
     )
     return result.acknowledged

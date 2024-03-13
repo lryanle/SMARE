@@ -3,9 +3,8 @@ import time
 from pymongo.errors import DuplicateKeyError
 from selenium import webdriver
 
-from . import craigslist
-from . import database as db
-from . import facebook
+from .. import database as db
+from . import craigslist, facebook
 
 
 def scrollTo(x, driver):

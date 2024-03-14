@@ -40,3 +40,12 @@ def extractAttributes(attributes):
                 output[attr] = cleanAttr(attr, match.group(1))
 
     return output
+
+
+def extractYear(titleStr):
+    year = re.match(r"^20\d{2}", titleStr)
+
+    if not year:
+        return None
+
+    return int(year.group(0))

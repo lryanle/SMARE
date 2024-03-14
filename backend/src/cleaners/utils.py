@@ -1,3 +1,6 @@
+import re
+
+
 def cleanCurrency(priceStr):
     cleanStr = priceStr.replace("$", "").replace(",", "")
 
@@ -5,3 +8,9 @@ def cleanCurrency(priceStr):
         cleanStr = "0"
 
     return float(cleanStr)
+
+
+def cleanOdometer(odometerStr):
+    cleanStr = odometerStr.replace("k", "000").replace(",", "").replace(" mi", "")
+
+    return int(cleanStr)

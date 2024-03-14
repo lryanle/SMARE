@@ -80,6 +80,7 @@ def postRaw(scraperVersion, source, car):
         "source": source,
         "scraper-version": scraperVersion,
         "scrape-date": str(date.today()),
+        "stage": "scrape"
     }
 
     # attach metadata to car before pushing to db

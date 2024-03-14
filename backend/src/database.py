@@ -12,15 +12,16 @@ COLLECTION = "scraped_raw"
 DONT_DECODE = ["link", "_id", "price", "odometer"]
 
 
-def getConn(db):
+def get_conn(db):
     # load environment variable containing db uri
     # (which includes username and password)
     load_dotenv()
-    dbURI = os.environ.get("DB_URI")
-
+    
     # create a mongodb connection
     try:
-        client = pymongo.MongoClient(dbURI)
+        db_uri = os.environ.get("DB_URI")
+        sanitized_uri = quote(db_uri)
+        client = pymongo.MongoClient(sanitized_uri)
 
     # return a friendly error if a URI error is thrown
     except pymongo.errors.ConfigurationError:
@@ -33,7 +34,7 @@ def getConn(db):
     return {"success": True, "db": client.get_database(db)}
 
 
-def extractIdFromLink(link):
+def extract_id_from_link(link):
     facebook = re.search(r"facebook\.com/marketplace/item/(\d+)/", link)
     craigslist = re.search(r"/(\d+)\.html$", link)
 
@@ -44,27 +45,27 @@ def extractIdFromLink(link):
         return craigslist.group(1)
 
 
-def findPostWithLink(link):
-    conn = getConn(DATABASE)
+def find_post_with_link(link):
+    conn = get_conn(DATABASE)
 
-    return conn["db"][COLLECTION].find_one({"_id": extractIdFromLink(link)})
+    return conn["db"][COLLECTION].find_one({"_id": extract_id_from_link(link)})
 
 
-def findCarsInStage(stage):
-    conn = getConn(DATABASE)
+def find_cars_in_stage(stage):
+    conn = get_conn(DATABASE)
 
     return [decode(car) for car in conn["db"][COLLECTION].find({"stage": stage})]
 
 
-def findAllCars():
-    conn = getConn(DATABASE)
+def find_all_cars():
+    conn = get_conn(DATABASE)
 
     return conn["db"][COLLECTION].find()
 
 
-def postRaw(scraperVersion, source, car):
+def post_raw(scraper_version, source, car):
     print("Connecting to DB...")
-    conn = getConn(DATABASE)
+    conn = get_conn(DATABASE)
 
     if not conn["success"]:
         print("Failed to connect to DB...")
@@ -73,79 +74,82 @@ def postRaw(scraperVersion, source, car):
     print("Connected to DB")
 
     # Encode car listing
-    encodedCar = encode(car)
+    encoded_car = encode(car)
 
     metadata = {
-        "_id": extractIdFromLink(car["link"]),
+        "_id": extract_id_from_link(car["link"]),
         "source": source,
-        "scraper-version": scraperVersion,
+        "scraper-version": scraper_version,
         "scrape-date": str(date.today()),
         "stage": "scrape"
     }
 
     # attach metadata to car before pushing to db
-    encodedCar.update(metadata)
+    encoded_car.update(metadata)
 
     # push encoded car (with metadata) to db
-    result = conn["db"][COLLECTION].insert_one(encodedCar)
+    result = conn["db"][COLLECTION].insert_one(encoded_car)
     return result.acknowledged
 
 
-def update(link, newFields):
-    conn = getConn(DATABASE)
+def update(link, new_fields):
+    conn = get_conn(DATABASE)
     if not conn["success"]:
         print("Failed to connect to DB...")
         return False
 
     result = conn["db"][COLLECTION].update_one(
-        {"_id": extractIdFromLink(link)}, {"$set": newFields}
+        {"_id": extract_id_from_link(link)}, {"$set": new_fields}
     )
     return result.acknowledged
 
 
 def encode(obj):
-    encodedObj = {}
+    encoded_obj = {}
 
     for field, value in obj.items():
         # the urls in the images field will not be encoded because they are an array
         if isinstance(value, str) and field not in DONT_DECODE:
-            encodedObj[field] = quote(value)
+            encoded_obj[field] = quote(value)
         elif isinstance(value, list) and field not in DONT_DECODE:
-            encodedObj[field] = encodeArr(field)
+            encoded_obj[field] = encode_arr(field)
         else:
-            encodedObj[field] = value
+            encoded_obj[field] = value
 
-    return encodedObj
+    return encoded_obj
 
 
 def decode(obj):
-    decodedObj = {}
+    decoded_obj = {}
 
     for field, value in obj.items():
         # the urls in the images field will not be decoded because they are an array
         if isinstance(value, str) and field not in DONT_DECODE:
-            decodedObj[field] = unquote(value)
+            decoded_obj[field] = unquote(value)
         elif isinstance(value, list) and field not in DONT_DECODE:
-            decodedObj[field] = decodeArr(field)
+            decoded_obj[field] = decode_arr(field)
         else:
-            decodedObj[field] = value
+            decoded_obj[field] = value
 
-    return decodedObj
-
-
-def encodeArr(arr):
-    encodedArr = []
-
-    for elem in arr:
-        encodedArr.append(quote(elem))
-
-    return encodedArr
+    return decoded_obj
 
 
-def decodeArr(arr):
-    decodedArr = []
+def encode_arr(arr):
+    encoded_arr = []
 
     for elem in arr:
-        decodedArr.append(unquote(elem))
+        encoded_arr.append(quote(elem))
 
-    return decodedArr
+    return encoded_arr
+
+
+def decode_arr(arr):
+    decoded_arr = []
+
+    for elem in arr:
+        decoded_arr.append(unquote(elem))
+
+    return decoded_arr
+
+def __init__():
+    print("database initialized")

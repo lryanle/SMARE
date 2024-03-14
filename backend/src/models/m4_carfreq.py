@@ -1,12 +1,12 @@
-import car_data
+import backend.src.models.MOVETOCLEAN_car_data as MOVETOCLEAN_car_data
 import pandas as pd
 
-def M4_riskscores():
+def m4_riskscores():
     # VEHICLE FREQUENCY MODEL
-    cars_dff = car_data.cars
+    cars_dff = MOVETOCLEAN_car_data.cars
 
     # Function to analyze frequency of vehicle models and calculate risk score
-    def calculate_risk_score(row, model_frequency, max_frequency, threshold=10):
+    def calculate_risk_score(row, model_frequency, max_frequency):
         # Normalize model frequency
         risk_score = model_frequency[row["model"]] / max_frequency
         return round(risk_score, 4)  # Round up to 4 decimal places

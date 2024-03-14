@@ -1,16 +1,16 @@
 # Importing the M3_riskscores and M4_riskscores functions from their respective modules
-from M3 import M3_riskscores
-from M4 import M4_riskscores
+from M3 import m3_riskscores
+from M4 import m4_riskscores
 import pandas as pd
 
 # todo: pass in data from mongo through each function
 # todo: calculate post-weight-product scores here, and not in each individual function.
 def model_manager():
-    m3_results = M3_riskscores()
-    m4_results = M4_riskscores()
+    m3_results = m3_riskscores()
+    m4_results = m4_riskscores()
 
     # Merging the results from both models based on a common identifier, if applicable
-    merged_results = pd.merge(m3_results, m4_results, on='_id', how='inner')
+    merged_results = pd.merge(m3_results, m4_results, on='_id', how='inner', validate='one_to_one')
     # Perform any additional data processing or calculations to derive the final risk score
     final_risk_score = min(100,merged_results['risk_score_M3'] + merged_results['risk_score_M4_y'])
     # Add the final risk score to the merged results DataFrame

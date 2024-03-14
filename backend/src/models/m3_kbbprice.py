@@ -1,13 +1,13 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
-import car_data
+import backend.src.models.MOVETOCLEAN_car_data as MOVETOCLEAN_car_data
 import numpy as np
 import pandas as pd
 import requests
 
-def M3_riskscores():
+def m3_riskscores():
     # MARKET PRICE COMPARISON
-    cars_df = car_data.cars
+    cars_df = MOVETOCLEAN_car_data.cars
 
     # Function to scrape current market price from Kelly Blue Book
     def get_kbb_price(row):

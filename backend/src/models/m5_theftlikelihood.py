@@ -1,5 +1,5 @@
 # import necessary libraries
-import car_data
+import backend.src.models.MOVETOCLEAN_car_data as MOVETOCLEAN_car_data
 import numpy as np
 import pandas as pd
 from fuzzywuzzy import fuzz
@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 # THEFT LIKELIHOOD MODEL
 
 # Step 1: Load the datasets
-car_df = car_data.cars
+car_df = MOVETOCLEAN_car_data.cars
 car_df["make_model"] = car_df["manufacturer"] + " " + car_df["model"]
 
 # Load the dataset containing the Top 10 Most Frequently Stolen Vehicles
@@ -114,7 +114,6 @@ for theft_occurrence in unique_theft_occurrences:
                     "Make_Model": make_model,
                     "Thefts": thefts_value,
                 },
-                ignore_index=True,
             )
     output_csv_filename = f"theft_occurrences_{theft_occurrence}.csv"
     output_df.to_csv(output_csv_filename, index=False)

@@ -30,16 +30,16 @@ bodyClass = (
 )
 
 
-def setupURLs(oldestAllowedCars):
+def setup_urls(oldest_allowed_cars):
     # List of TX cities to scrape; can be expanded
     cities = ["houston", "dallas", "austin", "fortworth", "elpaso", "sanantonio"]
 
     # Set the URL of the Facebook Marketplace automotive category
-    baseURL = "https://www.facebook.com/marketplace/{}/vehicles?minYear={}&exact=false"
-    return [baseURL.format(city, oldestAllowedCars) for city in cities]
+    base_url = "https://www.facebook.com/marketplace/{}/vehicles?minYear={}&exact=false"
+    return [base_url.format(city, oldest_allowed_cars) for city in cities]
 
 
-def getAllPosts(browser):
+def get_all_posts(browser):
     # Create a BeautifulSoup object from the HTML of the page
     html = browser.page_source
     soup = BeautifulSoup(html, "html.parser")
@@ -48,7 +48,7 @@ def getAllPosts(browser):
     return soup.find_all("div", class_=postClass)
 
 
-def getCarInfo(post):
+def get_car_info(post):
     title = post.find("span", class_=titleClass).text
 
     print(f'Scraping "{title}"')
@@ -71,7 +71,7 @@ def getCarInfo(post):
     }
 
 
-def scrapeListing(url, browser):
+def scrape_listing(url, browser):
     # Navigate to the URL
     print(f"Going to {url}")
     browser.get(url)
@@ -86,14 +86,14 @@ def scrapeListing(url, browser):
             " ", "."
         ),
     )[0]
-    seeMoreButton = listing.find_elements(
+    see_more_button = listing.find_elements(
         "class name",
         "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x6prxxf xvq8zen x1s688f xzsf02u".replace(
             " ", "."
         ),
     )[0]
 
-    utils.clickOn(seeMoreButton, browser)
+    utils.click_on(see_more_button, browser)
 
     # Create a BeautifulSoup object from the HTML of the page
     html = browser.page_source
@@ -105,16 +105,16 @@ def scrapeListing(url, browser):
             class_="x1jx94hy x78zum5 xdt5ytf x1lytzrv x6ikm8r x10wlt62 xiylbte xtxwg39",
         )
 
-        imagesHTML = listing.find_all("img")
+        images_html = listing.find_all("img")
         images = []
 
-        for img in imagesHTML:
+        for img in images_html:
             images.append(img["src"].replace("amp;", ""))
 
-        descriptionHTML = listing.find(
+        description_html = listing.find(
             "div", class_="xz9dl7a x4uap5 xsag5q8 xkhd6sd x126k92a"
         )
-        description = descriptionHTML.find(
+        description = description_html.find(
             "span",
             class_=(
                 "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x1lliihq x1s928wv "
@@ -124,8 +124,8 @@ def scrapeListing(url, browser):
         ).text
 
         # About this car: class="x1gslohp"
-        aboutVehicle = listing.find("div", class_="x1gslohp")
-        atrributesHTML = aboutVehicle.find_all(
+        about_vehicle = listing.find("div", class_="x1gslohp")
+        atrributes_html = about_vehicle.find_all(
             "span",
             class_=(
                 "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x1lliihq x1s928wv "
@@ -135,7 +135,7 @@ def scrapeListing(url, browser):
         )
         attributes = []
 
-        for attr in atrributesHTML:
+        for attr in atrributes_html:
             attributes.append(attr.text)
 
         # Typical features: x1gslohp x11i5rnm x12nagc x1mh8g0r

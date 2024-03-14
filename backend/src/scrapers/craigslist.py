@@ -3,7 +3,7 @@ import time
 from bs4 import BeautifulSoup
 
 
-def setupURLs(oldestAllowedCars):
+def setup_urls(oldest_allowed_cars):
     # List of TX cities to scrape; can be expanded
     cities = [
         "abilene",
@@ -36,11 +36,11 @@ def setupURLs(oldestAllowedCars):
     ]
 
     # Set the URL of the Facebook Marketplace automotive category
-    baseURL = "https://{}.craigslist.org/search/cta?min_auto_year={}&min_price=1#search=1~gallery~0~0"
-    return [baseURL.format(city, oldestAllowedCars) for city in cities]
+    base_url = "https://{}.craigslist.org/search/cta?min_auto_year={}&min_price=1#search=1~gallery~0~0"
+    return [base_url.format(city, oldest_allowed_cars) for city in cities]
 
 
-def getAllPosts(browser):
+def get_all_posts(browser):
     # Create a BeautifulSoup object from the HTML of the page
     html = browser.page_source
     soup = BeautifulSoup(html, "html.parser")
@@ -49,7 +49,7 @@ def getAllPosts(browser):
     return soup.find_all("div", class_="gallery-card")
 
 
-def getCarInfo(post):
+def get_car_info(post):
     title = post.find("span", class_="label").text
 
     print(f'Scraping "{title}"')
@@ -72,8 +72,8 @@ def getCarInfo(post):
     }
 
 
-def processAttributes(attributes):
-    processedAttributes = []
+def process_attributes(attributes):
+    processed_attributes = []
 
     for attr in attributes:
         label = (
@@ -84,12 +84,12 @@ def processAttributes(attributes):
         )
         value = attr.find("span", class_="valu").text
 
-        processedAttributes.append({"label": label, "value": value})
+        processed_attributes.append({"label": label, "value": value})
 
-    return processedAttributes
+    return processed_attributes
 
 
-def scrapeListing(url, browser):
+def scrape_listing(url, browser):
     # Navigate to the URL
     print(f"Going to {url}")
     browser.get(url)
@@ -105,18 +105,18 @@ def scrapeListing(url, browser):
         description = soup.find("section", id="postingbody").text
 
         year = soup.find("span", class_="valu year").text
-        makeModel = soup.find("a", class_="valu makemodel").text
+        make_model = soup.find("a", class_="valu makemodel").text
 
-        attributeGroups = soup.find_all("div", class_="attr")
-        attributes = processAttributes(attributeGroups[1:])
+        attribute_groups = soup.find_all("div", class_="attr")
+        attributes = process_attributes(attribute_groups[1:])
 
-        imgThumbnails = soup.find("div", id="thumbs")
+        img_thumbnails = soup.find("div", id="thumbs")
 
-        images = [img["src"] for img in imgThumbnails.find_all("img")]
+        images = [img["src"] for img in img_thumbnails.find_all("img")]
 
-        map = soup.find("div", id="map")
-        longitude = map["data-longitude"]
-        latitude = map["data-latitude"]
+        physical_map = soup.find("div", id="map")
+        longitude = physical_map["data-longitude"]
+        latitude = physical_map["data-latitude"]
     except Exception as e:
         print(f"Failed scraping {url}: \n{e}")
         return None
@@ -124,7 +124,7 @@ def scrapeListing(url, browser):
     return {
         "postBody": description,
         "year": year,
-        "makeModel": makeModel,
+        "makeModel": make_model,
         "latitude": latitude,
         "longitude": longitude,
         "attributes": attributes,

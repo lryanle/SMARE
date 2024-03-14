@@ -48,7 +48,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
     "lib/hooks/use-intersection-observer.ts"
   ],
   "exclude": ["node_modules"]

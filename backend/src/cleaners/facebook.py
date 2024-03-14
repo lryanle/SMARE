@@ -17,33 +17,33 @@ attrPatterns = {
 }
 
 
-def cleanAttr(attr, value):
+def clean_attr(attr, value):
     if attr == 'odometer':
         return int(value.replace(",", ""))
     elif attr == 'highwayMpg' or attr == 'cityMpg' or attr == 'combinedMpg':
         return float(value)
     elif attr == 'safetyRating':
-        score, max = value.split('/')
-        return float(score) / float(max)
+        score, maxscore = value.split('/')
+        return float(score) / float(maxscore)
     else:
         return value.lower()
 
 
-def extractAttributes(attributes):
+def extract_attributes(attributes):
     output = {}
 
     # Extract attributes using regular expressions
-    for attrStr in attributes:
+    for attr_str in attributes:
         for attr, pattern in attrPatterns.items():
-            match = re.search(pattern, attrStr)
+            match = re.search(pattern, attr_str)
             if match:
-                output[attr] = cleanAttr(attr, match.group(1))
+                output[attr] = clean_attr(attr, match.group(1))
 
     return output
 
 
-def extractYear(titleStr):
-    year = re.match(r"^20\d{2}", titleStr)
+def extract_year(title_str):
+    year = re.match(r"^20\d{2}", title_str)
 
     if not year:
         return None

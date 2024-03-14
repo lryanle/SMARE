@@ -1,16 +1,16 @@
 import re
 
 
-def cleanCurrency(priceStr):
-    cleanStr = priceStr.replace("$", "").replace(",", "")
+def clean_currency(price_str):
+    clean_str = price_str.replace("$", "").replace(",", "")
 
-    if cleanStr.lower() == "Free":
-        cleanStr = "0"
+    if clean_str.lower() == "Free":
+        clean_str = "0"
 
-    return float(cleanStr)
+    return float(clean_str)
 
 
-def cleanOdometer(odometerStr):
-    cleanStr = odometerStr.replace("k", "000").replace(",", "").replace(" mi", "")
+def clean_odometer(odometer_str):
+    clean_str = odometer_str.replace("k", "000").replace(",", "").replace(" mi", "")
 
-    return int(cleanStr)
+    return int(clean_str)

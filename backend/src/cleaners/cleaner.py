@@ -6,52 +6,55 @@ CONSECUTIVE_ERROR_LIMIT = 3
 
 
 def clean(car):
-    cleanCar = {}
+    clean_car = {}
 
     if car["source"] == "facebook":
-        cleanCar["attributes"] = fb.extractAttributes(car["attributes"])
+        clean_car["attributes"] = fb.extract_attributes(car["attributes"])
     elif car["source"] == "craigslist":
         # TODO: Modularize craigslist cleaner
         print("Craigslist car")
 
-    cleanCar["price"] = utils.cleanCurrency(car["price"])
+    clean_car["price"] = utils.clean_currency(car["price"])
 
-    return cleanCar
+    return clean_car
 
 
-def run(logger, isDone, version):
-    cars = db.findCarsInStage("scrape")
+def run(logger, is_done, version):
+    cars = db.find_cars_in_stage("scrape")
 
     logger("began cleaners")
     logger(f"found {len(cars)} unclean cars")
 
-    totalCleaned = 0
-    totalErrs = 0
-    consecutiveErrs = 0
+    total_cleaned = 0
+    total_errs = 0
+    consecutive_errs = 0
 
     for car in cars:
         try:
-            cleanFields = clean(db.decode(car))
-            cleanFields["stage"] = "clean"
-            cleanFields["cleaner-version"] = version
+            clean_fields = clean(db.decode(car))
+            clean_fields["stage"] = "clean"
+            clean_fields["cleaner-version"] = version
 
-            db.update(car["link"], cleanFields)
+            db.update(car["link"], clean_fields)
             logger(f"cleaned _id: {car['_id']}")
 
-            totalCleaned += 1
-            consecutiveErrs = 0
+            total_cleaned += 1
+            consecutive_errs = 0
         except Exception as error:
-            totalErrs += 1
-            consecutiveErrs += 1
+            total_errs += 1
+            consecutive_errs += 1
 
             logger(f"failed cleaning _id: {car['_id']}\n{error}")
 
-            if consecutiveErrs >= CONSECUTIVE_ERROR_LIMIT:
-                logger(f"cleaner failed {consecutiveErrs} in a row. Stopping cleaner early.")
+            if consecutive_errs >= CONSECUTIVE_ERROR_LIMIT:
+                logger(f"cleaner failed {consecutive_errs} in a row. Stopping cleaner early.")
                 break
 
-        if isDone:
+        if is_done:
             break
 
-    logger(f"cleaning summary: {totalErrs} errors, {totalCleaned} cleaned,"
-           f" {len(cars) - totalErrs - totalCleaned} unreached")
+    logger(f"cleaning summary: {total_errs} errors, {total_cleaned} cleaned,"
+           f" {len(cars) - total_errs - total_cleaned} unreached")
+
+def __init__():
+    print("cleaner initialized")

@@ -11,6 +11,7 @@ cont = "docker run --name smarecontainer -d smare:latest"
 exec = "docker exec -it smarecontainer"
 craigslist = "pipenv run exec python3 -c 'import app; app.craigslist()'"
 facebook = "pipenv run exec python3 -c 'import app; app.facebook()'"
+cleaner = "pipenv run exec python3 -c 'import app; app.clean()'"
 
 [packages]
 selenium = "*"

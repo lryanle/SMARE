@@ -51,7 +51,7 @@ def findPostWithLink(link):
 def findCarsInStage(stage):
     conn = getConn(DATABASE)
 
-    return conn["db"][COLLECTION].find({"stage": stage})
+    return list(conn["db"][COLLECTION].find({"stage": stage}))
 
 
 def findAllCars():
@@ -138,10 +138,10 @@ def encodeArr(arr):
     return encodedArr
 
 
-def deencodeArr(arr):
-    dencodedArr = []
+def decodeArr(arr):
+    decodedArr = []
 
     for elem in arr:
-        dencodedArr.append(unquote(elem))
+        decodedArr.append(unquote(elem))
 
-    return dencodedArr
+    return decodedArr

@@ -1,8 +1,9 @@
 from src.scrapers import utils as scrapeUtil
 from src.cleaners import cleaner
 
-CL_SCRAPER_VERSION = 4
-FB_SCRAPER_VERSION = 4
+CL_SCRAPER_VERSION = 5
+FB_SCRAPER_VERSION = 5
+CLEANER_VERSION = 1
 
 DUPLICATE_TERMINATION_LIMIT = 5
 
@@ -34,6 +35,6 @@ def facebook():
 def clean():
     logs, loggerFactory = initializeLogger()
 
-    cleaner.run(loggerFactory("clean"), False)
+    cleaner.run(loggerFactory("clean"), False, CLEANER_VERSION)
 
     print(logs)

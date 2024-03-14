@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 DATABASE = "scrape"
 COLLECTION = "scraped_raw"
 
+DONT_DECODE = ["link", "_id", "price", "odometer"]
+
 
 def getConn(db):
     # load environment variable containing db uri
@@ -51,7 +53,7 @@ def findPostWithLink(link):
 def findCarsInStage(stage):
     conn = getConn(DATABASE)
 
-    return list(conn["db"][COLLECTION].find({"stage": stage}))
+    return [decode(car) for car in conn["db"][COLLECTION].find({"stage": stage})]
 
 
 def findAllCars():
@@ -72,8 +74,6 @@ def postRaw(scraperVersion, source, car):
 
     # Encode car listing
     encodedCar = encode(car)
-    if source == "facebook":
-        encodedCar["attributes"] = encodeArr(encodedCar["attributes"])
 
     metadata = {
         "_id": extractIdFromLink(car["link"]),
@@ -108,8 +108,10 @@ def encode(obj):
 
     for field, value in obj.items():
         # the urls in the images field will not be encoded because they are an array
-        if isinstance(value, str) and field != "link":
+        if isinstance(value, str) and field not in DONT_DECODE:
             encodedObj[field] = quote(value)
+        elif isinstance(value, list) and field not in DONT_DECODE:
+            encodedObj[field] = encodeArr(field)
         else:
             encodedObj[field] = value
 
@@ -121,8 +123,10 @@ def decode(obj):
 
     for field, value in obj.items():
         # the urls in the images field will not be decoded because they are an array
-        if isinstance(value, str) and field != "link":
+        if isinstance(value, str) and field not in DONT_DECODE:
             decodedObj[field] = unquote(value)
+        elif isinstance(value, list) and field not in DONT_DECODE:
+            decodedObj[field] = decodeArr(field)
         else:
             decodedObj[field] = value
 

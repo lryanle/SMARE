@@ -9,7 +9,7 @@ def clean(car):
     cleanCar = {}
 
     if car["source"] == "facebook":
-        cleanCar["attributes"] = fb.extractAttributes(db.decodeArr(car["attributes"]))
+        cleanCar["attributes"] = fb.extractAttributes(car["attributes"])
     elif car["source"] == "craigslist":
         # TODO: Modularize craigslist cleaner
         print("Craigslist car")
@@ -19,7 +19,7 @@ def clean(car):
     return cleanCar
 
 
-def run(logger, isDone):
+def run(logger, isDone, version):
     cars = db.findCarsInStage("scrape")
 
     logger("began cleaners")
@@ -33,6 +33,7 @@ def run(logger, isDone):
         try:
             cleanFields = clean(db.decode(car))
             cleanFields["stage"] = "clean"
+            cleanFields["cleaner-version"] = version
 
             db.update(car["link"], cleanFields)
             logger(f"cleaned _id: {car['_id']}")

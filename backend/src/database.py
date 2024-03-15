@@ -63,6 +63,11 @@ def find_all_cars():
     return conn["db"][COLLECTION].find()
 
 
+def find_unanalyzed_cars(model):
+    conn = get_conn(DATABASE)
+
+    return [decode(car) for car in conn["db"][COLLECTION].find({"stage": "clean", model: -1})]
+
 def post_raw(scraper_version, source, car):
     print("Connecting to DB...")
     conn = get_conn(DATABASE)

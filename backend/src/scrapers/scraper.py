@@ -36,7 +36,7 @@ def run(website, scraper_version, duplicate_threshold):
 
                 post.update(stage2)
 
-                success = db.postRaw(scraper_version, website, post)
+                success = db.post_raw(scraper_version, website, post)
                 if success:
                     print("posted to db")
                 else:

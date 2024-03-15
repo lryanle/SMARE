@@ -35,6 +35,14 @@ def run(logger, is_done, version):
             clean_fields["stage"] = "clean"
             clean_fields["cleaner_version"] = version
 
+            clean_fields["model_1"] = -1
+            clean_fields["model_2"] = -1
+            clean_fields["model_3"] = -1
+            clean_fields["model_4"] = -1
+            clean_fields["model_5"] = -1
+            clean_fields["model_6"] = -1
+            clean_fields["model_7"] = -1
+
             db.update(car["link"], clean_fields)
             logger(f"cleaned _id: {car['_id']}")
 

@@ -33,7 +33,7 @@ def run(logger, is_done, version):
         try:
             clean_fields = clean(db.decode(car))
             clean_fields["stage"] = "clean"
-            clean_fields["cleaner-version"] = version
+            clean_fields["cleaner_version"] = version
 
             db.update(car["link"], clean_fields)
             logger(f"cleaned _id: {car['_id']}")

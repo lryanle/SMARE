@@ -5,13 +5,13 @@ import re
 attrPatterns = {
     'odometer': r'Driven\s*([\d,]+)\s*miles',
     'transmission': r'^([A-Za-z]+)\s*transmission',
-    'safetyRating': r'(\d/\d)\s*overall\s*NHTSA\s*safety\s*rating',
-    'fuelType': r'Fuel\s*type:\s*([A-Za-z]+)',
-    'cityMpg': r'(\d+\.\d+)\s*MPG\s*city',
-    'highwayMpg': r'(\d+\.\d+)\s*MPG\s*highway',
-    'combinedMpg': r'(\d+\.\d+)\s*MPG\s*combined',
-    'exteriorColor': r'Exterior\s*color:\s*([A-Za-z]+\s[A-Za-z]+?)\s',
-    'interiorColor': r'Interior\s*color:\s*([A-Za-z]+\s[A-Za-z]+?)$',
+    'safety_rating': r'(\d/\d)\s*overall\s*NHTSA\s*safety\s*rating',
+    'fuel_type': r'Fuel\s*type:\s*([A-Za-z]+)',
+    'city_mpg': r'(\d+\.\d+)\s*MPG\s*city',
+    'highway_mpg': r'(\d+\.\d+)\s*MPG\s*highway',
+    'combined_mpg': r'(\d+\.\d+)\s*MPG\s*combined',
+    'exterior_color': r'Exterior\s*color:\s*([A-Za-z]+\s[A-Za-z]+?)\s',
+    'interior_color': r'Interior\s*color:\s*([A-Za-z]+\s[A-Za-z]+?)$',
     'title': r'([A-Za-z]+)\s*title',
     'condition': r'([A-Za-z]+\s[A-Za-z]+?)\s*condition',
 }
@@ -20,9 +20,9 @@ attrPatterns = {
 def clean_attr(attr, value):
     if attr == 'odometer':
         return int(value.replace(",", ""))
-    elif attr == 'highwayMpg' or attr == 'cityMpg' or attr == 'combinedMpg':
+    elif attr == 'highway_mpg' or attr == 'city_mpg' or attr == 'combined_mpg':
         return float(value)
-    elif attr == 'safetyRating':
+    elif attr == 'safety_rating':
         score, maxscore = value.split('/')
         return float(score) / float(maxscore)
     else:

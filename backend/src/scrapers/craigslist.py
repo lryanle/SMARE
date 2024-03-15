@@ -79,7 +79,7 @@ def process_attributes(attributes):
         label = (
             attr.find("span", class_="labl")
             .text.replace(":", "")
-            .replace(" ", "-")
+            .replace(" ", "_")
             .lower()
         )
         value = attr.find("span", class_="valu").text
@@ -122,9 +122,9 @@ def scrape_listing(url, browser):
         return None
 
     return {
-        "postBody": description,
+        "post_body": description,
         "year": year,
-        "makeModel": make_model,
+        "makemodel": make_model,
         "latitude": latitude,
         "longitude": longitude,
         "attributes": attributes,

@@ -79,8 +79,8 @@ def post_raw(scraper_version, source, car):
     metadata = {
         "_id": extract_id_from_link(car["link"]),
         "source": source,
-        "scraper-version": scraper_version,
-        "scrape-date": str(date.today()),
+        "scraper_version": scraper_version,
+        "scrape_date": str(date.today()),
         "stage": "scrape"
     }
 

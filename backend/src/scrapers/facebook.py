@@ -143,4 +143,4 @@ def scrape_listing(url, browser):
         print(f"Failed scraping {url}: \n{err}")
         return None
 
-    return {"postBody": description, "attributes": attributes, "images": images}
+    return {"post_body": description, "attributes": attributes, "images": images}

@@ -1,5 +1,4 @@
 import backend.src.models.MOVETOCLEAN_car_data as MOVETOCLEAN_car_data
-import pandas as pd
 
 def m4_riskscores():
     # VEHICLE FREQUENCY MODEL

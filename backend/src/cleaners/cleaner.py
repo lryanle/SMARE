@@ -1,5 +1,6 @@
 from .. import database as db
 from . import facebook as fb
+from . import craigslist as cl
 from . import utils
 
 CONSECUTIVE_ERROR_LIMIT = 3
@@ -11,10 +12,11 @@ def clean(car):
     if car["source"] == "facebook":
         clean_car["attributes"] = fb.extract_attributes(car["attributes"])
     elif car["source"] == "craigslist":
-        # TODO: Modularize craigslist cleaner
-        print("Craigslist car")
+        clean_car["attributes"] = cl.extract_attributes(car["attributes"])
+        clean_car.update(cl.str_to_num(car))
 
     clean_car["price"] = utils.clean_currency(car["price"])
+    clean_car["odometer"] = clean_car["attributes"]["odometer"]
 
     return clean_car
 

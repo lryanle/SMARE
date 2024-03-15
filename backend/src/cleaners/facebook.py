@@ -53,8 +53,8 @@ def extract_year(title_str):
     return int(year.group(0))
 
 def extract_model_wreg(title, make):
-    with open("kbb_data.json") as kbbjson:
-        models = json.load(kbbjson)
+    with open("car_models.json") as models_json:
+        models = json.load(models_json)
 
     # Use regex to find patterns like "2021 RAM 3500" in the title
     match = re.search(r"\b\d{4}\s*[a-zA-Z0-9-]+\s*([a-zA-Z0-9-]+)\b", title)

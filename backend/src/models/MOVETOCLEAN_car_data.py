@@ -2,9 +2,9 @@ import json
 import re
 from difflib import get_close_matches
 
-import cleaner
+import model_cleaner
 
-cars = cleaner.cars
+cars = model_cleaner.cars
 
 # Dictionary of car makes
 kbb_make = [
@@ -64,9 +64,7 @@ title = cars["title"]
 def extract_make(title):
     title_lower = title.lower()
     for make in kbb_make:
-        if make in title_lower:
-            return make
-        elif len(make) >= 4 and make[:4] in title_lower:
+        if make in title_lower or (len(make) >= 4 and make[:4] in title_lower):
             return make
     return None
 

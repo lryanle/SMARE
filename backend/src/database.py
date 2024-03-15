@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 DATABASE = "scrape"
 COLLECTION = "scraped_raw"
 
-DONT_DECODE = ["link", "_id", "price", "odometer"]
+DONT_DECODE = ["link", "_id", "price", "odometer", "images"]
 
 
 def get_conn(db):
@@ -20,8 +20,7 @@ def get_conn(db):
     # create a mongodb connection
     try:
         db_uri = os.environ.get("DB_URI")
-        sanitized_uri = quote(db_uri)
-        client = pymongo.MongoClient(sanitized_uri)
+        client = pymongo.MongoClient(db_uri)
 
     # return a friendly error if a URI error is thrown
     except pymongo.errors.ConfigurationError:
@@ -113,11 +112,10 @@ def encode(obj):
     encoded_obj = {}
 
     for field, value in obj.items():
-        # the urls in the images field will not be encoded because they are an array
         if isinstance(value, str) and field not in DONT_DECODE:
             encoded_obj[field] = quote(value)
-        elif isinstance(value, list) and field not in DONT_DECODE:
-            encoded_obj[field] = encode_arr(field)
+        elif isinstance(value, list) and isinstance(value[0], str) and field not in DONT_DECODE:
+            encoded_obj[field] = encode_arr(value)
         else:
             encoded_obj[field] = value
 
@@ -131,8 +129,8 @@ def decode(obj):
         # the urls in the images field will not be decoded because they are an array
         if isinstance(value, str) and field not in DONT_DECODE:
             decoded_obj[field] = unquote(value)
-        elif isinstance(value, list) and field not in DONT_DECODE:
-            decoded_obj[field] = decode_arr(field)
+        elif isinstance(value, list) and isinstance(value[0], str) and field not in DONT_DECODE:
+            decoded_obj[field] = decode_arr(value)
         else:
             decoded_obj[field] = value
 

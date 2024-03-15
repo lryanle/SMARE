@@ -7,11 +7,11 @@ from .utils import load_page_resources, setup_browser
 
 def run(website, scraper_version, duplicate_threshold):
     if website == "craigslist":
-        website = craigslist
+        scraper = craigslist
     elif website == "facebook":
-        website = facebook
+        scraper = facebook
 
-    city_urls = website.setup_urls(2011)
+    city_urls = scraper.setup_urls(2011)
     browser = setup_browser()
 
     for url in city_urls:
@@ -21,7 +21,7 @@ def run(website, scraper_version, duplicate_threshold):
         print(f"Loading cars from {url}")
         load_page_resources(browser)
 
-        car_posts = website.get_all_posts(browser)
+        car_posts = scraper.get_all_posts(browser)
 
         duplicate_post_count = 0
 
@@ -31,8 +31,8 @@ def run(website, scraper_version, duplicate_threshold):
                 break
 
             try:
-                post = website.get_car_info(post)
-                stage2 = website.scrape_listing(post["link"], browser)
+                post = scraper.get_car_info(post)
+                stage2 = scraper.scrape_listing(post["link"], browser)
 
                 post.update(stage2)
 

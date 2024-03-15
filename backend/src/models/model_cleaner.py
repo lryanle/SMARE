@@ -4,7 +4,7 @@ import re
 
 import pandas as pd
 
-from .. import database as db
+from ..utils import database as db
 
 # Fetch data from MongoDB and convert it to a DataFrame
 cursor = db.findAllCars()

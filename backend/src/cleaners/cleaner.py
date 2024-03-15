@@ -47,14 +47,19 @@ def run(logger, is_done, version):
             logger(f"failed cleaning _id: {car['_id']}\n{error}")
 
             if consecutive_errs >= CONSECUTIVE_ERROR_LIMIT:
-                logger(f"cleaner failed {consecutive_errs} in a row. Stopping cleaner early.")
+                logger(
+                    f"cleaner failed {consecutive_errs} in a row. Stopping cleaner early."
+                )
                 break
 
         if is_done:
             break
 
-    logger(f"cleaning summary: {total_errs} errors, {total_cleaned} cleaned,"
-           f" {len(cars) - total_errs - total_cleaned} unreached")
+    logger(
+        f"cleaning summary: {total_errs} errors, {total_cleaned} cleaned,"
+        f" {len(cars) - total_errs - total_cleaned} unreached"
+    )
+
 
 def __init__():
     print("cleaner initialized")

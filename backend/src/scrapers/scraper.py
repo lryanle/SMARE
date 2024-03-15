@@ -2,7 +2,8 @@ from pymongo.errors import DuplicateKeyError
 
 from .. import database as db
 from . import craigslist, facebook
-from utils import setup_browser, load_page_resources
+from .utils import load_page_resources, setup_browser
+
 
 def run(website, scraper_version, duplicate_threshold):
     if website == "craigslist":

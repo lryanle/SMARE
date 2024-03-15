@@ -1,5 +1,5 @@
 # import necessary libraries
-import backend.src.models.MOVETOCLEAN_car_data as MOVETOCLEAN_car_data
+import MOVETOCLEAN_car_data
 import numpy as np
 import pandas as pd
 from fuzzywuzzy import fuzz

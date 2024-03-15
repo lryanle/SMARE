@@ -1,14 +1,61 @@
+import json
 import re
 from difflib import get_close_matches
-import json
+
 import cleaner
+
 cars = cleaner.cars
 
 # Dictionary of car makes
-kbb_make = ["acura", "alfa-romeo", "aston-martin", "audi", "bentley", "bmw", "buick", "cadillac", "chevrolet", "chrysler", "dodge", "ferrari", "fiat", "ford", "genesis", "gmc", "honda", "hyundai", "infiniti", "jaguar", "jeep", "kia", "lamborghini", "landrover", "lexus", "lincoln", "lucid", "maserati", "mazda", "mclaren", "mercedes-benz", "mini", "mitsubishi", "nissan", "polestar", "porsche", "ram", "rivian", "rolls-royce", "subaru", "tesla", "toyota", "volkswagen", "volvo"]
+kbb_make = [
+    "acura",
+    "alfa-romeo",
+    "aston-martin",
+    "audi",
+    "bentley",
+    "bmw",
+    "buick",
+    "cadillac",
+    "chevrolet",
+    "chrysler",
+    "dodge",
+    "ferrari",
+    "fiat",
+    "ford",
+    "genesis",
+    "gmc",
+    "honda",
+    "hyundai",
+    "infiniti",
+    "jaguar",
+    "jeep",
+    "kia",
+    "lamborghini",
+    "landrover",
+    "lexus",
+    "lincoln",
+    "lucid",
+    "maserati",
+    "mazda",
+    "mclaren",
+    "mercedes-benz",
+    "mini",
+    "mitsubishi",
+    "nissan",
+    "polestar",
+    "porsche",
+    "ram",
+    "rivian",
+    "rolls-royce",
+    "subaru",
+    "tesla",
+    "toyota",
+    "volkswagen",
+    "volvo",
+]
 
 with open("kbb_data.json") as kbbjson:
-    kbb_models = json.load(kbbjson) 
+    kbb_models = json.load(kbbjson)
 
 title = cars["title"]
 

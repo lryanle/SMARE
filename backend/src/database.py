@@ -16,7 +16,7 @@ def get_conn(db):
     # load environment variable containing db uri
     # (which includes username and password)
     load_dotenv()
-    
+
     # create a mongodb connection
     try:
         db_uri = os.environ.get("DB_URI")
@@ -81,7 +81,7 @@ def post_raw(scraper_version, source, car):
         "source": source,
         "scraper_version": scraper_version,
         "scrape_date": str(date.today()),
-        "stage": "scrape"
+        "stage": "scrape",
     }
 
     # attach metadata to car before pushing to db
@@ -150,6 +150,7 @@ def decode_arr(arr):
         decoded_arr.append(unquote(elem))
 
     return decoded_arr
+
 
 def __init__():
     print("database initialized")

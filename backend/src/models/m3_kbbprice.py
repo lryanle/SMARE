@@ -1,9 +1,11 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
-import backend.src.models.MOVETOCLEAN_car_data as MOVETOCLEAN_car_data
+
+import MOVETOCLEAN_car_data
 import numpy as np
 import pandas as pd
 import requests
+
 
 def m3_riskscores():
     # MARKET PRICE COMPARISON
@@ -34,7 +36,9 @@ def m3_riskscores():
 
     # Use ThreadPoolExecutor to parallelize the scraping process
     with ThreadPoolExecutor(max_workers=5) as executor:
-        kbb_prices = list(executor.map(get_kbb_price, cars_df.to_dict(orient="records")))
+        kbb_prices = list(
+            executor.map(get_kbb_price, cars_df.to_dict(orient="records"))
+        )
 
     cars_df["kbb_price"] = kbb_prices
 
@@ -46,7 +50,9 @@ def m3_riskscores():
     cars_df = cars_df.dropna(subset=["price", "kbb_price"])
 
     # Calculate price difference using .loc accessor
-    cars_df.loc[:, "price_difference"] = np.abs(cars_df["price"].astype(float) - cars_df["kbb_price"].astype(float))
+    cars_df.loc[:, "price_difference"] = np.abs(
+        cars_df["price"].astype(float) - cars_df["kbb_price"].astype(float)
+    )
 
     # Function to calculate reasonable price difference (rd_kbb)
     def calculate_reasonable_difference(kbb_price):
@@ -60,7 +66,7 @@ def m3_riskscores():
         delta_p = np.abs(listed_price - kbb_price)
         rd_kbb = calculate_reasonable_difference(kbb_price)
         x = delta_p / rd_kbb
-        y = 0.26 * x ** 2 + 0.07 * x
+        y = 0.26 * x**2 + 0.07 * x
         y = np.clip(y, 0, 1)
         return y
 
@@ -70,4 +76,3 @@ def m3_riskscores():
     )
 
     return cars_df
-

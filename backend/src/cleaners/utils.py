@@ -1,6 +1,3 @@
-import re
-
-
 def clean_currency(price_str):
     clean_str = price_str.replace("$", "").replace(",", "")
 

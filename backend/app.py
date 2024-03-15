@@ -1,5 +1,5 @@
-from src.scrapers import scraper
 from src.cleaners import cleaner
+from src.scrapers import scraper
 
 CL_SCRAPER_VERSION = 5
 FB_SCRAPER_VERSION = 5
@@ -9,11 +9,7 @@ DUPLICATE_TERMINATION_LIMIT = 5
 
 
 def initializeLogger():
-    log = {
-        "scrape": [],
-        "clean": [],
-        "analyze": []
-    }
+    log = {"scrape": [], "clean": [], "analyze": []}
 
     def loggerFactory(module):
         def logger(message):

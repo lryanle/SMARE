@@ -1,4 +1,5 @@
-import backend.src.models.MOVETOCLEAN_car_data as MOVETOCLEAN_car_data
+import MOVETOCLEAN_car_data
+
 
 def m4_riskscores():
     # VEHICLE FREQUENCY MODEL

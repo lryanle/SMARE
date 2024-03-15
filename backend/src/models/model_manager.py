@@ -1,6 +1,6 @@
 # Importing the M3_riskscores and M4_riskscores functions from their respective modules
-from M3 import m3_riskscores
-from M4 import m4_riskscores
+from m3_kbbprice import m3_riskscores
+from m4_carfreq import m4_riskscores
 import pandas as pd
 
 # todo: pass in data from mongo through each function

@@ -7,12 +7,13 @@ import pymongo
 from dotenv import load_dotenv
 
 DATABASE = "scrape"
-COLLECTION = "scraped_raw"
+SCRAPE_COLLECTION = "scraped_raw"
+LOG_COLLECTION = "logs"
 
 DONT_DECODE = ["link", "_id", "price", "odometer", "images"]
 
 
-def get_conn(db):
+def get_conn(db=DATABASE):
     # load environment variable containing db uri
     # (which includes username and password)
     load_dotenv()
@@ -47,25 +48,26 @@ def extract_id_from_link(link):
 def find_post_with_link(link):
     conn = get_conn(DATABASE)
 
-    return conn["db"][COLLECTION].find_one({"_id": extract_id_from_link(link)})
+    return conn["db"][SCRAPE_COLLECTION].find_one({"_id": extract_id_from_link(link)})
 
 
 def find_cars_in_stage(stage):
     conn = get_conn(DATABASE)
 
-    return [decode(car) for car in conn["db"][COLLECTION].find({"stage": stage})]
+    return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage})]
 
 
 def find_all_cars():
     conn = get_conn(DATABASE)
 
-    return conn["db"][COLLECTION].find()
+    return conn["db"][SCRAPE_COLLECTION].find()
 
 
 def find_unanalyzed_cars(model):
     conn = get_conn(DATABASE)
 
-    return [decode(car) for car in conn["db"][COLLECTION].find({"stage": "clean", model: -1})]
+    return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": "clean", model: -1})]
+
 
 def post_raw(scraper_version, source, car):
     print("Connecting to DB...")
@@ -92,7 +94,7 @@ def post_raw(scraper_version, source, car):
     encoded_car.update(metadata)
 
     # push encoded car (with metadata) to db
-    result = conn["db"][COLLECTION].insert_one(encoded_car)
+    result = conn["db"][SCRAPE_COLLECTION].insert_one(encoded_car)
     return result.acknowledged
 
 
@@ -102,9 +104,16 @@ def update(link, new_fields):
         print("Failed to connect to DB...")
         return False
 
-    result = conn["db"][COLLECTION].update_one(
+    result = conn["db"][SCRAPE_COLLECTION].update_one(
         {"_id": extract_id_from_link(link)}, {"$set": new_fields}
     )
+    return result.acknowledged
+
+
+def post_log(conn, time, level, message):
+    log = {"_id": time, "level": level, "message": message}
+
+    result = conn["db"][LOG_COLLECTION].insert_one(log)
     return result.acknowledged
 
 

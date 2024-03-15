@@ -14,6 +14,7 @@ def clean_odometer(odometer_str):
 
     return int(clean_str)
 
+
 CAR_MAKES = [
     "acura",
     "alfa-romeo",

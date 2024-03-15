@@ -23,6 +23,7 @@ requests = "*"
 pandas = "*"
 imblearn = "*"
 fuzzywuzzy = "*"
+loguru = "*"
 
 [dev-packages]
 isort = "*"

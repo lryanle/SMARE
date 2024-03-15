@@ -21,6 +21,7 @@ def get_conn(db=DATABASE):
     # create a mongodb connection
     try:
         db_uri = os.environ.get("DB_URI")
+        # deepcode ignore Ssrf: .env's content is controlled by the developer
         client = pymongo.MongoClient(db_uri)
 
     # return a friendly error if a URI error is thrown

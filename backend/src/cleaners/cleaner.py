@@ -1,4 +1,4 @@
-from .. import database as db
+from ..utils import database as db
 from . import facebook as fb
 from . import craigslist as cl
 from . import utils

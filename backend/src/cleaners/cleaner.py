@@ -14,14 +14,17 @@ def clean(car):
         clean_car = {}
 
         if car["source"] == "facebook":
-            clean_car["attributes"] = fb.extract_attributes(car["attributes"])
-            clean_car["make"] = utils.extract_make(car["title"])
-            clean_car["model"] = fb.extract_model(car["title"], clean_car["make"])
+            attributes = clean_car["attributes"] = fb.extract_attributes(car["attributes"])
+            make = clean_car["make"] = utils.extract_make(car["title"])
+            model = clean_car["model"] = fb.extract_model(car["title"], clean_car["make"])
         elif car["source"] == "craigslist":
-            clean_car["attributes"] = cl.extract_attributes(car["attributes"])
+            attributes = clean_car["attributes"] = cl.extract_attributes(car["attributes"])
             clean_car.update(cl.str_to_num(car))
-            clean_car["make"] = utils.extract_make(car["makemodel"])
-            clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
+            make = clean_car["make"] = utils.extract_make(car["makemodel"])
+            model = clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
+
+        if not attributes or not make or not model:
+            raise Exception("Failed cleaning attributes, make, or model")
 
         clean_car["price"] = utils.clean_currency(car["price"])
         clean_car["odometer"] = clean_car["attributes"]["odometer"]
@@ -53,7 +56,11 @@ def run(is_done, version):
                     clean_fields[f"model_{i}"] = -1
                 clean_fields["risk_score"] = -1
 
-                db.update(car["link"], clean_fields)
+                is_update_sucess = db.update(car["link"], clean_fields)
+
+                if not is_update_sucess:
+                    raise ValueError("Failed updating the database.")
+                
                 logger.info(f"Cleaned _id: {car['_id']}")
                 total_cleaned += 1
                 consecutive_errs = 0

@@ -1,8 +1,8 @@
 from ..utilities import database as db
-from . import facebook as fb
-from . import craigslist as cl
-from . import utils
 from ..utilities import logger
+from . import craigslist as cl
+from . import facebook as fb
+from . import utils
 
 logger = logger.SmareLogger()
 
@@ -14,14 +14,22 @@ def clean(car):
         clean_car = {}
 
         if car["source"] == "facebook":
-            attributes = clean_car["attributes"] = fb.extract_attributes(car["attributes"])
+            attributes = clean_car["attributes"] = fb.extract_attributes(
+                car["attributes"]
+            )
             make = clean_car["make"] = utils.extract_make(car["title"])
-            model = clean_car["model"] = fb.extract_model(car["title"], clean_car["make"])
+            model = clean_car["model"] = fb.extract_model(
+                car["title"], clean_car["make"]
+            )
         elif car["source"] == "craigslist":
-            attributes = clean_car["attributes"] = cl.extract_attributes(car["attributes"])
+            attributes = clean_car["attributes"] = cl.extract_attributes(
+                car["attributes"]
+            )
             clean_car.update(cl.str_to_num(car))
             make = clean_car["make"] = utils.extract_make(car["makemodel"])
-            model = clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
+            model = clean_car["model"] = cl.extract_model(
+                car["makemodel"], clean_car["make"]
+            )
 
         if not attributes or not make or not model:
             raise Exception("Failed cleaning attributes, make, or model")
@@ -60,7 +68,7 @@ def run(is_done, version):
 
                 if not is_update_sucess:
                     raise ValueError("Failed updating the database.")
-                
+
                 logger.info(f"Cleaned _id: {car['_id']}")
                 total_cleaned += 1
                 consecutive_errs = 0
@@ -85,6 +93,7 @@ def run(is_done, version):
         f"Cleaning summary: {total_errs} errors, {total_cleaned} cleaned, "
         f"{len(cars) - total_cleaned} unreached (due to errors or incomplete processing)."
     )
+
 
 def __init__():
     logger.info("Cleaner initialized")

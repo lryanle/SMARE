@@ -2,10 +2,11 @@ import os
 import re
 from datetime import date
 from urllib.parse import quote, unquote
-from .logger import SmareLogger
 
 import pymongo
 from dotenv import load_dotenv
+
+from .logger import SmareLogger
 
 DATABASE = "scrape"
 SCRAPE_COLLECTION = "scraped_raw"
@@ -14,6 +15,7 @@ LOG_COLLECTION = "logs"
 DONT_DECODE = ["link", "_id", "price", "odometer", "images"]
 
 logger = SmareLogger()
+
 
 def get_conn(db=DATABASE):
     # load environment variable containing db uri
@@ -58,10 +60,12 @@ def extract_id_from_link(link):
 
 
 def find_post_with_link(link):
-    try: 
+    try:
         conn = get_conn(DATABASE)
 
-        return conn["db"][SCRAPE_COLLECTION].find_one({"_id": extract_id_from_link(link)})
+        return conn["db"][SCRAPE_COLLECTION].find_one(
+            {"_id": extract_id_from_link(link)}
+        )
     except Exception as e:
         logger.error(f"Database: Failed to find post with link. Error: {e}")
         return None
@@ -71,7 +75,9 @@ def find_cars_in_stage(stage):
     try:
         conn = get_conn(DATABASE)
 
-        return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage})]
+        return [
+            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage})
+        ]
     except Exception as e:
         logger.error(f"Database: Failed to find cars in stage. Error: {e}")
         return None
@@ -110,10 +116,9 @@ def find_unanalyzed_cars():
         return None
 
 
-
 def post_raw(scraper_version, source, car):
     logger.info("Database: Connecting to DB...")
-    try: 
+    try:
         conn = get_conn(DATABASE)
     except Exception as e:
         logger.error(f"Database: Failed to connect to DB. Error: {e}")
@@ -150,12 +155,12 @@ def post_raw(scraper_version, source, car):
 
 
 def update(link, new_fields):
-    try: 
+    try:
         conn = get_conn(DATABASE)
     except Exception as e:
         logger.error(f"Database: Failed to connect to DB. Error: {e}")
         return False
-    
+
     if not conn["success"]:
         logger.error("Database: Failed to connect to DB.")
         return False
@@ -167,7 +172,7 @@ def update(link, new_fields):
     except Exception as e:
         logger.error(f"Database: Failed to update car data. Error: {e}")
         return False
-        
+
     return result.acknowledged
 
 
@@ -204,7 +209,7 @@ def post_log(
     except Exception as e:
         logger.error(f"Database: Failed to post log to the db. Error: {e}")
         return False
-    
+
     return result.acknowledged
 
 

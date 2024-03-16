@@ -1,6 +1,7 @@
-import re
 import json
+import re
 from difflib import SequenceMatcher, get_close_matches
+
 from ..utilities import logger
 
 logger = logger.SmareLogger()

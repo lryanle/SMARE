@@ -1,7 +1,8 @@
-import time
 import re
+import time
 
 from bs4 import BeautifulSoup
+
 from ..utilities import logger
 
 logger = logger.SmareLogger()
@@ -58,8 +59,11 @@ def get_all_posts(browser):
 
 
 def is_website(str):
-    match = re.match(r"www[\.\-_\s]|[a-zA-Z0-9-]+[\.\s\-_][a-zA-Z]{2,}|[a-zA-Z0-9-]+[\.\s\-_][a-zA-Z]{2,}[\.\s\-_][a-zA-Z]{2,}", str)
-    
+    match = re.match(
+        r"www[\.\-_\s]|[a-zA-Z0-9-]+[\.\s\-_][a-zA-Z]{2,}|[a-zA-Z0-9-]+[\.\s\-_][a-zA-Z]{2,}[\.\s\-_][a-zA-Z]{2,}",
+        str,
+    )
+
     return bool(match)
 
 
@@ -72,7 +76,7 @@ def get_car_info(post):
         metadata = post.find("div", class_="meta").text.split("·")
 
         odometer = metadata[1].strip()
-        location = metadata[2].strip() if len(metadata) >= 3 else 'Unknown location'
+        location = metadata[2].strip() if len(metadata) >= 3 else "Unknown location"
 
         link = post.find("a", class_="posting-title", href=True)["href"]
 

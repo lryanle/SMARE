@@ -69,7 +69,7 @@ def m3_riskscores():
             delta_p = np.abs(listed_price - kbb_price)
             rd_kbb = calculate_reasonable_difference(kbb_price)
             x = delta_p / rd_kbb
-            y = 0.26 * x ** 2 + 0.07 * x
+            y = 0.26 * x**2 + 0.07 * x
             y = np.clip(y, 0, 1)
             return y
 
@@ -77,9 +77,19 @@ def m3_riskscores():
     cars_df["risk_score_M3"] = cars_df.apply(
         lambda row: calculate_risk_score(row["price"], row["kbb_price"]), axis=1
     )
-    output_df = cars_df[['manufacturer', 'model', 'year', 'price', 'kbb_price', 'price_difference','risk_score_M3']]
+    output_df = cars_df[
+        [
+            "manufacturer",
+            "model",
+            "year",
+            "price",
+            "kbb_price",
+            "price_difference",
+            "risk_score_M3",
+        ]
+    ]
     # Save the results to a CSV file
-    output_csv_filename = 'price_comparison_results.csv'
+    output_csv_filename = "price_comparison_results.csv"
     output_df.to_csv(output_csv_filename, index=False)
-    
+
     return cars_df

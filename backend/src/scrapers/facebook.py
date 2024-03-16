@@ -1,6 +1,7 @@
 import time
 
 from bs4 import BeautifulSoup
+
 from ..utilities import logger
 from . import utils
 
@@ -46,8 +47,7 @@ def get_all_posts(browser):
         # Create a BeautifulSoup object from the HTML of the page
         html = browser.page_source
         soup = BeautifulSoup(html, "html.parser")
-        
-        
+
         return soup.find_all("div", class_=postClass)
     except Exception as e:
         logger.error(f"Failed to get page source: {e}")

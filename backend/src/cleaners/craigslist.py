@@ -1,7 +1,9 @@
-from .utils import clean_odometer, extract_model as model_parser
 from ..utilities import logger
+from .utils import clean_odometer
+from .utils import extract_model as model_parser
 
 logger = logger.SmareLogger()
+
 
 def extract_attributes(attributes):
     output = {}
@@ -29,7 +31,9 @@ def str_to_num(car):
     except ValueError as e:
         logger.error(f"Error converting string to number for car: {car} | Error: {e}")
     except KeyError as e:
-        logger.error(f"Key missing when converting string to number for car: {car} | Error: {e}")
+        logger.error(
+            f"Key missing when converting string to number for car: {car} | Error: {e}"
+        )
 
     return clean_car
 

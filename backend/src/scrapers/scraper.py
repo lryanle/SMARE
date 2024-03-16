@@ -1,7 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 
-from ..utilities import logger
 from ..utilities import database as db
+from ..utilities import logger
 from . import craigslist, facebook
 from .utils import load_page_resources, setup_browser
 
@@ -10,7 +10,7 @@ logger = logger.SmareLogger()
 
 def run(website, scraper_version, duplicate_threshold):
     logger.info(f"Starting {website} scraper...")
-    
+
     if website == "craigslist":
         scraper = craigslist
     elif website == "facebook":

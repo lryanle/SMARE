@@ -50,10 +50,9 @@ def run(logger, is_done, version):
             clean_fields["model_5"] = -1
             clean_fields["model_6"] = -1
             clean_fields["model_7"] = -1
+            clean_fields["risk_score"] = -1
 
-            # TODO: Uncomment this
-            print(json.dumps(clean_fields))
-            # db.update(car["link"], clean_fields)
+            db.update(car["link"], clean_fields)
 
             logger(f"cleaned _id: {car['_id']}")
 

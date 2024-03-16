@@ -6,6 +6,10 @@ from m4_carfreq import m4_riskscores
 
 logger = logger.SmareLogger()
 
+def filter_on_model(all_cars, model):
+    return [car for car in all_cars if car[model] == -1]
+
+
 # todo: pass in data from mongo through each function
 # todo: calculate post-weight-product scores here, and not in each individual function.
 

@@ -2,7 +2,7 @@ import os
 import re
 from datetime import date
 from urllib.parse import quote, unquote
-from . import logger
+from .logger import SmareLogger
 
 import pymongo
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ LOG_COLLECTION = "logs"
 
 DONT_DECODE = ["link", "_id", "price", "odometer", "images"]
 
-logger = logger.SmareLogger()
+logger = SmareLogger()
 
 def get_conn(db=DATABASE):
     # load environment variable containing db uri

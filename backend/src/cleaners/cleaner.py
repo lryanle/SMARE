@@ -3,7 +3,6 @@ from . import facebook as fb
 from . import craigslist as cl
 from . import utils
 from ..utilities import logger
-import json
 
 logger = logger.SmareLogger()
 
@@ -71,7 +70,7 @@ def run(is_done, version):
                 )
                 break
 
-        if is_done():
+        if is_done:
             logger.info("Cleaning process is done.")
             break
 

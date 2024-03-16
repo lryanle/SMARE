@@ -8,18 +8,6 @@ CLEANER_VERSION = 1
 DUPLICATE_TERMINATION_LIMIT = 5
 
 
-def initializeLogger():
-    log = {"scrape": [], "clean": [], "analyze": []}
-
-    def loggerFactory(module):
-        def logger(message):
-            log[module].append(message)
-
-        return logger
-
-    return log, loggerFactory
-
-
 def craigslist():
     scraper.run("craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
@@ -29,8 +17,4 @@ def facebook():
 
 
 def clean():
-    logs, loggerFactory = initializeLogger()
-
-    cleaner.run(loggerFactory("clean"), False, CLEANER_VERSION)
-
-    print(logs)
+    cleaner.run(False, CLEANER_VERSION)

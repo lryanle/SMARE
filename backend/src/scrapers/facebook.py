@@ -1,8 +1,10 @@
 import time
 
 from bs4 import BeautifulSoup
-
+from utilities import logger
 from . import utils
+
+logger = logger.SmareLogger()
 
 postClass = (
     "x9f619 x78zum5 x1r8uery xdt5ytf x1iyjqo2 xs83m0k x1e558r4"
@@ -40,107 +42,118 @@ def setup_urls(oldest_allowed_cars):
 
 
 def get_all_posts(browser):
-    # Create a BeautifulSoup object from the HTML of the page
-    html = browser.page_source
-    soup = BeautifulSoup(html, "html.parser")
-
-    # Find all of the car listings on the page
-    return soup.find_all("div", class_=postClass)
+    try:
+        # Create a BeautifulSoup object from the HTML of the page
+        html = browser.page_source
+        soup = BeautifulSoup(html, "html.parser")
+        
+        
+        return soup.find_all("div", class_=postClass)
+    except Exception as e:
+        logger.error(f"Failed to get page source: {e}")
+        return []
 
 
 def get_car_info(post):
-    title = post.find("span", class_=titleClass).text
+    try:
+        title = post.find("span", class_=titleClass).text
+        logger.debug(f'Scraping "{title}"')
 
-    print(f'Scraping "{title}"')
+        price = post.find("div", class_=priceClass).text
+        metadata = post.findAll("span", class_=metaClass)
 
-    price = post.find("div", class_=priceClass).text
-    metadata = post.findAll("span", class_=metaClass)
+        location = metadata[0].text
+        odometer = metadata[1].text
 
-    location = metadata[0].text
-    odometer = metadata[1].text
+        link = post.find("a", class_=linkClass, href=True)["href"]
+        link = "https://facebook.com" + link
 
-    link = post.find("a", class_=linkClass, href=True)["href"]
-    link = "https://facebook.com" + link
-
-    return {
-        "title": title,
-        "price": price,
-        "location": location,
-        "odometer": odometer,
-        "link": link,
-    }
+        return {
+            "title": title,
+            "price": price,
+            "location": location,
+            "odometer": odometer,
+            "link": link,
+        }
+    except AttributeError as e:
+        logger.error(f"Failed to extract car info: {e}")
+        return {}
 
 
 def scrape_listing(url, browser):
-    # Navigate to the URL
-    print(f"Going to {url}")
-    browser.get(url)
-
-    print(f"Loading page for {url}")
-    time.sleep(1)
-
-    # Find div with the current listing's info
-    listing = browser.find_elements(
-        "class name",
-        "x1jx94hy x78zum5 xdt5ytf x1lytzrv x6ikm8r x10wlt62 xiylbte xtxwg39".replace(
-            " ", "."
-        ),
-    )[0]
-    see_more_button = listing.find_elements(
-        "class name",
-        "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x6prxxf xvq8zen x1s688f xzsf02u".replace(
-            " ", "."
-        ),
-    )[0]
-
-    utils.click_on(see_more_button, browser)
-
-    # Create a BeautifulSoup object from the HTML of the page
-    html = browser.page_source
-    soup = BeautifulSoup(html, "html.parser")
-
     try:
-        listing = soup.find(
-            "div",
-            class_="x1jx94hy x78zum5 xdt5ytf x1lytzrv x6ikm8r x10wlt62 xiylbte xtxwg39",
-        )
+        # Navigate to the URL
+        logger.debug(f"Going to {url}")
+        browser.get(url)
 
-        images_html = listing.find_all("img")
-        images = []
+        logger.debug(f"Loading page for {url}")
+        time.sleep(1)
 
-        for img in images_html:
-            images.append(img["src"].replace("amp;", ""))
-
-        description_html = listing.find(
-            "div", class_="xz9dl7a x4uap5 xsag5q8 xkhd6sd x126k92a"
-        )
-        description = description_html.find(
-            "span",
-            class_=(
-                "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x1lliihq x1s928wv "
-                "xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x41vudc "
-                "x6prxxf xvq8zen xo1l8bm xzsf02u"
+        # Find div with the current listing's info
+        listing = browser.find_elements(
+            "class name",
+            "x1jx94hy x78zum5 xdt5ytf x1lytzrv x6ikm8r x10wlt62 xiylbte xtxwg39".replace(
+                " ", "."
             ),
-        ).text
-
-        # About this car: class="x1gslohp"
-        about_vehicle = listing.find("div", class_="x1gslohp")
-        atrributes_html = about_vehicle.find_all(
-            "span",
-            class_=(
-                "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x1lliihq x1s928wv "
-                "xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x41vudc "
-                "x6prxxf xvq8zen xo1l8bm xzsf02u"
+        )[0]
+        see_more_button = listing.find_elements(
+            "class name",
+            "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x6prxxf xvq8zen x1s688f xzsf02u".replace(
+                " ", "."
             ),
-        )
-        attributes = []
+        )[0]
 
-        for attr in atrributes_html:
-            attributes.append(attr.text)
+        utils.click_on(see_more_button, browser)
 
-        # Typical features: x1gslohp x11i5rnm x12nagc x1mh8g0r
-    except Exception as err:
-        print(f"Failed scraping {url}: \n{err}")
-        return None
+        # Create a BeautifulSoup object from the HTML of the page
+        html = browser.page_source
+        soup = BeautifulSoup(html, "html.parser")
+
+        try:
+            listing = soup.find(
+                "div",
+                class_="x1jx94hy x78zum5 xdt5ytf x1lytzrv x6ikm8r x10wlt62 xiylbte xtxwg39",
+            )
+
+            images_html = listing.find_all("img")
+            images = []
+
+            for img in images_html:
+                images.append(img["src"].replace("amp;", ""))
+
+            description_html = listing.find(
+                "div", class_="xz9dl7a x4uap5 xsag5q8 xkhd6sd x126k92a"
+            )
+            description = description_html.find(
+                "span",
+                class_=(
+                    "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x1lliihq x1s928wv "
+                    "xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x41vudc "
+                    "x6prxxf xvq8zen xo1l8bm xzsf02u"
+                ),
+            ).text
+
+            # About this car: class="x1gslohp"
+            about_vehicle = listing.find("div", class_="x1gslohp")
+            atrributes_html = about_vehicle.find_all(
+                "span",
+                class_=(
+                    "x193iq5w xeuugli x13faqbe x1vvkbs x10flsy6 x1lliihq x1s928wv "
+                    "xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x4zkp8e x41vudc "
+                    "x6prxxf xvq8zen xo1l8bm xzsf02u"
+                ),
+            )
+            attributes = []
+
+            for attr in atrributes_html:
+                attributes.append(attr.text)
+
+            # Typical features: x1gslohp x11i5rnm x12nagc x1mh8g0r
+        except Exception as err:
+            logger.error(f"Failed scraping {url}: \n{err}")
+            return None
+    except Exception as e:
+        logger.error(f"Failed to scrape listing: {e}")
+        return {}
 
     return {"post_body": description, "attributes": attributes, "images": images}

@@ -1,7 +1,7 @@
 import re
 
 from .utils import extract_model as parse_model
-from utilities import logger
+from ..utilities import logger
 
 logger = logger.SmareLogger()
 

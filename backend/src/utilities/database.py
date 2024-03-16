@@ -2,7 +2,7 @@ import os
 import re
 from datetime import date
 from urllib.parse import quote, unquote
-from utilities import logger
+from . import logger
 
 import pymongo
 from dotenv import load_dotenv

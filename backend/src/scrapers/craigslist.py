@@ -2,7 +2,7 @@ import time
 import re
 
 from bs4 import BeautifulSoup
-from utilities import logger
+from ..utilities import logger
 
 logger = logger.SmareLogger()
 

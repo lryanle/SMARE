@@ -1,6 +1,6 @@
 from pymongo.errors import DuplicateKeyError
 
-from utilities import logger
+from ..utilities import logger
 from ..utilities import database as db
 from . import craigslist, facebook
 from .utils import load_page_resources, setup_browser

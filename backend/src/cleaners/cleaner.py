@@ -2,7 +2,7 @@ from ..utilities import database as db
 from . import facebook as fb
 from . import craigslist as cl
 from . import utils
-from utilities import logger
+from ..utilities import logger
 import json
 
 logger = logger.SmareLogger()

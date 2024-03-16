@@ -1,5 +1,5 @@
 from .utils import clean_odometer, extract_model as model_parser
-from utilities import logger
+from ..utilities import logger
 
 logger = logger.SmareLogger()
 

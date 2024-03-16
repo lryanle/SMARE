@@ -6,7 +6,7 @@ from difflib import SequenceMatcher, get_close_matches
 def clean_currency(price_str):
     clean_str = price_str.replace("$", "").replace(",", "")
 
-    if clean_str.lower() == "Free":
+    if clean_str.lower() == "free":
         clean_str = "0"
 
     return float(clean_str)
@@ -91,7 +91,7 @@ def best_fitting_make(title):
 
 
 def extract_model(title, make, regex):
-    with open("../utilities/car_models.json") as models_json:
+    with open("/var/task/src/utilities/car_models.json") as models_json:
         models = json.load(models_json)
         models = models[make]
 

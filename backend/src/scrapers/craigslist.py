@@ -2,6 +2,9 @@ import time
 import re
 
 from bs4 import BeautifulSoup
+from utilities import logger
+
+logger = logger.SmareLogger()
 
 
 def setup_urls(oldest_allowed_cars):
@@ -42,12 +45,16 @@ def setup_urls(oldest_allowed_cars):
 
 
 def get_all_posts(browser):
-    # Create a BeautifulSoup object from the HTML of the page
-    html = browser.page_source
-    soup = BeautifulSoup(html, "html.parser")
+    try:
+        # Create a BeautifulSoup object from the HTML of the page
+        html = browser.page_source
+        soup = BeautifulSoup(html, "html.parser")
 
-    # Find all of the car listings on the page
-    return soup.find_all("div", class_="gallery-card")
+        # Find all of the car listings on the page
+        return soup.find_all("div", class_="gallery-card")
+    except Exception as e:
+        logger.error(f"Error occurred while getting posts: {e}")
+        return []
 
 
 def is_website(str):
@@ -57,32 +64,34 @@ def is_website(str):
 
 
 def get_car_info(post):
-    title = post.find("span", class_="label").text
+    try:
+        title = post.find("span", class_="label").text
+        logger.debug(f'Scraping "{title}"')
 
-    print(f'Scraping "{title}"')
+        price = post.find("span", class_="priceinfo").text
+        metadata = post.find("div", class_="meta").text.split("·")
 
-    price = post.find("span", class_="priceinfo").text
-    metadata = post.find("div", class_="meta").text.split("·")
+        odometer = metadata[1].strip()
+        location = metadata[2].strip() if len(metadata) >= 3 else 'Unknown location'
 
-    odometer = metadata[1]
-    if len(metadata) >= 3:
-        location = metadata[2]
+        link = post.find("a", class_="posting-title", href=True)["href"]
 
-    link = post.find("a", class_="posting-title", href=True)["href"]
+        car_info = {
+            "title": title,
+            "price": price,
+            "odometer": odometer,
+            "link": link,
+        }
 
-    car_info = {
-        "title": title,
-        "price": price,
-        "odometer": odometer,
-        "link": link,
-    }
+        if is_website(location):
+            car_info["seller_website"] = location
+        else:
+            car_info["location"] = location
 
-    if is_website(location):
-        car_info["seller_website"] = location
-    else:
-        car_info["location"] = location
-
-    return car_info
+        return car_info
+    except Exception as e:
+        logger.error(f"Error occurred while getting car info: {e}")
+        return {}
 
 
 def process_attributes(attributes):
@@ -103,43 +112,38 @@ def process_attributes(attributes):
 
 
 def scrape_listing(url, browser):
-    # Navigate to the URL
-    print(f"Going to {url}")
-    browser.get(url)
-
-    print(f"Loading page for {url}")
-    time.sleep(1)
-
-    # Create a BeautifulSoup object from the HTML of the page
-    html = browser.page_source
-    soup = BeautifulSoup(html, "html.parser")
-
     try:
-        description = soup.find("section", id="postingbody").text
+        logger.info(f"Going to {url}")
+        browser.get(url)
+        logger.debug(f"Loading page for {url}")
+        time.sleep(1)
 
-        year = soup.find("span", class_="valu year").text
-        make_model = soup.find("a", class_="valu makemodel").text
+        html = browser.page_source
+        soup = BeautifulSoup(html, "html.parser")
+
+        description = soup.find("section", id="postingbody").text.strip()
+        year = soup.find("span", class_="valu year").text.strip()
+        make_model = soup.find("a", class_="valu makemodel").text.strip()
 
         attribute_groups = soup.find_all("div", class_="attr")
         attributes = process_attributes(attribute_groups[1:])
 
         img_thumbnails = soup.find("div", id="thumbs")
-
         images = [img["src"] for img in img_thumbnails.find_all("img")]
 
         physical_map = soup.find("div", id="map")
         longitude = physical_map["data-longitude"]
         latitude = physical_map["data-latitude"]
-    except Exception as e:
-        print(f"Failed scraping {url}: \n{e}")
-        return None
 
-    return {
-        "post_body": description,
-        "year": year,
-        "makemodel": make_model,
-        "latitude": latitude,
-        "longitude": longitude,
-        "attributes": attributes,
-        "images": images,
-    }
+        return {
+            "post_body": description,
+            "year": year,
+            "makemodel": make_model,
+            "latitude": latitude,
+            "longitude": longitude,
+            "attributes": attributes,
+            "images": images,
+        }
+    except Exception as e:
+        logger.error(f"Failed scraping {url}: {e}")
+        return {}

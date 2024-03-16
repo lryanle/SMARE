@@ -1,33 +1,187 @@
 # Importing the M3_riskscores and M4_riskscores functions from their respective modules
 import pandas as pd
+from ..utilities import logger
 from m3_kbbprice import m3_riskscores
 from m4_carfreq import m4_riskscores
 
+logger = logger.SmareLogger()
 
 # todo: pass in data from mongo through each function
 # todo: calculate post-weight-product scores here, and not in each individual function.
+
 def model_manager():
-    m3_results = m3_riskscores()
-    m4_results = m4_riskscores()
-
-    # Merging the results from both models based on a common identifier, if applicable
-    merged_results = pd.merge(
-        m3_results, m4_results, on="_id", how="inner", validate="one_to_one"
-    )
-    # Perform any additional data processing or calculations to derive the final risk score
-    final_risk_score = min(
-        100, merged_results["risk_score_M3"] + merged_results["risk_score_M4_y"]
-    )
-    # Add the final risk score to the merged results DataFrame
-    merged_results["final_risk_score"] = final_risk_score
-
-    # Extracting the 'id' column and 'final_risk_score' column as a list of tuples
-    output = merged_results[["_id", "final_risk_score"]]
-    # Save the output to a CSV file
-    output.to_csv("final_risk_scores.csv", index=False)
-
-    # Returning the list of tuples containing 'id' and 'final_risk_score'
-    return output.values.tolist()
-
-
-print(model_manager())
+    logger.info("Starting Model Manager...")
+    
+    
+    # Importing data from MongoDB
+    logger.info("Moddel Manager: Importing data from MongoDB...")
+    try:
+        # todo: import all data from mongodb
+        # REMOVE ME
+        logger.warning("Model Manager: Data import from MongoDB not implemented yet")
+        
+    except Exception as e:
+        logger.critical(f"Model Manager: Failed to import data from MongoDB. Error: {e}")
+        return
+    logger.success("Model Manager: Data successfully imported from MongoDB")
+    
+    
+    # Model 1: Sentiment Analysis Model
+    try:
+        try:
+            # todo: filter mongodb for relevant data
+            # REMOVE ME
+            logger.warning("Model Manager: Model 1 data filtering not implemented yet")
+            
+        except Exception as e:
+            logger.error(f"Model Manager: Model 1 failed to filter listings. Error: {e}")
+            return
+        input_size = 0
+        
+        logger.info(f"Model Manager: Model 1 started processing {input_size} listings")
+        
+        # todo: upload updated results back to mongodb 
+        # m1_results = m1_riskscores()
+        
+        # REMOVE ME
+        logger.warning("Model Manager: Model 1 processing not implemented yet")
+        
+        logger.success("Model Manager: Model 1 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 1 failed to process listings. Error: {e}")
+        
+        
+    # Model 2: Car Frequency Model
+    try:
+        try:
+            # todo: filter mongodb for relevant data
+            print("get model 2 data here lol")
+        except Exception as e:
+            logger.error(f"Model Manager: Model 2 failed to filter listings. Error: {e}")
+            return
+        input_size = 0
+        
+        logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
+        
+        # todo: upload updated results back to mongodb
+        # m2_results = m2_riskscores()
+        
+        # REMOVE ME
+        logger.warning("Model Manager: Model 2 processing not implemented yet")
+        
+        logger.success("Model Manager: Model 2 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
+        
+        
+    # Model 3: KBB Price Model
+    try:
+        try:
+            # todo: filter mongodb for relevant data
+            print("get model 3 data here lol")
+        except Exception as e:
+            logger.error(f"Model Manager: Model 3 failed to filter listings. Error: {e}")
+            return
+        input_size = 0
+        
+        logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
+        
+        # todo: upload updated results back to mongodb
+        # m3_results = m3_riskscores()
+        
+        # REMOVE ME
+        logger.warning("Model Manager: Model 3 processing not implemented yet")
+        
+        logger.success("Model Manager: Model 3 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
+        
+        
+    # Model 4: Car Frequency Model
+    try:
+        try:
+            # todo: filter mongodb for relevant data
+            print("get model 4 data here lol")
+        except Exception as e:
+            logger.error(f"Model Manager: Model 4 failed to filter listings. Error: {e}")
+            return
+        input_size = 0
+        
+        logger.info(f"Model Manager: Model 4 started processing {input_size} listings")
+        
+        # todo: upload updated results back to mongodb
+        # m4_results = m4_riskscores()
+        
+        # REMOVE ME
+        logger.warning("Model Manager: Model 4 processing not implemented yet")
+        
+        logger.success("Model Manager: Model 4 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 4 failed to process listings. Error: {e}")
+        
+        
+    # Model 5: Theft Likelihood Model
+    try:
+        try:
+            # todo: filter mongodb for relevant data
+            print("get model 5 data here lol")
+        except Exception as e:
+            logger.error(f"Model Manager: Model 5 failed to filter listings. Error: {e}")
+            return
+        input_size = 0
+        
+        logger.info(f"Model Manager: Model 5 started processing {input_size} listings")
+        
+        # todo: upload updated results back to mongodb
+        # m4_results = m4_riskscores()
+        
+        # REMOVE ME
+        logger.warning("Model Manager: Model 5 processing not implemented yet")
+        
+        logger.success("Model Manager: Model 5 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 5 failed to process listings. Error: {e}")
+        
+        
+    # Model 6: Luxury/Anomaly Model
+    try:
+        try:
+            # todo: filter mongodb for relevant data
+            print("get model 6 data here lol")
+        except Exception as e:
+            logger.error(f"Model Manager: Model 6 failed to filter listings. Error: {e}")
+            return
+        input_size = 0
+        
+        logger.info(f"Model Manager: Model 6 started processing {input_size} listings")
+        
+        # todo: upload updated results back to mongodb
+        # m4_results = m4_riskscores()
+        
+        # REMOVE ME
+        logger.warning("Model Manager: Model 6 processing not implemented yet")
+        
+        logger.success("Model Manager: Model 6 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 6 failed to process listings. Error: {e}")
+        
+    
+    # todo: add all risk scores and clamp them to 100 (i.e. `min(100, sum_of_risk_scores)`)
+    # PLEASE USE LOGGERS TO:
+    #    - Log when this process starts
+    # try...except any errors
+    #    - Log when this process ends
+    # use `logger.critical()` when making any CODE ASSUMPTIONS. I.e., variable X is supposed to have Y property. Make sure that you have a check to see if X has Y property. Critical log if not. (i.e. if a model breaks, its an error. If this file cant connect to the mongodb database, that's a critical)
+    
+    # REMOVE ME
+    logger.warning("Model Manager: Final risk score calculation not implemented yet")
+    
+    
+    # todo: save final risk scores to each listing in mongodb# PLEASE USE LOGGERS TO:
+    #    - Log when this process starts
+    # try...except any errors
+    #    - Log when this process ends
+    # use `logger.critical()` when making any CODE ASSUMPTIONS. I.e., variable X is supposed to have Y property. Make sure that you have a check to see if X has Y property. Critical log if not. (i.e. if a model breaks, its an error. If this file cant connect to the mongodb database, that's a critical)
+    
+    # REMOVE ME
+    logger.warning("Model Manager: Final risk score saving not implemented yet")

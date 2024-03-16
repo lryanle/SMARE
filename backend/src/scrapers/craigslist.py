@@ -1,4 +1,5 @@
 import time
+import re
 
 from bs4 import BeautifulSoup
 
@@ -49,6 +50,12 @@ def get_all_posts(browser):
     return soup.find_all("div", class_="gallery-card")
 
 
+def is_website(str):
+    match = re.match(r"www[\.\-_\s]|[a-zA-Z0-9-]+[\.\s\-_][a-zA-Z]{2,}|[a-zA-Z0-9-]+[\.\s\-_][a-zA-Z]{2,}[\.\s\-_][a-zA-Z]{2,}", str)
+    
+    return bool(match)
+
+
 def get_car_info(post):
     title = post.find("span", class_="label").text
 
@@ -63,13 +70,19 @@ def get_car_info(post):
 
     link = post.find("a", class_="posting-title", href=True)["href"]
 
-    return {
+    car_info = {
         "title": title,
         "price": price,
-        "location": location,
         "odometer": odometer,
         "link": link,
     }
+
+    if is_website(location):
+        car_info["seller_website"] = location
+    else:
+        car_info["location"] = location
+
+    return car_info
 
 
 def process_attributes(attributes):

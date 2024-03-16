@@ -1,46 +1,40 @@
 # Importing the M3_riskscores and M4_riskscores functions from their respective modules
 import pandas as pd
 from ..utilities import logger
+from ..utilities.database import find_unanalyzed_cars
+
 from m3_kbbprice import m3_riskscores
 from m4_carfreq import m4_riskscores
 
 logger = logger.SmareLogger()
 
+
 def filter_on_model(all_cars, model):
     return [car for car in all_cars if car[model] == -1]
 
 
-# todo: pass in data from mongo through each function
 # todo: calculate post-weight-product scores here, and not in each individual function.
-
 def model_manager():
     logger.info("Starting Model Manager...")
-    
-    
+        
     # Importing data from MongoDB
     logger.info("Moddel Manager: Importing data from MongoDB...")
     try:
-        # todo: import all data from mongodb
-        # REMOVE ME
-        logger.warning("Model Manager: Data import from MongoDB not implemented yet")
-        
+        all_cars = find_unanalyzed_cars()
     except Exception as e:
         logger.critical(f"Model Manager: Failed to import data from MongoDB. Error: {e}")
         return
     logger.success("Model Manager: Data successfully imported from MongoDB")
     
-    
     # Model 1: Sentiment Analysis Model
     try:
         try:
-            # todo: filter mongodb for relevant data
-            # REMOVE ME
-            logger.warning("Model Manager: Model 1 data filtering not implemented yet")
+            model_1_cars = filter_on_model(all_cars, "model_1")
             
         except Exception as e:
             logger.error(f"Model Manager: Model 1 failed to filter listings. Error: {e}")
             return
-        input_size = 0
+        input_size = len(model_1_cars)
         
         logger.info(f"Model Manager: Model 1 started processing {input_size} listings")
         
@@ -55,11 +49,10 @@ def model_manager():
         logger.error(f"Model Manager: Model 1 failed to process listings. Error: {e}")
         
         
-    # Model 2: Car Frequency Model
+    # Model 2: GPT Vision Model
     try:
         try:
-            # todo: filter mongodb for relevant data
-            print("get model 2 data here lol")
+            model_2_cars = filter_on_model(all_cars, "model_2")
         except Exception as e:
             logger.error(f"Model Manager: Model 2 failed to filter listings. Error: {e}")
             return
@@ -81,8 +74,7 @@ def model_manager():
     # Model 3: KBB Price Model
     try:
         try:
-            # todo: filter mongodb for relevant data
-            print("get model 3 data here lol")
+            model_3_cars = filter_on_model(all_cars, "model_3")
         except Exception as e:
             logger.error(f"Model Manager: Model 3 failed to filter listings. Error: {e}")
             return
@@ -104,8 +96,7 @@ def model_manager():
     # Model 4: Car Frequency Model
     try:
         try:
-            # todo: filter mongodb for relevant data
-            print("get model 4 data here lol")
+            model_4_cars = filter_on_model(all_cars, "model_4")
         except Exception as e:
             logger.error(f"Model Manager: Model 4 failed to filter listings. Error: {e}")
             return
@@ -127,8 +118,7 @@ def model_manager():
     # Model 5: Theft Likelihood Model
     try:
         try:
-            # todo: filter mongodb for relevant data
-            print("get model 5 data here lol")
+            model_5_cars = filter_on_model(all_cars, "model_5")
         except Exception as e:
             logger.error(f"Model Manager: Model 5 failed to filter listings. Error: {e}")
             return
@@ -147,11 +137,10 @@ def model_manager():
         logger.error(f"Model Manager: Model 5 failed to process listings. Error: {e}")
         
         
-    # Model 6: Luxury/Anomaly Model
+    # Model 6: Luxury Model
     try:
         try:
-            # todo: filter mongodb for relevant data
-            print("get model 6 data here lol")
+            model_6_cars = filter_on_model(all_cars, "model_6")
         except Exception as e:
             logger.error(f"Model Manager: Model 6 failed to filter listings. Error: {e}")
             return
@@ -168,8 +157,30 @@ def model_manager():
         logger.success("Model Manager: Model 6 successfully processed listings")
     except Exception as e:
         logger.error(f"Model Manager: Model 6 failed to process listings. Error: {e}")
-        
     
+
+    # Model 7: Anomaly Model
+    try:
+        try:
+            model_7_cars = filter_on_model(all_cars, "model_7")
+        except Exception as e:
+            logger.error(f"Model Manager: Model 7 failed to filter listings. Error: {e}")
+            return
+        input_size = 0
+        
+        logger.info(f"Model Manager: Model 7 started processing {input_size} listings")
+        
+        # todo: upload updated results back to mongodb
+        # m4_results = m4_riskscores()
+        
+        # REMOVE ME
+        logger.warning("Model Manager: Model 7 processing not implemented yet")
+        
+        logger.success("Model Manager: Model 7 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 7 failed to process listings. Error: {e}")
+    
+
     # todo: add all risk scores and clamp them to 100 (i.e. `min(100, sum_of_risk_scores)`)
     # PLEASE USE LOGGERS TO:
     #    - Log when this process starts

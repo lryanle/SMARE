@@ -1,5 +1,6 @@
 from .utils import clean_odometer, extract_model as model_parser
 
+
 def extract_attributes(attributes):
     output = {}
 
@@ -11,6 +12,7 @@ def extract_attributes(attributes):
 
     return output
 
+
 def str_to_num(car):
     clean_car = {}
 
@@ -19,6 +21,7 @@ def str_to_num(car):
     clean_car["longitude"] = float(car["longitude"])
 
     return clean_car
+
 
 def extract_model(title, make):
     return model_parser(title, make, r"\w+\s+(.*)")

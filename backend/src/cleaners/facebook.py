@@ -1,6 +1,6 @@
 import re
 
-from utils import extract_model as parse_model
+from .utils import extract_model as parse_model
 
 # Define patterns for different attributes
 attrPatterns = {

@@ -3,6 +3,8 @@ from . import facebook as fb
 from . import craigslist as cl
 from . import utils
 
+import json
+
 CONSECUTIVE_ERROR_LIMIT = 3
 
 
@@ -11,9 +13,13 @@ def clean(car):
 
     if car["source"] == "facebook":
         clean_car["attributes"] = fb.extract_attributes(car["attributes"])
+        clean_car["make"] = utils.extract_make(car["title"])
+        clean_car["model"] = fb.extract_model(car["title"], clean_car["make"])
     elif car["source"] == "craigslist":
         clean_car["attributes"] = cl.extract_attributes(car["attributes"])
         clean_car.update(cl.str_to_num(car))
+        clean_car["make"] = utils.extract_make(car["makemodel"])
+        clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
 
     clean_car["price"] = utils.clean_currency(car["price"])
     clean_car["odometer"] = clean_car["attributes"]["odometer"]
@@ -45,7 +51,10 @@ def run(logger, is_done, version):
             clean_fields["model_6"] = -1
             clean_fields["model_7"] = -1
 
-            db.update(car["link"], clean_fields)
+            # TODO: Uncomment this
+            print(json.dumps(clean_fields))
+            # db.update(car["link"], clean_fields)
+
             logger(f"cleaned _id: {car['_id']}")
 
             total_cleaned += 1

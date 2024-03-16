@@ -111,8 +111,9 @@ def update(link, new_fields):
     return result.acknowledged
 
 
-def post_log(conn, time, level, message):
-    log = {"_id": time, "level": level, "message": message}
+def post_log(conn, time, level, message, file_name, file_path, line_number, function_name, function_module, source=None, exception=None, long_message=None):
+    log = {"date": time, "level": level, "message": message, "file_name": file_name, "file_path": file_path,
+           "line_number": line_number, "function_name": function_name, "function_module": function_module, "source": source, "exception": exception, "long_message": long_message}
 
     result = conn["db"][LOG_COLLECTION].insert_one(log)
     return result.acknowledged

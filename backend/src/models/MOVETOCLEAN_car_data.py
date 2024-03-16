@@ -54,7 +54,7 @@ kbb_make = [
     "volvo",
 ]
 
-with open("kbb_data.json") as kbbjson:
+with open("../utils/kbb_data.json") as kbbjson:
     kbb_models = json.load(kbbjson)
 
 title = cars["title"]

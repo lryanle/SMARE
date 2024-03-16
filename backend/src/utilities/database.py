@@ -64,10 +64,23 @@ def find_all_cars():
     return conn["db"][SCRAPE_COLLECTION].find()
 
 
-def find_unanalyzed_cars(model):
+def find_unanalyzed_cars():
     conn = get_conn(DATABASE)
 
-    return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": "clean", model: -1})]
+    query = {
+        "stage": "clean",
+        "$or": [
+            {"model_1": -1},
+            {"model_2": -1},
+            {"model_3": -1},
+            {"model_4": -1},
+            {"model_5": -1},
+            {"model_6": -1},
+            {"model_7": -1},
+        ],
+    }
+
+    return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find(query)]
 
 
 def post_raw(scraper_version, source, car):
@@ -111,9 +124,33 @@ def update(link, new_fields):
     return result.acknowledged
 
 
-def post_log(conn, time, level, message, file_name, file_path, line_number, function_name, function_module, source=None, exception=None, long_message=None):
-    log = {"date": time, "level": level, "message": message, "file_name": file_name, "file_path": file_path,
-           "line_number": line_number, "function_name": function_name, "function_module": function_module, "source": source, "exception": exception, "long_message": long_message}
+def post_log(
+    conn,
+    time,
+    level,
+    message,
+    file_name,
+    file_path,
+    line_number,
+    function_name,
+    function_module,
+    source=None,
+    exception=None,
+    long_message=None,
+):
+    log = {
+        "date": time,
+        "level": level,
+        "message": message,
+        "file_name": file_name,
+        "file_path": file_path,
+        "line_number": line_number,
+        "function_name": function_name,
+        "function_module": function_module,
+        "source": source,
+        "exception": exception,
+        "long_message": long_message,
+    }
 
     result = conn["db"][LOG_COLLECTION].insert_one(log)
     return result.acknowledged
@@ -125,7 +162,11 @@ def encode(obj):
     for field, value in obj.items():
         if isinstance(value, str) and field not in DONT_DECODE:
             encoded_obj[field] = quote(value)
-        elif isinstance(value, list) and isinstance(value[0], str) and field not in DONT_DECODE:
+        elif (
+            isinstance(value, list)
+            and isinstance(value[0], str)
+            and field not in DONT_DECODE
+        ):
             encoded_obj[field] = encode_arr(value)
         else:
             encoded_obj[field] = value
@@ -140,7 +181,11 @@ def decode(obj):
         # the urls in the images field will not be decoded because they are an array
         if isinstance(value, str) and field not in DONT_DECODE:
             decoded_obj[field] = unquote(value)
-        elif isinstance(value, list) and isinstance(value[0], str) and field not in DONT_DECODE:
+        elif (
+            isinstance(value, list)
+            and isinstance(value[0], str)
+            and field not in DONT_DECODE
+        ):
             decoded_obj[field] = decode_arr(value)
         else:
             decoded_obj[field] = value

@@ -1,21 +1,31 @@
 import re
 import json
 from difflib import SequenceMatcher, get_close_matches
+from utilities import logger
+
+logger = logger.SmareLogger()
 
 
 def clean_currency(price_str):
-    clean_str = price_str.replace("$", "").replace(",", "")
+    try:
+        clean_str = price_str.replace("$", "").replace(",", "")
 
-    if clean_str.lower() == "free":
-        clean_str = "0"
+        if clean_str.lower() == "free":
+            clean_str = "0"
 
-    return float(clean_str)
+        return float(clean_str)
+    except ValueError as e:
+        logger.error(f"Error converting price to float: {price_str} | Error: {e}")
+        return None
 
 
 def clean_odometer(odometer_str):
-    clean_str = odometer_str.replace("k", "000").replace(",", "").replace(" mi", "")
-
-    return int(clean_str)
+    try:
+        clean_str = odometer_str.replace("k", "000").replace(",", "").replace(" mi", "")
+        return int(clean_str)
+    except ValueError as e:
+        logger.error(f"Error converting odometer to int: {odometer_str} | Error: {e}")
+        return None
 
 
 CAR_MAKES = [
@@ -67,61 +77,80 @@ CAR_MAKES = [
 
 
 def extract_make(title):
-    for make in CAR_MAKES:
-        if make in title:
-            return make
+    try:
+        for make in CAR_MAKES:
+            if make in title.lower():
+                return make
 
-    return best_fitting_make(title)
+        return best_fitting_make(title)
+    except Exception as e:
+        logger.error(f"Error extracting make: {title} | Error: {e}")
+        return None
 
 
 def best_fitting_make(title):
-    title_words = title.lower().split()
-    max_similarity = 0
-    best_match = None
+    try:
+        title_words = title.lower().split()
+        max_similarity = 0
+        best_match = None
 
-    for make in CAR_MAKES:
-        similarity = max(
-            SequenceMatcher(None, make, word).ratio() for word in title_words
-        )
-        if similarity > max_similarity:
-            max_similarity = similarity
-            best_match = make
+        for make in CAR_MAKES:
+            similarity = max(
+                SequenceMatcher(None, make, word).ratio() for word in title_words
+            )
+            if similarity > max_similarity:
+                max_similarity = similarity
+                best_match = make
 
-    return best_match
+        return best_match
+    except Exception as e:
+        logger.error(f"Error finding best fitting make: {title} | Error: {e}")
+        return None
 
 
 def extract_model(title, make, regex):
-    with open("/var/task/src/utilities/car_models.json") as models_json:
-        models = json.load(models_json)
-        models = models[make]
+    try:
+        with open("../utilities/car_models.json") as models_json:
+            models = json.load(models_json)
+            models = models[make]
 
-    match = re.search(regex, title)
+        match = re.search(regex, title)
 
-    if match:
-        model_search_area = match.group(1)
-        model_search_area = model_search_area.replace("-", "")
+        if match:
+            model_search_area = match.group(1)
+            model_search_area = model_search_area.replace("-", "")
 
-        close_match = get_close_matches(model_search_area, models, n=1, cutoff=0.4)
-        if close_match:
-            return close_match[0]
+            close_match = get_close_matches(model_search_area, models, n=1, cutoff=0.4)
+            if close_match:
+                return close_match[0]
 
-    return incremental_model_search(title, make, models)
+        return incremental_model_search(title, make, models)
+    except json.JSONDecodeError as e:
+        logger.error(f"Error reading car models JSON file: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"Error extracting model: {title}, {make} | Error: {e}")
+        return None
 
 
 def incremental_model_search(title, make, models):
-    title_words = title.split(" ")
-    search_substring = []
+    try:
+        title_words = title.split(" ")
+        search_substring = []
 
-    for word in title_words:
-        if word.lower() in make.lower():
-            continue
-        search_substring.append(word)
+        for word in title_words:
+            if word.lower() in make.lower():
+                continue
+            search_substring.append(word)
 
-        close_match = get_close_matches(
-            " ".join(search_substring), models, n=1, cutoff=0.4
-        )
+            close_match = get_close_matches(
+                " ".join(search_substring), models, n=1, cutoff=0.4
+            )
 
-        if close_match:
-            return close_match[0]
+            if close_match:
+                return close_match[0]
 
-    return None
+        return None
+    except Exception as e:
+        logger.error(f"Error in incremental model search: {title}, {make} | Error: {e}")
+        return None

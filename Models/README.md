@@ -22,7 +22,7 @@ This model helps in viewing the risk associated with vehicles with significant f
 
 This model is used to view the risk associated with vehicles with higher theft occurrences.
 
-## Model 6 - Car that Shouldn't Exist on a Social Media Marketplace
+## Model 6 + 7 - Car that Shouldn't Exist on a Social Media Marketplace
 
-This model helps in identifying vehicles that shouldn't exist on a social media marketplace.
+This model helps in identifying vehicles that shouldn't exist on a social media marketplace by differentiating between luxury and non-luxury car listings and also assessing price discrepancies to identify and flag anomalies.
 

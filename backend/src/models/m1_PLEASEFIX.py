@@ -24,12 +24,12 @@ def get_kbb_price(make, model, year):
         return None
 print()
 @app.route('/get_price', methods=['GET'])
-def price_endpoint():
-    make = request.args.get('make')
-    model = request.args.get('model')
-    year = request.args.get('year')
-    price = get_kbb_price(make, model, year)
-    return jsonify({'price': price})
+    def price_endpoint():
+        make = request.args.get('make')
+        model = request.args.get('model')
+        year = request.args.get('year')
+        price = get_kbb_price(make, model, year)
+        return jsonify({'price': price})
 
 if __name__ == '__main__':
     app.run(debug=True)

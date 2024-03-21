@@ -9,11 +9,11 @@ DUPLICATE_TERMINATION_LIMIT = 5
 
 
 def craigslist():
-    scraper.run("craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    scraper.run(False, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
 def facebook():
-    scraper.run("facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    scraper.run(False, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
 def clean():

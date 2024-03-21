@@ -60,8 +60,9 @@ def run(is_done, version):
                 clean_fields["stage"] = "clean"
                 clean_fields["cleaner_version"] = version
                 # Initializing additional model fields and risk_score
+                clean_fields["model_scores"] = {}
                 for i in range(1, 8):
-                    clean_fields[f"model_{i}"] = -1
+                    clean_fields["model_scores"][f"model_{i}"] = -1
                 clean_fields["risk_score"] = -1
 
                 is_update_sucess = db.update(car["link"], clean_fields)

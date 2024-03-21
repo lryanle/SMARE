@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from .logger import SmareLogger
 
 DATABASE = "scrape"
-SCRAPE_COLLECTION = "scraped_raw"
+SCRAPE_COLLECTION = "listings"
 LOG_COLLECTION = "logs"
 
 DONT_DECODE = ["link", "_id", "price", "odometer", "images"]
@@ -46,7 +46,7 @@ def get_conn(db=DATABASE):
 
 def extract_id_from_link(link):
     try:
-        id = re.search(r"^\d+$")
+        id = re.search(r"^\d+$", link)
         facebook = re.search(r"facebook\.com/marketplace/item/(\d+)/", link)
         craigslist = re.search(r"/(\d+)\.html$", link)
 
@@ -105,13 +105,13 @@ def find_unanalyzed_cars(current_versions):
             "stage": "clean",
             "$or": [
                 {"$or": [
-                    {"model_1": -1},
-                    {"model_2": -1},
-                    {"model_3": -1},
-                    {"model_4": -1},
-                    {"model_5": -1},
-                    {"model_6": -1},
-                    {"model_7": -1},
+                    {"model_scores.model_1": -1},
+                    {"model_scores.model_2": -1},
+                    {"model_scores.model_3": -1},
+                    {"model_scores.model_4": -1},
+                    {"model_scores.model_5": -1},
+                    {"model_scores.model_6": -1},
+                    {"model_scores.model_7": -1},
                 ]},
                 {"$or": [
                     {"model_versions.model_1": {"$not": {"$eq": current_versions[0]}}},

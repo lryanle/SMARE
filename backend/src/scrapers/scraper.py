@@ -8,7 +8,7 @@ from .utils import load_page_resources, setup_browser
 logger = logger.SmareLogger()
 
 
-def run(website, scraper_version, duplicate_threshold):
+def run(is_done, website, scraper_version, duplicate_threshold):
     logger.info(f"Starting {website} scraper...")
 
     if website == "craigslist":
@@ -53,6 +53,10 @@ def run(website, scraper_version, duplicate_threshold):
                 )
             except Exception as error:
                 logger.error(f"Encountered an error: {error}")
+            
+            if is_done:
+                logger.info("Cleaning process is done.")
+                break
 
     logger.success(f"Finished {website} scraper")
     browser.quit()

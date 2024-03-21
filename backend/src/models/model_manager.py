@@ -32,7 +32,7 @@ def append_to_cars(model_num, model_cars, scores):
     try:
         scored_model_cars = model_cars
         for car, score in zip(model_cars, scores):
-            car.update({f"model_{model_num}": score, "model_versions": {f"model_{model_num}": MODEL_VERSIONS[model_num - 1]}})
+            car.update({"model_scores": {f"model_{model_num}": score}, "model_versions": {f"model_{model_num}": MODEL_VERSIONS[model_num - 1]}})
 
         return scored_model_cars
     except Exception as e:

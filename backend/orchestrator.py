@@ -1,45 +1,16 @@
-import datetime
 import multiprocessing
 import time
 
 from src.cleaners.cleaner import run as run_cleaner
+from src.scrapers.scraper import run as run_scraper
+from src.models.model_manager import run as run_analyzer
 from src.utilities.logger import SmareLogger
 
 logger = SmareLogger()
 
 
-def printTime():
-    print(datetime.datetime.now().strftime("%H:%M:%S:%f")[:-3])
-
-
 def timer(duration):
     time.sleep(duration)
-
-
-def stopwatch():
-    seconds = 0
-    while True:
-        print(seconds)
-        seconds += 1
-        timer(1)
-
-
-def module(name, done, logs):
-    moduleLog = []
-
-    moduleLog.append(f"running {name}")
-    print(f"running {name}")
-
-    i = 0
-    # run loop while not done
-    while not done.value:
-        i += 1
-
-    moduleLog.append(f"counted to {i}")
-    moduleLog.append(f"cleaning up for {name}")
-    print(f"cleaning up for {name}")
-
-    logs[name] = moduleLog
 
 
 def runModule(duration, target, version):
@@ -59,5 +30,24 @@ def runModule(duration, target, version):
     logger.debug("process completed")
 
 
+def facebook(is_done):
+    run_scraper(is_done, "facebook", 5, 5)
+
+
+def craigslist(is_done):
+    run_scraper(is_done, "craigslist", 5, 5)
+
+
+def cleaner(is_done):
+    run_scraper(is_done, 1)
+
+
+def model_manager(is_done):
+    run_analyzer(is_done)
+
 if __name__ == "__main__":
-    runModule(20, run_cleaner, 1)
+    logger.info("Starting SMARE...")
+    runModule(20, facebook)
+    # runModule(20, craigslist)
+    runModule(20, cleaner)
+    # runModule(20, model_manager)

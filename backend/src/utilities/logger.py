@@ -1,6 +1,8 @@
-import json
-import os
+import os, sys
 
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
+import json
 import pymongo
 from dotenv import load_dotenv
 from loguru import logger

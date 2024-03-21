@@ -51,5 +51,6 @@ types-beautifulsoup4==4.12.0.20240229
 types-html5lib==1.1.11.20240228
 typing_extensions==4.10.0
 tzdata==2024.1
-urllib3==2.2.1
 wsproto==1.2.0
+openai==1.14.2
+urllib3==1.26.18

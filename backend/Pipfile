@@ -24,6 +24,8 @@ pandas = "*"
 imblearn = "*"
 fuzzywuzzy = "*"
 loguru = "*"
+openai = "*"
+urllib3 = "*"
 
 [dev-packages]
 isort = "*"

@@ -15,8 +15,9 @@ def m2_riskscores(listings):
     client = OpenAI(api_key=gpt_key)
     output = []
 
-    for listing in listings:
+    for k, listing in enumerate(listings):
         try:
+            logger.debug(f"Model 2: Processing listing {k + 1}/{len(listings)}")
             response = client.chat.completions.create(
                 model="gpt-4-vision-preview",
                 messages=[
@@ -42,8 +43,8 @@ def m2_riskscores(listings):
                     1
                     - float(
                         re.search(
-                            r"\b\d+\b", response.choices[0].message.content.group(0)
-                        )
+                            r"\b\d+\b", response.choices[0].message.content
+                        ).group(0)
                     )
                     * 0.2
                 )
@@ -51,8 +52,8 @@ def m2_riskscores(listings):
                 output.append("-1")
 
         except Exception as e:
-            logger.error(f"Error with model2: {e}")
-            print(e)
+            logger.warning(f"Error with model2: {e}")
+            output.append("-1")
             continue
 
-        return output
+    return output

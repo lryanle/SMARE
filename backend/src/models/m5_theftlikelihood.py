@@ -1,5 +1,6 @@
 import json
 from difflib import SequenceMatcher
+#from ..cleaners import cleaner as cln
 from ..utilities.logger import SmareLogger
 
 # Initialize logger
@@ -58,11 +59,11 @@ def calculate_likelihoods(theft_rates):
             theft_likelihoods.append({"theft_rate": None, "risk_score": -1})  # Append -1 if calculation fails for the listing
     return theft_likelihoods
 
-def m5_theftlikelihood(cars_file,theft_data_file = "nhtsa_theft_data.json"):
+def m5_theftlikelihood(cars_file):
     try:
         logger.info("Starting M5 model for calculating theft likelihoods...")
       # Get theft rates
-        theft_rates = get_theft_rates(cars_file, theft_data_file)
+        theft_rates = get_theft_rates(cars_file, "nhtsa_theft_data.json")
         # Calculate theft likelihoods
         theft_likelihoods = calculate_likelihoods(theft_rates)
         logger.info("M5 model execution completed successfully.")
@@ -71,4 +72,12 @@ def m5_theftlikelihood(cars_file,theft_data_file = "nhtsa_theft_data.json"):
         logger.error(f"An error occurred: {e}")
         return []
 
-#thefts_riskscore = m5_theftlikelihood("cars.json","nhtsa_theft_data.json")
+#Questions on input for cars_file in this code
+#cln.init -> get clean_cars dict from the cleaners file -> 
+# File path to save the JSON file
+#output_file = "clean_cars.json"
+# Write clean_cars to a JSON file
+#with open(output_file, "w") as f:
+    #json.dump(clean_car, f, indent=4)
+#the parse into m5: 
+#thefts_riskscore = m5_theftlikelihood("clean_cars.json")

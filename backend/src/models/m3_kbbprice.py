@@ -1,110 +1,74 @@
 import json
-import re
-from concurrent.futures import ThreadPoolExecutor
-import numpy as np
-import pandas as pd
-import requests
-
-from ..utilities import logger
+from difflib import SequenceMatcher
+from ..utilities.logger import SmareLogger
 
 # Initialize logger
-logger = logger.SmareLogger()
+logger = SmareLogger()
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
+def get_theft(make, model, year, data):
+    theft_rate = None
+    max_similarity = 0
+    input_string = f"{year} {make} {model}"
+    for entry in data:
+        # Construct the string for the entry to be compared
+        entry_string = f"{entry['year']} {entry['manufacturer']} {entry['make']} {entry['make_model']}"
+        # Calculate similarity using the entire constructed strings
+        similarity_score = similar(input_string.lower(), entry_string.lower())
+        # Check if the year is within a 5-year range and the makes and models are similar
+        entry_year = int(entry['year'])
+        if abs(entry_year - year) <= 5:
+            if similarity_score > max_similarity:
+                max_similarity = similarity_score
+                theft_rate = float(entry["rate"])
+    return theft_rate
 
-def m3_riskscores(car_listings):
+def get_theft_rates(cars_listings, theft_data_file):
     try:
-        logger.info("Starting M3 model for calculating risk scores...")
-       
-        # Ensure the input is a list even if it's a single object
-        if not isinstance(car_listings, list):
-            car_listings = [car_listings]  # Convert single object input to list
-            logger.error("Input is not a list. Converting to a list.")
-
-        if len(car_listings) == 0:
-            logger.warning("Input list is empty.")
-            return []
-        
-        risk_scores = []
-
-        for data in car_listings:
-            # Extract relevant data
-            year = data.get('year')
-            price = data.get('price')
-            make = data.get('make')
-            model = data.get('model')
-
-            # MARKET PRICE COMPARISON
-            base_url = "https://www.kbb.com/"
-
-            # Check if make and model are strings
-            if not all(isinstance(val, str) for val in [make, model]):
-                logger.warning("Make or model is not a string!")
-                continue
-
-            # Replace spaces with dashes in the make and model for the URL
-            make_url_part = make.lower().replace(" ", "-")
-            model_url_part = model.lower().replace(" ", "-")
-
-            search_url = f'{base_url}{make_url_part}/{model_url_part}/{year}/'
-
-            try:
-                response = requests.get(search_url)
-                pattern = re.compile(r'"nationalBaseDefaultPrice":(\d+),')
-                match = pattern.search(response.text)
-                kbb_price = match.group(1) if match else None
-
-                if kbb_price is None:
-                    logger.warning(f"KBB price not found for {make} {model} {year}")
-                    continue
-
-                kbb_price = float(kbb_price)
-                price = float(price)
-
-                # Calculate price difference
-                price_difference = np.abs(price - kbb_price)
-
-                # Calculate reasonable price difference
-                a = 20000  # Initial value at x = 0
-                b = (1.06) ** (1 / 10000)  # Base of the exponential function
-                rd_kbb = a * (b ** (1.19 * kbb_price)) - 20000
-
-                # Calculate risk score
-                if price > kbb_price:
-                    risk_score = 0.01
-                else:
-                    delta_p = np.abs(price - kbb_price)
-                    x = delta_p / rd_kbb
-                    y = 0.26 * x ** 2 + 0.07 * x
-                    y = max(0, min(1, y))  # Ensure the risk score is between 0 and 1
-                    risk_score = y
-
-                risk_scores.append(risk_score)
-                logger.info(f"Risk score calculated for {make} {model} {year}: {risk_score}")
-
-            except Exception as e:
-                logger.error(f"Error processing {make} {model} {year}: {e}")
-
-        return risk_scores
-    
+        with open(theft_data_file, "r") as file:
+            theft_data = json.load(file)
+        theft_rates = []
+        for car in cars_listings:
+            make = car["make"]
+            model = car["model"]
+            year = car["year"]
+            theft_rate = get_theft(make, model, year, theft_data)
+            theft_rates.append(theft_rate)  # Append theft rate to the list
+        logger.info("Successfully calculated theft rates.")
+        return theft_rates
     except Exception as e:
-        logger.error(f"Error in M3 model: {e}")
-        return None
+        logger.error(f"Error occurred: {str(e)}")
 
-def test_m3():
+
+def calculate_likelihoods(theft_rates):
+    theft_likelihoods = []
+    for theft_rate in theft_rates:
+        try:
+            # Calculate risk score based on theft rate
+            if theft_rate is not None:
+                risk_score = theft_rate / 100  # Normalize theft rate to be between 0 and 1
+                theft_likelihoods.append(risk_score)
+            else:
+                theft_likelihoods.append(-1)  # Append -1 if theft rate is not available for the listing
+        except Exception as e:
+            logger.error(f"Failed to calculate risk score: {e}")
+            theft_likelihoods.append(-1)  # Append -1 if calculation fails for the listing
+    return theft_likelihoods
+
+def m5_theftlikelihood(cars_listings):
     try:
-        # Load data from the JSON file-- I used the cars.json just for testing purposes
-        with open("cars.json", "r") as file:
-            car_listings = json.load(file)
-        # Call the m3_riskscores function
-        risk_scores = m3_riskscores(car_listings)
-        if risk_scores is not None:
-            # Print the risk scores
-            logger.info("Risk Scores:")
-            logger.info(risk_scores)
-        else:
-            logger.info("Error occurred while calculating risk scores.")
+        logger.info("Starting M5 model for calculating theft likelihoods...")
+      # Get theft rates
+        theft_rates = get_theft_rates(cars_listings, "nhtsa_theft_data.json")
+        # Calculate theft likelihoods
+        theft_likelihoods = calculate_likelihoods(theft_rates)
+        # Check input and output array sizes before returning
+        if len(cars_listings) != len(theft_likelihoods):
+            logger.error("Input and output array sizes do not match.")
+            theft_likelihoods.append(-1)
+        logger.info("M5 model execution completed successfully.")
+        return theft_likelihoods
     except Exception as e:
-        logger.error(f"Error in M3 model tester: {e}")
-
-# Call the tester function
-test_m3()
+        logger.error(f"An error occurred: {e}")
+        theft_likelihoods.append(-1)

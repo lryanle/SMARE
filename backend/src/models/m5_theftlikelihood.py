@@ -63,7 +63,11 @@ def m5_theftlikelihood(cars_listings):
         theft_rates = get_theft_rates(cars_listings, "nhtsa_theft_data.json")
         # Calculate theft likelihoods
         theft_likelihoods = calculate_likelihoods(theft_rates)
-        logger.info("M5 model execution completed successfully.")
+        # Check input and output array sizes before returning
+        if len(cars_listings) != len(theft_likelihoods):
+            logger.error("Input and output array sizes do not match.")
+            theft_likelihoods.append(-1)
+        logger.info("M5 model execution completed...")
         return theft_likelihoods
     except Exception as e:
         logger.error(f"An error occurred: {e}")

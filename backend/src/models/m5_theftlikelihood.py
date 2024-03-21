@@ -1,6 +1,5 @@
 import json
 from difflib import SequenceMatcher
-#from ..cleaners import cleaner as cln
 from ..utilities.logger import SmareLogger
 
 # Initialize logger
@@ -25,10 +24,8 @@ def get_theft(make, model, year, data):
                 theft_rate = float(entry["rate"])
     return theft_rate
 
-def get_theft_rates(cars_file, theft_data_file):
+def get_theft_rates(cars_listings, theft_data_file):
     try:
-        with open(cars_file, "r") as file:
-            cars_data = json.load(file)
         with open(theft_data_file, "r") as file:
             theft_data = json.load(file)
         theft_rates = []
@@ -51,19 +48,19 @@ def calculate_likelihoods(theft_rates):
             # Calculate risk score based on theft rate
             if theft_rate is not None:
                 risk_score = theft_rate / 100  # Normalize theft rate to be between 0 and 1
-                theft_likelihoods.append({"theft_rate": theft_rate, "risk_score": risk_score})
+                theft_likelihoods.append(risk_score)
             else:
-                theft_likelihoods.append({"theft_rate": None, "risk_score": -1})  # Append None if theft rate is not available for the listing
+                theft_likelihoods.append(-1)  # Append -1 if theft rate is not available for the listing
         except Exception as e:
             logger.error(f"Failed to calculate risk score: {e}")
-            theft_likelihoods.append({"theft_rate": None, "risk_score": -1})  # Append -1 if calculation fails for the listing
+            theft_likelihoods.append(-1)  # Append -1 if calculation fails for the listing
     return theft_likelihoods
 
-def m5_theftlikelihood(cars_file):
+def m5_theftlikelihood(cars_listings):
     try:
         logger.info("Starting M5 model for calculating theft likelihoods...")
-      # Get theft rates
-        theft_rates = get_theft_rates(cars_file, "nhtsa_theft_data.json")
+        # Get theft rates
+        theft_rates = get_theft_rates(cars_listings, "nhtsa_theft_data.json")
         # Calculate theft likelihoods
         theft_likelihoods = calculate_likelihoods(theft_rates)
         logger.info("M5 model execution completed successfully.")
@@ -71,13 +68,3 @@ def m5_theftlikelihood(cars_file):
     except Exception as e:
         logger.error(f"An error occurred: {e}")
         return []
-
-#Questions on input for cars_file in this code
-#cln.init -> get clean_cars dict from the cleaners file -> 
-# File path to save the JSON file
-#output_file = "clean_cars.json"
-# Write clean_cars to a JSON file
-#with open(output_file, "w") as f:
-    #json.dump(clean_car, f, indent=4)
-#the parse into m5: 
-#thefts_riskscore = m5_theftlikelihood("clean_cars.json")

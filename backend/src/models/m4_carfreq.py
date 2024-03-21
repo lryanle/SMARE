@@ -9,13 +9,12 @@ def m4_riskscores(car_listings):
     # VEHICLE FREQUENCY MODEL
     try:
         logger.info("Starting M4 model for calculating risk scores...")
-                
         # Ensure the input is a list even if it's a single object
         if not isinstance(car_listings, list):
             car_listings = [car_listings]  # Convert single object input to list
-            logger.error("Input is not a list. Converting to a list.")  
+            logger.warning("Input is not a list. Converting to a list.")  
         if len(car_listings) == 0:
-            logger.warning("Input list is empty.")
+            logger.error("Input list is empty.")
             return []
         
         # Accumulate all the models into a list
@@ -46,23 +45,3 @@ def m4_riskscores(car_listings):
     except Exception as e:
         logger.error(f"Error in M3 model: {e}")
         return None
-    
-def test_m4():
-    try:
-        # Load data from the JSON file
-        with open("cars.json", "r") as file:
-            car_listings = json.load(file)
-        # Call the m4_riskscores function
-        risk_scores = m4_riskscores(car_listings)
-        if risk_scores is not None:
-            # Print the risk scores
-            logger.info("Risk Scores:")
-            logger.info(risk_scores)
-        else:
-            logger.info("Error occurred while calculating risk scores.")
-
-    except Exception as e:
-        logger.error(f"Error in M3 model tester: {e}")
-
-# Call the tester function
-test_m4()

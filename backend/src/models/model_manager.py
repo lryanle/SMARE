@@ -5,21 +5,48 @@ from m4_carfreq import m4_riskscores
 from ..utilities import logger
 from ..utilities.database import find_unanalyzed_cars
 
+MODEL_VERSIONS = [
+    1, # Model 1: Sentiment Analysis Model
+    1, # Model 2: GPT Vision Model
+    1, # Model 3: KBB Price Model
+    1, # Model 4: Car Frequency Model
+    1, # Model 5: Theft Likelihood Model
+    1, # Model 6: Luxury Model
+    1, # Model 7: Anomaly Model
+]
+
 logger = logger.SmareLogger()
 
 
 def filter_on_model(all_cars, model):
-    return [car for car in all_cars if car[model] == -1]
+    try:
+        return [car for car in all_cars if car[model] == -1]
+    except Exception as e:
+        logger.error(f"Model Manager: Could not filter cars for {model}")
+        return None
+
+
+def append_to_cars(model_num, model_cars, scores):
+    try:
+        scored_model_cars = model_cars
+        for car, score in zip(model_cars, scores):
+            car.update({f"model_{model_num}": score, "model_versions": {f"model_{model_num}": MODEL_VERSIONS[model_num - 1]}})
+        
+        return scored_model_cars
+    except Exception as e:
+        logger.error(f"Model Manager: Could append scores to model {model_num}")
+        return None
 
 
 # todo: calculate post-weight-product scores here, and not in each individual function.
-def model_manager():
+# todo: check the time stamp periodically and stop execution after reaching the time stamp
+def run(timestamp):
     logger.info("Starting Model Manager...")
 
     # Importing data from MongoDB
     logger.info("Moddel Manager: Importing data from MongoDB...")
     try:
-        all_cars = find_unanalyzed_cars()
+        all_cars = find_unanalyzed_cars(MODEL_VERSIONS)
     except Exception as e:
         logger.critical(
             f"Model Manager: Failed to import data from MongoDB. Error: {e}"
@@ -43,9 +70,11 @@ def model_manager():
 
         # todo: upload updated results back to mongodb
         # m1_results = m1_riskscores()
+        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 1 processing not implemented yet")
+        logger.warning("Modem Manager: Model 1 isn't yet tagging results with its version")
 
         logger.success("Model Manager: Model 1 successfully processed listings")
     except Exception as e:
@@ -66,9 +95,11 @@ def model_manager():
 
         # todo: upload updated results back to mongodb
         # m2_results = m2_riskscores()
+        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 2 processing not implemented yet")
+        logger.warning("Modem Manager: Model 2 isn't yet tagging results with its version")
 
         logger.success("Model Manager: Model 2 successfully processed listings")
     except Exception as e:
@@ -89,9 +120,11 @@ def model_manager():
 
         # todo: upload updated results back to mongodb
         # m3_results = m3_riskscores()
+        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 3 processing not implemented yet")
+        logger.warning("Modem Manager: Model 3 isn't yet tagging results with its version")
 
         logger.success("Model Manager: Model 3 successfully processed listings")
     except Exception as e:
@@ -112,9 +145,11 @@ def model_manager():
 
         # todo: upload updated results back to mongodb
         # m4_results = m4_riskscores()
+        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 4 processing not implemented yet")
+        logger.warning("Modem Manager: Model 4 isn't yet tagging results with its version")
 
         logger.success("Model Manager: Model 4 successfully processed listings")
     except Exception as e:
@@ -135,9 +170,11 @@ def model_manager():
 
         # todo: upload updated results back to mongodb
         # m4_results = m4_riskscores()
+        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 5 processing not implemented yet")
+        logger.warning("Modem Manager: Model 5 isn't yet tagging results with its version")
 
         logger.success("Model Manager: Model 5 successfully processed listings")
     except Exception as e:
@@ -158,9 +195,11 @@ def model_manager():
 
         # todo: upload updated results back to mongodb
         # m4_results = m4_riskscores()
+        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 6 processing not implemented yet")
+        logger.warning("Modem Manager: Model 6 isn't yet tagging results with its version")
 
         logger.success("Model Manager: Model 6 successfully processed listings")
     except Exception as e:
@@ -181,9 +220,11 @@ def model_manager():
 
         # todo: upload updated results back to mongodb
         # m4_results = m4_riskscores()
+        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 7 processing not implemented yet")
+        logger.warning("Modem Manager: Model 7 isn't yet tagging results with its version")
 
         logger.success("Model Manager: Model 7 successfully processed listings")
     except Exception as e:

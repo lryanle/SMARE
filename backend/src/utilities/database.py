@@ -46,8 +46,12 @@ def get_conn(db=DATABASE):
 
 def extract_id_from_link(link):
     try:
+        id = re.search(r"^\d+$")
         facebook = re.search(r"facebook\.com/marketplace/item/(\d+)/", link)
         craigslist = re.search(r"/(\d+)\.html$", link)
+
+        if id:
+            return id
 
         if facebook:
             return facebook.group(1)
@@ -93,20 +97,31 @@ def find_all_cars():
         return None
 
 
-def find_unanalyzed_cars():
+def find_unanalyzed_cars(current_versions):
     try:
         conn = get_conn(DATABASE)
 
         query = {
             "stage": "clean",
             "$or": [
-                {"model_1": -1},
-                {"model_2": -1},
-                {"model_3": -1},
-                {"model_4": -1},
-                {"model_5": -1},
-                {"model_6": -1},
-                {"model_7": -1},
+                {"$or": [
+                    {"model_1": -1},
+                    {"model_2": -1},
+                    {"model_3": -1},
+                    {"model_4": -1},
+                    {"model_5": -1},
+                    {"model_6": -1},
+                    {"model_7": -1},
+                ]},
+                {"$or": [
+                    {"model_versions.model_1": {"$not": {"$eq": current_versions[0]}}},
+                    {"model_versions.model_2": {"$not": {"$eq": current_versions[1]}}},
+                    {"model_versions.model_3": {"$not": {"$eq": current_versions[2]}}},
+                    {"model_versions.model_4": {"$not": {"$eq": current_versions[3]}}},
+                    {"model_versions.model_5": {"$not": {"$eq": current_versions[4]}}},
+                    {"model_versions.model_6": {"$not": {"$eq": current_versions[5]}}},
+                    {"model_versions.model_7": {"$not": {"$eq": current_versions[6]}}},
+                ]}
             ],
         }
 
@@ -154,15 +169,16 @@ def post_raw(scraper_version, source, car):
             return False
 
 
-def update(link, new_fields):
+def update(link, new_fields, conn=None):
     try:
-        conn = get_conn(DATABASE)
+        if conn is None:
+            conn = get_conn(DATABASE)
+
+            if not conn["success"]:
+                logger.error("Database: Failed to connect to DB.")
+                return False
     except Exception as e:
         logger.error(f"Database: Failed to connect to DB. Error: {e}")
-        return False
-
-    if not conn["success"]:
-        logger.error("Database: Failed to connect to DB.")
         return False
 
     try:
@@ -174,6 +190,31 @@ def update(link, new_fields):
         return False
 
     return result.acknowledged
+
+
+def update_all(cars_array):
+    try:
+        conn = get_conn(DATABASE)
+    except Exception as e:
+        logger.error(f"Database: Failed to connect to DB. Error: {e}")
+        return False
+
+    if not conn["success"]:
+        logger.error("Database: Failed to connect to DB.")
+        return False
+
+    try:
+        updated = 0
+
+        for car in cars_array:
+            sucess = update(car["link"], car, conn)
+            if sucess:
+                updated += 1
+    except Exception as e:
+        logger.error(f"Database: Failed to update_all cars. Error: {e}")
+        return False
+
+    return updated
 
 
 def post_log(

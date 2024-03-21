@@ -1,186 +1,74 @@
-# import necessary libraries
-import MOVETOCLEAN_car_data
-import numpy as np
-import pandas as pd
-from fuzzywuzzy import fuzz
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.impute import SimpleImputer
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
+import json
+from difflib import SequenceMatcher
+from ..utilities.logger import SmareLogger
 
-# THEFT LIKELIHOOD MODEL
+# Initialize logger
+logger = SmareLogger()
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
-# Step 1: Load the datasets
-car_df = MOVETOCLEAN_car_data.cars
-car_df["make_model"] = car_df["manufacturer"] + " " + car_df["model"]
+def get_theft(make, model, year, data):
+    theft_rate = None
+    max_similarity = 0
+    input_string = f"{year} {make} {model}"
+    for entry in data:
+        # Construct the string for the entry to be compared
+        entry_string = f"{entry['year']} {entry['manufacturer']} {entry['make']} {entry['make_model']}"
+        # Calculate similarity using the entire constructed strings
+        similarity_score = similar(input_string.lower(), entry_string.lower())
+        # Check if the year is within a 5-year range and the makes and models are similar
+        entry_year = int(entry['year'])
+        if abs(entry_year - year) <= 5:
+            if similarity_score > max_similarity:
+                max_similarity = similarity_score
+                theft_rate = float(entry["rate"])
+    return theft_rate
 
-# Load the dataset containing the Top 10 Most Frequently Stolen Vehicles
-top10theft = {
-    "Rank": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "Model": [
-        "Chevrolet Full Size Pick-up",
-        "Ford Full Size Pick-up",
-        "Honda Civic",
-        "Honda Accord",
-        "Hyundai Sonata",
-        "Hyundai Elantra",
-        "Kia Optima",
-        "Toyota Camry",
-        "GMC Full Size Pick-up",
-        "Honda CR-V",
-    ],
-    "Thefts": [
-        49.903,
-        48.175,
-        27.113,
-        27.089,
-        21.707,
-        19.602,
-        18.221,
-        17.094,
-        16.622,
-        13.832,
-    ],
-    "year": [2004, 2006, 2000, 1997, 2013, 2017, 2015, 2021, 2005, 2001],
-}
-
-top10theft = pd.DataFrame(top10theft)
+def get_theft_rates(cars_file, theft_data_file):
+    try:
+        with open(cars_file, "r") as file:
+            cars_data = json.load(file)
+        with open(theft_data_file, "r") as file:
+            theft_data = json.load(file)
+        theft_rates = []
+        for car in cars_data:
+            make = car["make"]
+            model = car["model"]
+            year = car["year"]
+            theft_rate = get_theft(make, model, year, theft_data)
+            theft_rates.append(theft_rate)  # Append theft rate to the list
+        logger.info("Successfully calculated theft rates.")
+        return theft_rates
+    except Exception as e:
+        logger.error(f"Error occurred: {str(e)}")
 
 
-# Function to calculate similarity between strings using fuzzywuzzy
-def calculate_similarity(str1, str2):
-    return fuzz.token_sort_ratio(str1, str2)
+def calculate_likelihoods(theft_rates):
+    theft_likelihoods = []
+    for theft_rate in theft_rates:
+        try:
+            # Calculate risk score based on theft rate
+            if theft_rate is not None:
+                risk_score = theft_rate / 100  # Normalize theft rate to be between 0 and 1
+                theft_likelihoods.append({"theft_rate": theft_rate, "risk_score": risk_score})
+            else:
+                theft_likelihoods.append({"theft_rate": None, "risk_score": -1})  # Append None if theft rate is not available for the listing
+        except Exception as e:
+            logger.error(f"Failed to calculate risk score: {e}")
+            theft_likelihoods.append({"theft_rate": None, "risk_score": -1})  # Append -1 if calculation fails for the listing
+    return theft_likelihoods
 
+def m5_theftlikelihood(cars_file,theft_data_file = "nhtsa_theft_data.json"):
+    try:
+        logger.info("Starting M5 model for calculating theft likelihoods...")
+      # Get theft rates
+        theft_rates = get_theft_rates(cars_file, theft_data_file)
+        # Calculate theft likelihoods
+        theft_likelihoods = calculate_likelihoods(theft_rates)
+        logger.info("M5 model execution completed successfully.")
+        return theft_likelihoods
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        return []
 
-# Function to compare models and years and assign theft occurrences
-def assign_theft_occurrences(row):
-    for index, theft_row in top10theft.iterrows():
-        # Check if model and year are similar
-        similarity = calculate_similarity(row["make_model"], theft_row["Model"])
-        if similarity >= 80 and abs(row["year"] - theft_row["year"]) <= 5:
-            return theft_row["Thefts"]
-    # If vehicle not in top 10 list, assign a reasonable number
-    return 1000
-
-
-# Apply the function to assign theft occurrences
-car_df["theft_occurrences"] = car_df.apply(assign_theft_occurrences, axis=1)
-
-# Step 2: Preprocess the data (if needed)
-# Drop columns that are not needed for modeling
-car_df = car_df.drop(
-    columns=[
-        "source",
-        "title",
-        "location",
-        "kbb_price",
-        "price_difference",
-        "fraudulent",
-        "risk_level",
-        "model_frequency",
-        "model_short",
-        "high_risk",
-    ]
-)
-
-# One-hot encode categorical variables if needed
-car_df = pd.get_dummies(car_df, columns=["manufacturer", "model"])
-
-# Step 3: Split the data into features and target variable
-X = car_df.drop(["theft_occurrences", "make_model"], axis=1)
-y = car_df["theft_occurrences"]
-
-# Print unique theft_occurrences values and their corresponding make_model and thefts
-unique_theft_occurrences = car_df["theft_occurrences"].unique()
-for theft_occurrence in unique_theft_occurrences:
-    print(f"Theft Occurrence: {theft_occurrence}")
-    print("Make Model and Thefts:")
-    matched_make_models = car_df.loc[
-        car_df["theft_occurrences"] == theft_occurrence, "make_model"
-    ].unique()
-
-    output_df = []
-
-    for make_model in matched_make_models:
-        # Find the corresponding thefts value from top10theft
-        top10_row = top10theft[
-            top10theft["Model"].str.lower().str.startswith(make_model[:3])
-        ]
-        if not top10_row.empty:
-            thefts_value = top10_row.iloc[0]["Thefts"]
-            output_df.append(
-                {
-                    "Theft_Occurrence": theft_occurrence,
-                    "Make_Model": make_model,
-                    "Thefts": thefts_value,
-                },
-            )
-    output_csv_filename = f"theft_occurrences_{theft_occurrence}.csv"
-    output_df.to_csv(output_csv_filename, index=False)
-    print(
-        f"Results for theft occurrence {theft_occurrence} have been saved to {output_csv_filename}"
-    )
-
-# Step 4: Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-
-# Step 5: Impute missing values in y_train and y_test
-imputer = SimpleImputer(strategy="mean")
-y_train_imputed = imputer.fit_transform(y_train.values.reshape(-1, 1)).ravel()
-y_test_imputed = imputer.transform(y_test.values.reshape(-1, 1)).ravel()
-
-# Step 6: Train the machine learning model
-model = RandomForestRegressor(random_state=42)
-model.fit(X_train, y_train_imputed)
-
-# Step 7: Make predictions
-y_pred = model.predict(X_test)
-
-# Step 8: Evaluate the model
-mse = mean_squared_error(y_test_imputed, y_pred)
-output_df = pd.DataFrame(columns=["Mean Squared Error"], data=[mse])
-output_csv_filename = "mse_evaluation.csv"
-output_df.to_csv(output_csv_filename, index=False)
-print(f"Mean Squared Error has been saved to {output_csv_filename}")
-
-# Example of predicting theft rate for new data
-# Assuming 'new_data_features' contains features of new vehicles
-new_data_features = X_test.head(9)  # Use the first row of the test set as an example
-new_data_theft_rate = model.predict(new_data_features)
-print("Predicted theft rate for new data:", new_data_theft_rate)
-
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-
-# Train the Gradient Boosting Regressor model
-model = GradientBoostingRegressor(random_state=42)
-model.fit(X_train, y_train)
-
-# Make predictions
-y_pred = model.predict(X_test)
-
-# Evaluate the model
-mse = mean_squared_error(y_test, y_pred)
-output_df = pd.DataFrame(columns=["Mean Squared Error"], data=[mse])
-output_csv_filename = "gradient_boosting_mse_evaluation.csv"
-output_df.to_csv(output_csv_filename, index=False)
-print(
-    f"Mean Squared Error for Gradient Boosting Regressor has been saved to {output_csv_filename}"
-)
-
-# Visualize the feature importances
-feature_importances = model.feature_importances_
-sorted_indices = np.argsort(feature_importances)[::-1]
-sorted_features = X.columns[sorted_indices]
-sorted_importances = feature_importances[sorted_indices]
-
-output_df = pd.DataFrame(
-    {"Feature": sorted_features, "Feature Importance": sorted_importances}
-)
-output_csv_filename = "feature_importance_visualization.csv"
-output_df.to_csv(output_csv_filename, index=False)
-print(f"Feature importances visualization has been saved to {output_csv_filename}")
+#thefts_riskscore = m5_theftlikelihood("cars.json","nhtsa_theft_data.json")

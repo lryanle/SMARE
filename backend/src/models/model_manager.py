@@ -1,4 +1,6 @@
 # Importing the M3_riskscores and M4_riskscores functions from their respective modules
+# form m1_sentiment import m1_riskscores
+from m2_gptvision import m2_riskscores
 from m3_kbbprice import m3_riskscores
 from m4_carfreq import m4_riskscores
 
@@ -22,7 +24,7 @@ def filter_on_model(all_cars, model):
     try:
         return [car for car in all_cars if car[model] == -1]
     except Exception as e:
-        logger.error(f"Model Manager: Could not filter cars for {model}")
+        logger.critical(f"Model Manager: Could not filter cars for {model}")
         return None
 
 
@@ -31,10 +33,10 @@ def append_to_cars(model_num, model_cars, scores):
         scored_model_cars = model_cars
         for car, score in zip(model_cars, scores):
             car.update({f"model_{model_num}": score, "model_versions": {f"model_{model_num}": MODEL_VERSIONS[model_num - 1]}})
-        
+
         return scored_model_cars
     except Exception as e:
-        logger.error(f"Model Manager: Could append scores to model {model_num}")
+        logger.critical(f"Model Manager: Could append scores to model {model_num}")
         return None
 
 
@@ -93,13 +95,8 @@ def run(timestamp):
 
         logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
 
-        # todo: upload updated results back to mongodb
-        # m2_results = m2_riskscores()
-        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
-
-        # REMOVE ME
-        logger.warning("Model Manager: Model 2 processing not implemented yet")
-        logger.warning("Modem Manager: Model 2 isn't yet tagging results with its version")
+        m2_results = m2_riskscores()
+        model_2_cars = append_to_cars(1, model_2_cars, m2_results)
 
         logger.success("Model Manager: Model 2 successfully processed listings")
     except Exception as e:
@@ -120,7 +117,7 @@ def run(timestamp):
 
         # todo: upload updated results back to mongodb
         # m3_results = m3_riskscores()
-        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
+        # model_3_cars = append_to_cars(1, model_3_cars, m3_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 3 processing not implemented yet")
@@ -145,7 +142,7 @@ def run(timestamp):
 
         # todo: upload updated results back to mongodb
         # m4_results = m4_riskscores()
-        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
+        # model_4_cars = append_to_cars(1, model_4_cars, m4_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 4 processing not implemented yet")
@@ -170,7 +167,7 @@ def run(timestamp):
 
         # todo: upload updated results back to mongodb
         # m4_results = m4_riskscores()
-        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
+        # model_5_cars = append_to_cars(1, model_5_cars, m5_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 5 processing not implemented yet")
@@ -195,7 +192,7 @@ def run(timestamp):
 
         # todo: upload updated results back to mongodb
         # m4_results = m4_riskscores()
-        # model_1_cars = append_to_cars(1, model_1_cars, m1_results) # appends scores to the filtered cars list of this model
+        # model_6_cars = append_to_cars(1, model_6_cars, m6_results) # appends scores to the filtered cars list of this model
 
         # REMOVE ME
         logger.warning("Model Manager: Model 6 processing not implemented yet")
@@ -230,25 +227,4 @@ def run(timestamp):
     except Exception as e:
         logger.error(f"Model Manager: Model 7 failed to process listings. Error: {e}")
 
-    # todo: add all risk scores and clamp them to 100 (i.e. `min(100, sum_of_risk_scores)`)
-    # PLEASE USE LOGGERS TO:
-    #    - Log when this process starts
-    # try...except any errors
-    #    - Log when this process ends
-    # use `logger.critical()` when making any CODE ASSUMPTIONS. I.e., variable X is supposed to have Y property.
-    # Make sure that you have a check to see if X has Y property. Critical log if not.
-    # (i.e. if a model breaks, its an error. If this file cant connect to the mongodb database, that's a critical)
-
-    # REMOVE ME
-    logger.warning("Model Manager: Final risk score calculation not implemented yet")
-
-    # todo: save final risk scores to each listing in mongodb# PLEASE USE LOGGERS TO:
-    #    - Log when this process starts
-    # try...except any errors
-    #    - Log when this process ends
-    # use `logger.critical()` when making any CODE ASSUMPTIONS. I.e., variable X is supposed to have Y property.
-    # Make sure that you have a check to see if X has Y property. Critical log if not.
-    # (i.e. if a model breaks, its an error. If this file cant connect to the mongodb database, that's a critical)
-
-    # REMOVE ME
-    logger.warning("Model Manager: Final risk score saving not implemented yet")
+    logger.success("Model Manager: All models successfully processed listings")

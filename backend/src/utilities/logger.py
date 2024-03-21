@@ -131,7 +131,7 @@ class SmareLogger:
         try:
             msg = f"{source}: {message}" if source else message
 
-            logger.bind(source=source).debug(msg)
+            logger.bind(source=source).opt(depth=1).debug(msg)
         except Exception as e:
             logger.critical(f"Error: {e}")
 
@@ -139,7 +139,7 @@ class SmareLogger:
         try:
             msg = f"{source}: {message}" if source else message
 
-            logger.bind(source=source).info(msg)
+            logger.bind(source=source).opt(depth=1).info(msg)
         except Exception as e:
             logger.critical(f"Error: {e}")
 
@@ -147,7 +147,7 @@ class SmareLogger:
         try:
             msg = f"{source}: {message}" if source else message
 
-            logger.bind(source=source).success(msg)
+            logger.bind(source=source).opt(depth=1).success(msg)
         except Exception as e:
             logger.critical(f"Error: {e}")
 
@@ -155,7 +155,7 @@ class SmareLogger:
         try:
             msg = f"{source}: {message}" if source else message
 
-            logger.bind(source=source).warning(msg)
+            logger.bind(source=source).opt(depth=1).warning(msg)
         except Exception as e:
             logger.critical(f"Error: {e}")
 
@@ -163,7 +163,7 @@ class SmareLogger:
         try:
             msg = f"{source}: {message}" if source else message
 
-            logger.bind(source=source).error(msg)
+            logger.bind(source=source).opt(depth=1).error(msg)
         except Exception as e:
             logger.critical(f"Error: {e}")
 
@@ -171,6 +171,6 @@ class SmareLogger:
         try:
             msg = f"{source}: {message}" if source else message
 
-            logger.bind(source=source).critical(msg)
+            logger.bind(source=source).opt(depth=1).critical(msg)
         except Exception as e:
             logger.critical(f"Error: {e}")

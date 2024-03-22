@@ -226,18 +226,17 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
         return False
 
     try:
-        updated = 0
-
         update_operations = []
         for k, car in enumerate(cars_array):
-            field_name = f"model_name.model_{model_number}"
+            model_field_score = f"model_scores.model_{model_number}"
+            model_field_version = f"model_versions.model_{model_number}"
 
-            update_operation = pymongo.UpdateOne(
+            update_operation = UpdateOne(
                 {"_id": car["_id"]},
                 {
                     "$set": {
-                        field_name: new_scores[k],
-                        "model_versions": {f"model_{model_number}": model_version},
+                        model_field_score: new_scores[k],
+                        model_field_version: model_version,
                     }
                 },
             )

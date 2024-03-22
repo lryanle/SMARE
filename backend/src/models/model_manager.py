@@ -23,7 +23,7 @@ logger = logger.SmareLogger()
 
 def filter_on_model(all_cars, model):
     try:
-        return [car for car in all_cars if car[model] == -1]
+        return [car for car in all_cars if car["model_scores"][model] == -1]
     except Exception as e:
         logger.critical(f"Model Manager: Could not filter cars for {model}")
         return None
@@ -60,10 +60,7 @@ def run(timestamp):
 
         logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
 
-        logger.debug("model_2_cars: ", model_2_cars)
-        m2_scores = m2_riskscores(model_2_cars)
-
-        update_listing_scores(model_2_cars, m2_scores, 2, MODEL_VERSIONS[1])
+        update_listing_scores(model_2_cars, m2_riskscores(model_2_cars), 2, MODEL_VERSIONS[1])
 
         logger.success("Model Manager: Model 2 successfully processed listings")
     except Exception as e:

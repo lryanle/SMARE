@@ -140,7 +140,7 @@ def post_raw(scraper_version, source, car):
         return False
 
     if not conn["success"]:
-        logger.error("Database: Failed to connect to DB.")
+        logger.error("Database (post_raw): Failed to connect to DB.")
         return False
 
     logger.success("Database: Connected to DB")
@@ -192,24 +192,61 @@ def update(link, new_fields, conn=None):
     return result.acknowledged
 
 
-def update_all(cars_array):
+def update_listing_scores(cars_array, new_scores, model_number, model_version):
+    logger.debug(f"Database: Bulk updating listing scores. new scores: {new_scores}")
     try:
         conn = get_conn(DATABASE)
+        if not conn["success"]:
+            logger.error("Database: Failed to connect to DB.")
+            return False
     except Exception as e:
         logger.error(f"Database: Failed to connect to DB. Error: {e}")
         return False
 
-    if not conn["success"]:
-        logger.error("Database: Failed to connect to DB.")
+    if len(cars_array) != len(new_scores):
+        logger.critical(
+            "Database: Length of cars array and scores array do not match. Please fix your model :)"
+        )
+        return False
+
+    if not cars_array:
+        logger.warning("Database: No cars to update")
+        return False
+
+    if not new_scores:
+        logger.warning("Database: No scores to update")
+        return False
+
+    if not model_version:
+        logger.error("Database: No model version provided")
+        return False
+
+    if not model_number:
+        logger.error("Database: No model number provided")
         return False
 
     try:
         updated = 0
 
-        for car in cars_array:
-            sucess = update(car["link"], car, conn)
-            if sucess:
-                updated += 1
+        update_operations = []
+        for k, car in enumerate(cars_array):
+            field_name = f"model_name.model_{model_number}"
+
+            update_operation = pymongo.UpdateOne(
+                {"_id": car["_id"]},
+                {
+                    "$set": {
+                        field_name: new_scores[k],
+                        "model_versions": {f"model_{model_number}": model_version},
+                    }
+                },
+            )
+            update_operations.append(update_operation)
+
+        if update_operations:
+            result = conn["db"][SCRAPE_COLLECTION].bulk_write(update_operations)
+            return result.modified_count
+
     except Exception as e:
         logger.error(f"Database: Failed to update_all cars. Error: {e}")
         return False

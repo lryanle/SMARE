@@ -19,38 +19,63 @@ logger = SmareLogger()
 
 
 def calculate_timestamp(seconds):
-    return datetime.now() + timedelta(seconds=seconds)
+    try:
+        return datetime.now() + timedelta(seconds=seconds)
+    except Exception as e:
+        logger.critical(f"Orchestrator failed to generate module termination-timestamp. Error: {e}")
 
 
 def facebook(termination_timestamp):
-    logger.info(f"Running faceboook until {termination_timestamp}")
-    run_scraper(termination_timestamp, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    try:
+        run_scraper(termination_timestamp, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    except Exception as e:
+        logger.critical(f"Orchestrator failed runnning facebook scraper. Error: {e}")
 
 
 def craigslist(termination_timestamp):
-    logger.info(f"Running craigslist until {termination_timestamp}")
-    run_scraper(termination_timestamp, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    try:
+        run_scraper(termination_timestamp, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    except Exception as e:
+        logger.critical(f"Orchestrator failed runnning craigslist scraper. Error: {e}")
 
 
 def smare(scraper_name):
-    if scraper_name == "facebook":
-        logger.info("Starting SMARE with facebook...")
-        scraper = facebook
-    elif scraper_name == "craigslist":
-        logger.info("Starting SMARE with craigslist...")
-        scraper = craigslist
+    try:
+        if scraper_name == "facebook":
+            logger.info("Starting SMARE with facebook...")
+            scraper = facebook
+        elif scraper_name == "craigslist":
+            logger.info("Starting SMARE with craigslist...")
+            scraper = craigslist
 
-    # scraper(calculate_timestamp(SCRAPER_DURATION))
-    run_cleaner(calculate_timestamp(SCRAPER_DURATION), CLEANER_VERSION)
-    # run_analyzer(calculate_timestamp(ANALYZER_DURATION))
+
+        scraper(calculate_timestamp(SCRAPER_DURATION))
+    except Exception as e:
+        logger.critical(f"Orchestrator failed while runnning the scraper module. Error: {e}")
+
+    try:
+        run_cleaner(calculate_timestamp(SCRAPER_DURATION), CLEANER_VERSION)
+    except Exception as e:
+        logger.critical(f"Orchestrator failed runnning the cleaner module. Error: {e}")
+
+    try:
+        run_analyzer(calculate_timestamp(ANALYZER_DURATION))
+    except Exception as e:
+        logger.critical(f"Orchestrator failed runnning analyzer module (model manager). Error: {e}")
 
 
 def smare_cragigslist():
-    smare("craigslist")
-
+    try:
+        smare("craigslist")
+    except Exception as e:
+        logger.critical(f"SMARE failed running the craigslist pipeline. Error: {e}")
+    
 
 def smare_facebook():
-    smare("facebook")
+    try:
+        smare("facebook")
+    except Exception as e:
+        logger.critical(f"SMARE failed running the facebook pipeline. Error: {e}")
 
 
 if __name__ == "__main__":

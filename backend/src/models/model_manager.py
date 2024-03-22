@@ -30,7 +30,7 @@ def filter_on_model(all_cars, model):
 
 # todo: calculate post-weight-product scores here, and not in each individual function.
 # todo: check the time stamp periodically and stop execution after reaching the time stamp
-def run(timestamp):
+def run(termination_timestamp):
     logger.info("Starting Model Manager...")
 
     # Importing data from MongoDB

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from ..utilities import database as db
 from ..utilities import logger
 from . import craigslist as cl
@@ -43,7 +45,7 @@ def clean(car):
         return None
 
 
-def run(is_done, version):
+def run(termination_timestamp, version):
     cars = db.find_cars_in_stage("scrape")
 
     logger.info("Began cleaners")
@@ -86,7 +88,7 @@ def run(is_done, version):
                 )
                 break
 
-        if is_done:
+        if datetime.now() >= termination_timestamp:
             logger.info("Cleaning process is done.")
             break
 

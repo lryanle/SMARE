@@ -1,53 +1,58 @@
-import multiprocessing
-import time
+from datetime import datetime, timedelta
 
 from src.cleaners.cleaner import run as run_cleaner
 from src.scrapers.scraper import run as run_scraper
 from src.models.model_manager import run as run_analyzer
 from src.utilities.logger import SmareLogger
 
+SCRAPER_DURATION = 4 * 60
+CLEANER_DURATION = 3 * 60
+ANALYZER_DURATION = 4 * 60
+
+CL_SCRAPER_VERSION = 5
+FB_SCRAPER_VERSION = 5
+CLEANER_VERSION = 1
+
+DUPLICATE_TERMINATION_LIMIT = 5
+
 logger = SmareLogger()
 
 
-def timer(duration):
-    time.sleep(duration)
+def calculate_timestamp(seconds):
+    return datetime.now() + timedelta(seconds=seconds)
 
 
-def runModule(duration, target, version):
-    done = multiprocessing.Value("b", False)
-
-    mod = multiprocessing.Process(target=target, args=(done, version))
-    mod.start()
-
-    # wait for duration, then stop the module
-    logger.debug(f"starting timer for {duration} seconds")
-    timer(duration)
-    done.value = True
-    logger.debug("timer finished, set process boolean flag to true")
-
-    # wait until the module process returns
-    mod.join()
-    logger.debug("process completed")
+def facebook(termination_timestamp):
+    logger.info(f"Running faceboook until {termination_timestamp}")
+    run_scraper(termination_timestamp, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
-def facebook(is_done):
-    run_scraper(is_done, "facebook", 5, 5)
+def craigslist(termination_timestamp):
+    logger.info(f"Running craigslist until {termination_timestamp}")
+    run_scraper(termination_timestamp, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
-def craigslist(is_done):
-    run_scraper(is_done, "craigslist", 5, 5)
+def smare(scraper_name):
+    if scraper_name == "facebook":
+        logger.info("Starting SMARE with facebook...")
+        scraper = facebook
+    elif scraper_name == "craigslist":
+        logger.info("Starting SMARE with craigslist...")
+        scraper = craigslist
+
+    # scraper(calculate_timestamp(SCRAPER_DURATION))
+    run_cleaner(calculate_timestamp(SCRAPER_DURATION), CLEANER_VERSION)
+    # run_analyzer(calculate_timestamp(ANALYZER_DURATION))
 
 
-def cleaner(is_done):
-    run_scraper(is_done, 1)
+def smare_cragigslist():
+    smare("craigslist")
 
 
-def model_manager(is_done):
-    run_analyzer(is_done)
+def smare_facebook():
+    smare("facebook")
+
 
 if __name__ == "__main__":
-    logger.info("Starting SMARE...")
-    runModule(20, facebook)
-    # runModule(20, craigslist)
-    runModule(20, cleaner)
-    # runModule(20, model_manager)
+    smare_facebook()
+    # smare_cragigslist()

@@ -1,3 +1,4 @@
+from orchestrator import smare_cragigslist, smare_facebook
 from src.cleaners import cleaner
 from src.scrapers import scraper
 
@@ -6,6 +7,14 @@ FB_SCRAPER_VERSION = 5
 CLEANER_VERSION = 1
 
 DUPLICATE_TERMINATION_LIMIT = 5
+
+
+def pipeline_facebook():
+    smare_facebook()
+
+
+def pipeline_craigslist():
+    smare_cragigslist()
 
 
 def craigslist():

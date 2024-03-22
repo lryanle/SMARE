@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pymongo.errors import DuplicateKeyError
 
 from ..utilities import database as db
@@ -8,7 +10,7 @@ from .utils import load_page_resources, setup_browser
 logger = logger.SmareLogger()
 
 
-def run(is_done, website, scraper_version, duplicate_threshold):
+def run(termination_timestamp, website, scraper_version, duplicate_threshold):
     logger.info(f"Starting {website} scraper...")
 
     if website == "craigslist":
@@ -20,6 +22,10 @@ def run(is_done, website, scraper_version, duplicate_threshold):
     browser = setup_browser()
 
     for url in city_urls:
+        if datetime.now() >= termination_timestamp:
+                logger.info("Scraping process is done.")
+                break
+        
         logger.debug(f"Going to {url}")
         browser.get(url)
 
@@ -31,6 +37,10 @@ def run(is_done, website, scraper_version, duplicate_threshold):
         duplicate_post_count = 0
 
         for post in car_posts:
+            if datetime.now() >= termination_timestamp:
+                logger.info("Scraping process is done.")
+                break
+
             if duplicate_post_count >= duplicate_threshold:
                 logger.warning(f"Reached duplicate threshold of {duplicate_threshold}")
                 break
@@ -53,10 +63,6 @@ def run(is_done, website, scraper_version, duplicate_threshold):
                 )
             except Exception as error:
                 logger.error(f"Encountered an error: {error}")
-            
-            if is_done:
-                logger.info("Cleaning process is done.")
-                break
 
     logger.success(f"Finished {website} scraper")
     browser.quit()

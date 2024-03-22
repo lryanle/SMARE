@@ -17,6 +17,7 @@ COPY --from=build /opt/chromedriver-linux64 /opt/
 
 WORKDIR /var/task
 COPY app.py ./
+COPY orchestrator.py ./
 COPY src ./src
 COPY src/models ./src/models
 COPY requirements.txt ./

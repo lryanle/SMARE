@@ -79,5 +79,3 @@ def run(timestamp):
     # here...
 
     logger.success("Model Manager: All models successfully processed listings")
-
-run(0)

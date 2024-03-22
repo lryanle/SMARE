@@ -5,6 +5,9 @@ from .m2_gptvision import m2_riskscores
 # from m3_kbbprice import m3_riskscores
 # from m4_carfreq import m4_riskscores
 
+from model_6 import m6_labels, preprocess_listing
+import joblib
+
 from ..utilities import logger
 from ..utilities.database import find_unanalyzed_cars, update_listing_scores
 

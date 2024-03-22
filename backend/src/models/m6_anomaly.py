@@ -1,5 +1,8 @@
 import pandas as pd
 import joblib
+from ..utilities import logger
+
+logger = logger.SmareLogger()
 
 # Define luxury brands and their average prices
 luxury_brands = ['Mercedes-Benz', 'BMW', 'Audi', 'Lexus', 'Porsche', 'Tesla', 
@@ -51,37 +54,26 @@ def preprocess_listing(listing):
     return features
 
 # Load the model and preprocessor
-model = joblib.load('isolation_forest_model.pkl')
-preprocessor = joblib.load('preprocessor.pkl')
+try:
+    model = joblib.load('isolation_forest_model.pkl')
+    preprocessor = joblib.load('preprocessor.pkl')
+    logger.success("Model and preprocessor successfully loaded.")
+except Exception as e:
+    logger.error(f"Failed to load model or preprocessor: {e}")
+    raise e
 
 # Function to predict anomalies on new listings
-def predict_listings(listings):
+def m6_labels(listings):
     predictions = []
-    for listing in listings:
-        preprocessed_listing = preprocess_listing(listing)
-        features_preprocessed = preprocessor.transform(preprocessed_listing)
-        score = model.decision_function(features_preprocessed)
-        prediction = 1 if score <= 0.05 else 0
-        predictions.append(prediction)
+    for k, listing in enumerate(listings):
+        try:
+            preprocessed_listing = preprocess_listing(listing)
+            features_preprocessed = preprocessor.transform(preprocessed_listing)
+            score = model.decision_function(features_preprocessed)
+            prediction = 1 if score <= 0.05 else 0
+            predictions.append(prediction)
+            logger.debug(f"Processed listing {k + 1}/{len(listings)}. Prediction: {prediction}")
+        except Exception as e:
+            logger.warning(f"Error processing listing {k + 1}: {e}")
+            predictions.append(-1)
     return predictions
-
-import json
-
-# Function to load JSON data
-def load_json(filename):
-    with open(filename, 'r') as file:
-        data = json.load(file)
-    return data
-
-# Load your JSON file
-filename = 'listings.json'
-listings = load_json(filename)
-
-# Assuming predict_listings function is already defined as per previous script
-predictions = predict_listings(listings)
-
-# Display or process the predictions
-for listing, prediction in zip(listings, predictions):
-    print(f"Listing ID: {listing['_id']} - Anomaly Prediction: {'Anomaly' if prediction == 1 else 'Normal'}")
-
-

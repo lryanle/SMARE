@@ -1,12 +1,20 @@
 {
   "compilerOptions": {
     "plugins": [
-      { "name": "next" },
+      {
+        "name": "next"
+      },
       // See https://github.com/mrmckeb/typescript-plugin-css-modules#installation
-      { "name": "typescript-plugin-css-modules" }
+      {
+        "name": "typescript-plugin-css-modules"
+      }
     ],
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -29,26 +37,51 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/public/*": ["./public/*"],
-      "@/components/*": ["./components/*"],
+      "@/*": [
+        "./*"
+      ],
+      "@/public/*": [
+        "./public/*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
       // "@/data/*": ["data/*"],
-      "@/layouts/*": ["./components/layout/*"],
-      "@/lib/*": ["./lib/*"],
+      "@/layouts/*": [
+        "./components/layout/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
       // "@/styles/*": ["./src/styles/*"],
-      "@/types": ["types/index"],
-      "@/types/*": ["types/*"],
-      "@/hooks/*": ["./lib/hooks/*"],
-      "@/app/*": ["./app/*"],
-      "@/api/*": ["./app/api/*"],
-      "@/icons": ["./components/shared/icons"]
+      "@/types": [
+        "types/index"
+      ],
+      "@/types/*": [
+        "types/*"
+      ],
+      "@/hooks/*": [
+        "./lib/hooks/*"
+      ],
+      "@/app/*": [
+        "./app/*"
+      ],
+      "@/api/*": [
+        "./app/api/*"
+      ],
+      "@/icons": [
+        "./components/shared/icons"
+      ]
     }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "lib/hooks/use-intersection-observer.ts"
+    "lib/hooks/use-intersection-observer.ts",
+    ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,19 +1,28 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-
-const data = [
-  {
-    name: "Oct",
-    total: 133,
-  },
-  {
-    name: "Nov",
-    total: 153,
-  },
-];
+import { useState, useEffect } from 'react';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 export function Overview() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('/api/listings/month');
+      if (!response.ok) {
+        console.error('Failed to fetch data');
+        return;
+      }
+
+      const result = await response.json();
+      if (result.success && result.data) {
+        setData(result.data);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart data={data}>

@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma"; // adjust the import path as needed
-import { getSession, useSession } from "next-auth/react";
 import { NextRequest } from "next/server";
-import useSWR from "swr";
 
 const fetcher = (url: string) =>
   fetch(url, { next: { revalidate: 60 } }).then((res) => res.json());

@@ -19,8 +19,8 @@ export function CalendarDateRangePicker({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 9, 27),
-    to: addDays(new Date(2023, 9, 27), 31),
+    from: addDays(new Date(), -30),
+    to: new Date(),
   });
 
   return (

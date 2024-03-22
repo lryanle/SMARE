@@ -16,11 +16,11 @@ COPY --from=build /opt/chrome-linux64 /opt/chrome
 COPY --from=build /opt/chromedriver-linux64 /opt/
 
 WORKDIR /var/task
-COPY app.py ./
+COPY orchestrator.py ./
 COPY src ./src
 COPY src/models ./src/models
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD [ "app.craigslist" ]
+CMD [ "orchestrator.smare_cragigslist" ]

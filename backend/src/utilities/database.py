@@ -231,7 +231,7 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
             model_field_score = f"model_scores.model_{model_number}"
             model_field_version = f"model_versions.model_{model_number}"
 
-            update_operation = UpdateOne(
+            update_operation = update_one(
                 {"_id": car["_id"]},
                 {
                     "$set": {
@@ -250,7 +250,7 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
         logger.error(f"Database: Failed to update_all cars. Error: {e}")
         return False
 
-    return updated
+    return True
 
 
 def post_log(

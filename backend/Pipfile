@@ -12,8 +12,9 @@ exec = "docker exec -it smarecontainer"
 craigslist = "pipenv run exec python3 -c 'import app; app.craigslist()'"
 facebook = "pipenv run exec python3 -c 'import app; app.facebook()'"
 cleaner = "pipenv run exec python3 -c 'import app; app.clean()'"
-cl_pipeline = "pipenv run exec python3 -c 'import app; app.pipeline_craigslist()'"
-fb_pipeline = "pipenv run exec python3 -c 'import app; app.pipeline_facebook()'"
+model = "pipenv run exec python3 -c 'import app; app.model()'"
+cl_app = "pipenv run exec python3 -c 'import app; app.pipeline_craigslist()'"
+fb_app = "pipenv run exec python3 -c 'import app; app.pipeline_facebook()'"
 
 [packages]
 selenium = "*"

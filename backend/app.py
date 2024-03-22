@@ -1,13 +1,9 @@
-from orchestrator import smare_cragigslist, smare_facebook
+from orchestrator import smare_cragigslist, smare_facebook, CL_SCRAPER_VERSION, FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT, CLEANER_VERSION
 from src.cleaners import cleaner
 from src.scrapers import scraper
+from src.models import model_manager
 
-CL_SCRAPER_VERSION = 5
-FB_SCRAPER_VERSION = 5
-CLEANER_VERSION = 1
-
-DUPLICATE_TERMINATION_LIMIT = 5
-
+DURATION = float('inf')
 
 def pipeline_facebook():
     smare_facebook()
@@ -18,12 +14,16 @@ def pipeline_craigslist():
 
 
 def craigslist():
-    scraper.run(False, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    scraper.run(DURATION, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
 def facebook():
-    scraper.run(False, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    scraper.run(DURATION, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
 def clean():
-    cleaner.run(False, CLEANER_VERSION)
+    cleaner.run(DURATION, CLEANER_VERSION)
+
+
+def model():
+    model_manager.run(DURATION)

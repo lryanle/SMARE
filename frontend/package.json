@@ -50,7 +50,7 @@
     "cmdk": "^0.2.0",
     "cross-env": "^7.0.3",
     "date-fns": "^2.30.0",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.5",
     "framer-motion": "^10.18.0",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",

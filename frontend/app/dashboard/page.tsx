@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { CalendarDateRangePicker } from "@/components/dashboard/date-range-picker";
 import { Overview } from "@/components/dashboard/overview";
 import { RecentListings } from "@/components/dashboard/recent-listings";
+import DashboardCards from "@/components/dashboard/dashboard-cards";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,15 +17,6 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { redirect } from "next/navigation";
-import {
-  Activity,
-  Book,
-  CalendarDays,
-  Clock4,
-  FileText,
-  ShieldAlert,
-  TableProperties,
-} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Dashboard | Statefarm SMARE",
@@ -81,64 +73,7 @@ export default async function DashboardPage() {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="overview" className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Total Listings
-                      </CardTitle>
-                      <FileText size={16} strokeWidth={2} />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">286</div>
-                      <p className="text-xs text-muted-foreground">
-                        +1098% from last month
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Flagged Listings
-                      </CardTitle>
-                      <ShieldAlert size={16} strokeWidth={2} />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">+0</div>
-                      <p className="text-xs text-muted-foreground">
-                        +0% from last month
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        New Listings
-                      </CardTitle>
-                      <CalendarDays size={16} strokeWidth={2} />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">+243</div>
-                      <p className="text-xs text-muted-foreground">
-                        +876% from last month
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Listings Today
-                      </CardTitle>
-                      <Clock4 size={16} />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">+36</div>
-                      <p className="text-xs text-muted-foreground">
-                        +36 from last 24 hours
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                <DashboardCards />
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                   <Card className="col-span-4">
                     <CardHeader>

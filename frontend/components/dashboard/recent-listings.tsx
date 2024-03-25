@@ -1,65 +1,57 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useEffect, useState } from "react";
+import ListingsItem from "@/components/dashboard/listings-item";
 
 export function RecentListings() {
+  const [data, setData] =
+    useState<
+      {
+        _id: string;
+        title: string;
+        price: string;
+        odometer: string;
+        link: string;
+        seller_website: string;
+        post_body: string;
+        year: string;
+        makemodel: string;
+        latitude: string;
+        longitude: string;
+        attributes?: { label: string; value: string }[];
+        images: string[];
+        source: string;
+        scraper_version: number;
+        scrape_date: string;
+        stage: string;
+      }[]
+    >();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("/api/listings");
+      if (!response.ok) {
+        console.error("Failed to fetch data");
+        return;
+      }
+
+      const result = await response.json();
+      if (result.success && result.data) {
+        setData(result.data);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/logos/facebook.png" alt="Avatar" />
-          <AvatarFallback>FB</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Toyota Camry 2010</p>
-          <p className="text-sm text-muted-foreground">Date</p>
-        </div>
-        <div className="ml-auto font-medium">0.0/100</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
-          <AvatarImage src="/logos/facebook.png" alt="Avatar" />
-          <AvatarFallback>FB</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Ford Mustang 2018</p>
-          <p className="text-sm text-muted-foreground">Date</p>
-        </div>
-        <div className="ml-auto font-medium">0.0/100</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/logos/facebook.png" alt="Avatar" />
-          <AvatarFallback>FB</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Honda Civic 2015</p>
-          <p className="text-sm text-muted-foreground">Date</p>
-        </div>
-        <div className="ml-auto font-medium">0.0/100</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/logos/craigslist.png" alt="Avatar" />
-          <AvatarFallback>CL</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">
-            Chevrolet Silverado 2020
-          </p>
-          <p className="text-sm text-muted-foreground">Date</p>
-        </div>
-        <div className="ml-auto font-medium">0.0/100</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/logos/craigslist.png" alt="Avatar" />
-          <AvatarFallback>CL</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">BMW 3 Series 2013</p>
-          <p className="text-sm text-muted-foreground">Date</p>
-        </div>
-        <div className="ml-auto font-medium">0.0/100</div>
-      </div>
+    <div className="space-y-8  overflow-y-scroll h-80">
+      {data ? (
+        data.map((item) => <ListingsItem source={item.source} name={item.makemodel} year={item.year} date={item.scrape_date} riskScore={0} key={item._id} />)
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 }

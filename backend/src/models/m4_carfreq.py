@@ -1,47 +1,37 @@
-import json
 import pandas as pd
 from ..utilities import logger
 
 # Initialize logger
 logger = logger.SmareLogger()
 
-def m4_riskscores(car_listings):
-    # VEHICLE FREQUENCY MODEL
-    try:
-        logger.info("Starting M4 model for calculating risk scores...")
-        # Ensure the input is a list even if it's a single object
-        if not isinstance(car_listings, list):
-            car_listings = [car_listings]  # Convert single object input to list
-            logger.warning("Input is not a list. Converting to a list.")  
-        if len(car_listings) == 0:
-            logger.error("Input list is empty.")
-            return []
-        
-        # Accumulate all the models into a list
-        all_models = []
-        for data in car_listings:
-            # Extract relevant data
-            model = data.get('model')
-            all_models.append(model)
+def m4_riskscores(listings):
+    logger.info("Starting M4 model for calculating risk scores...")
+    output = []
 
-        # Create a DataFrame from the list of models
-        models_df = pd.DataFrame(all_models, columns=['model'])
+    for k, listing in enumerate(listings):
+        try:
+            logger.debug(f"Model 4: Processing listing {k + 1}/{len(listings)}")
+            model = listing.get('model')
 
-        # Analyze frequency of vehicle models
-        model_frequency = models_df['model'].value_counts()
-        max_frequency = model_frequency.max()
-        
-        # Calculate risk score for each model and append to the list
-        risk_scores = []
-        for model, frequency in model_frequency.items():
-            risk_score = frequency / max_frequency            
-            # Ensure risk score is between 0 and 1
-            risk_score = max(0, min(1, risk_score))
-            risk_scores.append(risk_score)
-            logger.info(f"Risk score calculated for model {model}: {risk_score}")
+            if model is not None:
+                all_models = [listing['model'] for listing in listings]
+                models_df = pd.DataFrame(all_models, columns=['model'])
+                model_frequency = models_df['model'].value_counts()
+                max_frequency = model_frequency.max()
 
-        return risk_scores
-            
-    except Exception as e:
-        logger.error(f"Error in M3 model: {e}")
-        return None
+                risk_scores = []
+                for model, frequency in model_frequency.items():
+                    risk_score = frequency / max_frequency            
+                    risk_score = max(0, min(1, risk_score))
+                    risk_scores.append(risk_score)
+                output.append(risk_scores)
+            else:
+                logger.warning("Model information not found in the listing.")
+                output.append([])
+        except Exception as e:
+            logger.warning(f"Error with model 4: {e}")
+            output.append(-1)
+            continue
+
+    logger.info("M4 model execution completed successfully.")
+    return output

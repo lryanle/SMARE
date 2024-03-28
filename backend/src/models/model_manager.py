@@ -1,9 +1,9 @@
 # Importing the M3_riskscores and M4_riskscores functions from their respective modules
 # form m1_sentiment import m1_riskscores
 from .m2_gptvision import m2_riskscores
-
-# from m3_kbbprice import m3_riskscores
-# from m4_carfreq import m4_riskscores
+from .m3_kbbprice import m3_riskscores
+from .m4_carfreq import m4_riskscores
+from .m5_theftlikelihood import m5_riskscores
 
 # from .m6_anomaly import m6_labels, preprocess_listing
 import joblib
@@ -70,13 +70,63 @@ def run(termination_timestamp):
         logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 
     # Model 3: KBB Price Model
-    # here...
+    try:
+        try:
+            model_3_cars = filter_on_model(all_cars, "model_3")
+        except Exception as e:
+            logger.error(
+                f"Model Manager: Model 3 failed to filter listings. Error: {e}"
+            )
+            return
+        input_size = len(model_3_cars)
+
+        logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
+
+        update_listing_scores(model_3_cars, m3_riskscores(model_3_cars), 3, MODEL_VERSIONS[2])
+
+        logger.success("Model Manager: Model 3 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
+
 
     # Model 4: Car Frequency Model
-    # here...
+    try:
+        try:
+            model_4_cars = filter_on_model(all_cars, "model_4")
+        except Exception as e:
+            logger.error(
+                f"Model Manager: Model 4 failed to filter listings. Error: {e}"
+            )
+            return
+        input_size = len(model_4_cars)
+
+        logger.info(f"Model Manager: Model 4 started processing {input_size} listings")
+
+        update_listing_scores(model_4_cars, m4_riskscores(model_4_cars), 4, MODEL_VERSIONS[3])
+
+        logger.success("Model Manager: Model 4 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 4 failed to process listings. Error: {e}")
+
 
     # Model 5: Theft Likelihood Model
-    # here...
+    try:
+        try:
+            model_5_cars = filter_on_model(all_cars, "model_5")  # Filter cars for model 5
+        except Exception as e:
+            logger.error(f"Model Manager: Model 5 failed to filter listings. Error: {e}")
+            return
+        input_size = len(model_5_cars)
+
+        logger.info(f"Model Manager: Model 5 started processing {input_size} listings")
+
+        theft_likelihoods = m5_riskscores(model_5_cars)
+
+        update_listing_scores(model_5_cars, theft_likelihoods, 5, MODEL_VERSIONS[4])
+
+        logger.success("Model Manager: Model 5 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 5 failed to process listings. Error: {e}")
 
     # Model 6: Anomaly/Luxury Model
     # try:

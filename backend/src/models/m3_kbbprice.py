@@ -1,13 +1,13 @@
 import json
 import numpy as np
 from difflib import SequenceMatcher
-
 from ..utilities import logger
 
 # Initialize logger
 logger = logger.SmareLogger()
 
-with open("kbb_prices.json", "r") as kbb_file:
+kbb_price_file = "/var/task/src/models/kbb_prices.json"
+with open(kbb_price_file, "r") as kbb_file:
     kbb_prices = json.load(kbb_file)
 
 def similar(a, b):
@@ -29,22 +29,22 @@ def find_similar_listing(car_data):
                 kbb_price = kbb_prices[key]
                 return kbb_price
         except ValueError:
-                pass
+            pass
     return None
 
 def m3_riskscores(car_listings):
     risk_scores = []
     if not isinstance(car_listings, list):
         car_listings = [car_listings] 
-        logger.warning("Input is not a list. Converting to a list.")
+        logger.warning("Model 3: Input is not a list. Converting to a list.")
 
     if len(car_listings) == 0:
-        logger.error("Input list is empty.")
+        logger.error("Model 3: Input list is empty.")
         return []
         
     for k, data in enumerate(car_listings):
         try:
-            logger.debug(f"Model 3: Processing listing {k + 1}/{len(car_listings)}")
+            #logger.debug(f"Model 3: Processing listing {k + 1}/{len(car_listings)}")
             year = data.get('year')
             price = data.get('price')
             make = data.get('make')
@@ -56,7 +56,7 @@ def m3_riskscores(car_listings):
             if kbb_price is None:
                 kbb_price = find_similar_listing(data)
                 if kbb_price is None:
-                    logger.error(f"KBB price not found for {make} {model} {year}")
+                    logger.error(f"Model 3: KBB price not found for {make} {model} {year}")
                     risk_scores.append(-1)
                     continue
             try:               
@@ -76,16 +76,17 @@ def m3_riskscores(car_listings):
                     risk_score = y
                 risk_scores.append(risk_score)
             except ValueError:
-                logger.error(f"Error: Could not parse price data for {make} {model} {year}")
-                risk_scores.append(-1)
-
-            if len(car_listings) != len(risk_scores):
-                logger.error("Input and output array sizes do not match.")
+                logger.error(f"Model 3: Error: Could not parse price data for {make} {model} {year}")
                 risk_scores.append(-1)
 
         except Exception as e:
             logger.warning(f"Error in M3_Model3: {e}")
             risk_scores.append(-1)
             continue
+
+    # Check input and output array sizes after processing all listings
+    if len(car_listings) != len(risk_scores):
+        logger.error("Model 3: Input and output array sizes do not match.")
+        return [-1] * len(car_listings)
 
     return risk_scores

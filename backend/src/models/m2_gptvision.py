@@ -5,6 +5,8 @@ import requests
 from dotenv import load_dotenv
 from ..utilities import logger
 
+MODEL_2_WEIGHT = 0.2
+
 logger = logger.SmareLogger()
 
 load_dotenv()
@@ -46,14 +48,14 @@ def m2_riskscores(listings):
                             r"\b\d+\b", response.choices[0].message.content
                         ).group(0)
                     )
-                    * 0.2
+                    * MODEL_2_WEIGHT
                 )
             else:
-                output.append("-1")
+                output.append(-1)
 
         except Exception as e:
             logger.warning(f"Error with model2: {e}")
-            output.append("-1")
+            output.append(-1)
             continue
 
     return output

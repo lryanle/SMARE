@@ -1,15 +1,15 @@
-# Importing the M3_riskscores and M4_riskscores functions from their respective modules
-# form m1_sentiment import m1_riskscores
-from .m2_gptvision import m2_riskscores
-from .m3_kbbprice import m3_riskscores
-from .m4_carfreq import m4_riskscores
-from .m5_theftlikelihood import m5_riskscores
-
 # from .m6_anomaly import m6_labels, preprocess_listing
 import joblib
 
 from ..utilities import logger
-from ..utilities.database import find_unanalyzed_cars, update_listing_scores
+from ..utilities.database import (find_pending_risk_update,
+                                  find_unanalyzed_cars, update_db_risk_scores,
+                                  update_listing_scores)
+# form m1_sentiment import m1_riskscores
+from .m2_gptvision import m2_riskscores
+# from .m3_kbbprice import m3_riskscores
+from .m4_carfreq import m4_riskscores
+from .m5_theftlikelihood import m5_riskscores
 
 MODEL_VERSIONS = [
     1, # Model 1: Sentiment Analysis Model
@@ -24,12 +24,38 @@ MODEL_VERSIONS = [
 logger = logger.SmareLogger()
 
 
-def filter_on_model(all_cars, model):
+def filter_on_model(all_cars, model_num):
     try:
-        return [car for car in all_cars if car["model_scores"][model] == -1]
+        return [car for car in all_cars if car["model_scores"][f"model_{model_num}"] == -1 or (f"model_{model_num}" in car["model_versions"] and car["model_versions"][f"model_{model_num}"] != MODEL_VERSIONS[model_num - 1])]
     except Exception as e:
-        logger.critical(f"Model Manager: Could not filter cars for {model}")
+        logger.critical(f"Model Manager: Could not filter cars for model_{model_num}. Error: {e}")
         return None
+
+
+def update_risk_scores():
+    try:
+        listings_to_update = find_pending_risk_update()
+
+        for i, car in enumerate(listings_to_update):
+            new_score = -1
+
+            for score in car["model_scores"].values():
+                if score < 0:
+                    continue
+
+                if new_score < 0:
+                    new_score = 0
+
+                new_score += score
+
+            listings_to_update[i]["risk_score"] = new_score
+            listings_to_update[i]["pending_risk_update"] = False
+
+        return update_db_risk_scores(listings_to_update)
+    except Exception as e:
+        logger.critical(f"Failed to update risk scores. Error: {e}")
+        return None
+
 
 # todo: calculate post-weight-product scores here, and not in each individual function.
 # todo: check the time stamp periodically and stop execution after reaching the time stamp
@@ -37,7 +63,7 @@ def run(termination_timestamp):
     logger.info("Starting Model Manager...")
 
     # Importing data from MongoDB
-    logger.info("Moddel Manager: Importing data from MongoDB...")
+    logger.info("Model Manager: Importing data from MongoDB...")
     try:
         all_cars = find_unanalyzed_cars(MODEL_VERSIONS)
     except Exception as e:
@@ -53,7 +79,7 @@ def run(termination_timestamp):
     # Model 2: GPT Vision Model
     try:
         try:
-            model_2_cars = filter_on_model(all_cars, "model_2")
+            model_2_cars = filter_on_model(all_cars, 2)
         except Exception as e:
             logger.error(
                 f"Model Manager: Model 2 failed to filter listings. Error: {e}"
@@ -69,30 +95,30 @@ def run(termination_timestamp):
     except Exception as e:
         logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 
-    # Model 3: KBB Price Model
-    try:
-        try:
-            model_3_cars = filter_on_model(all_cars, "model_3")
-        except Exception as e:
-            logger.error(
-                f"Model Manager: Model 3 failed to filter listings. Error: {e}"
-            )
-            return
-        input_size = len(model_3_cars)
+    # # Model 3: KBB Price Model
+    # try:
+    #     try:
+    #         model_3_cars = filter_on_model(all_cars, 3)
+    #     except Exception as e:
+    #         logger.error(
+    #             f"Model Manager: Model 3 failed to filter listings. Error: {e}"
+    #         )
+    #         return
+    #     input_size = len(model_3_cars)
 
-        logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
+    #     logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
 
-        update_listing_scores(model_3_cars, m3_riskscores(model_3_cars), 3, MODEL_VERSIONS[2])
+    #     update_listing_scores(model_3_cars, m3_riskscores(model_3_cars), 3, MODEL_VERSIONS[2])
 
-        logger.success("Model Manager: Model 3 successfully processed listings")
-    except Exception as e:
-        logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
+    #     logger.success("Model Manager: Model 3 successfully processed listings")
+    # except Exception as e:
+    #     logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
 
 
     # Model 4: Car Frequency Model
     try:
         try:
-            model_4_cars = filter_on_model(all_cars, "model_4")
+            model_4_cars = filter_on_model(all_cars, 4)
         except Exception as e:
             logger.error(
                 f"Model Manager: Model 4 failed to filter listings. Error: {e}"
@@ -112,7 +138,7 @@ def run(termination_timestamp):
     # Model 5: Theft Likelihood Model
     try:
         try:
-            model_5_cars = filter_on_model(all_cars, "model_5")  # Filter cars for model 5
+            model_5_cars = filter_on_model(all_cars, 5)  # Filter cars for model 5
         except Exception as e:
             logger.error(f"Model Manager: Model 5 failed to filter listings. Error: {e}")
             return
@@ -131,7 +157,7 @@ def run(termination_timestamp):
     # Model 6: Anomaly/Luxury Model
     # try:
     #     # Assuming the filter_on_model function is already defined
-    #     model_6_cars = filter_on_model(all_cars, "model_6")
+    #     model_6_cars = filter_on_model(all_cars, 6)
     #     if not model_6_cars:
     #         logger.error("Model Manager: No cars to process for Model 6.")
     #         return
@@ -168,4 +194,9 @@ def run(termination_timestamp):
 
     logger.success("Model Manager: All models successfully processed listings")
 
-run(0)
+    try:
+        update_count = update_risk_scores()
+
+        logger.success(f"Updated {update_count} risk scores")
+    except Exception as e:
+        logger.error(f"Failed updating risk scores. Error: {e}")

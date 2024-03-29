@@ -95,62 +95,68 @@ def run(termination_timestamp):
     except Exception as e:
         logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 
-    # # Model 3: KBB Price Model
-    # try:
-    #     try:
-    #         model_3_cars = filter_on_model(all_cars, 3)
-    #     except Exception as e:
-    #         logger.error(
-    #             f"Model Manager: Model 3 failed to filter listings. Error: {e}"
-    #         )
-    #         return
-    #     input_size = len(model_3_cars)
-
-    #     logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
-
-    #     update_listing_scores(model_3_cars, m3_riskscores(model_3_cars), 3, MODEL_VERSIONS[2])
-
-    #     logger.success("Model Manager: Model 3 successfully processed listings")
-    # except Exception as e:
-    #     logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
+  
+    # Model 3: KBB Price Model
+    try:
+        success=1
+        try:
+            model_3_cars = filter_on_model(all_cars, 3)
+            if not model_3_cars:
+                logger.error("Model Manager: No cars to process for Model 3.")
+                success= 0
+        except Exception as e:
+            logger.error(
+                f"Model Manager: Model 3 failed to filter listings. Error: {e}"
+            )
+            return
+        if(success):
+            input_size = len(model_3_cars)
+            logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
+            update_listing_scores(model_3_cars, m3_riskscores(model_3_cars), 3, MODEL_VERSIONS[2])
+            logger.success("Model Manager: Model 3 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
 
 
     # Model 4: Car Frequency Model
     try:
+        success=1
         try:
             model_4_cars = filter_on_model(all_cars, 4)
+            if not model_4_cars:
+                logger.error("Model Manager: No cars to process for Model 4.")
+                success= 0
         except Exception as e:
             logger.error(
                 f"Model Manager: Model 4 failed to filter listings. Error: {e}"
             )
             return
-        input_size = len(model_4_cars)
-
-        logger.info(f"Model Manager: Model 4 started processing {input_size} listings")
-
-        update_listing_scores(model_4_cars, m4_riskscores(model_4_cars), 4, MODEL_VERSIONS[3])
-
-        logger.success("Model Manager: Model 4 successfully processed listings")
+        if(success):
+            input_size = len(model_4_cars)
+            logger.info(f"Model Manager: Model 4 started processing {input_size} listings")
+            update_listing_scores(model_4_cars, m4_riskscores(model_4_cars), 4, MODEL_VERSIONS[3])
+            logger.success("Model Manager: Model 4 successfully processed listings")
     except Exception as e:
         logger.error(f"Model Manager: Model 4 failed to process listings. Error: {e}")
 
 
     # Model 5: Theft Likelihood Model
     try:
+        success= 1
         try:
             model_5_cars = filter_on_model(all_cars, 5)  # Filter cars for model 5
+            if not model_5_cars:
+                logger.error("Model Manager: No cars to process for Model 5.")
+                success= 0
         except Exception as e:
             logger.error(f"Model Manager: Model 5 failed to filter listings. Error: {e}")
             return
-        input_size = len(model_5_cars)
-
-        logger.info(f"Model Manager: Model 5 started processing {input_size} listings")
-
-        theft_likelihoods = m5_riskscores(model_5_cars)
-
-        update_listing_scores(model_5_cars, theft_likelihoods, 5, MODEL_VERSIONS[4])
-
-        logger.success("Model Manager: Model 5 successfully processed listings")
+        if(success):
+            input_size = len(model_5_cars)
+            logger.info(f"Model Manager: Model 5 started processing {input_size} listings")
+            theft_likelihoods = m5_riskscores(model_5_cars)
+            update_listing_scores(model_5_cars, theft_likelihoods, 5, MODEL_VERSIONS[4])
+            logger.success("Model Manager: Model 5 successfully processed listings")
     except Exception as e:
         logger.error(f"Model Manager: Model 5 failed to process listings. Error: {e}")
 

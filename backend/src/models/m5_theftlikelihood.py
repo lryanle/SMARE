@@ -35,7 +35,7 @@ def get_theft_rates(cars_listings, theft_data_file):
             theft_rate = get_theft(make, model, year, theft_data)
             theft_rates.append(theft_rate)  
         except Exception as e:
-            logger.warning(f"Error occurred with Model4: {str(e)}")
+            logger.warning(f"Error occurred with Model 5: {str(e)}")
             theft_rates.append(-1)  
     logger.debug("Successfully calculated theft rates.")
     return theft_rates
@@ -51,18 +51,17 @@ def calculate_likelihoods(theft_rates):
             else:
                 theft_likelihoods.append(-1)  
         except Exception as e:
-            logger.error(f"Failed to calculate risk score: {e}")
+            logger.error(f"Model 5: Failed to calculate risk score: {e}")
             theft_likelihoods.append(-1)  
     return theft_likelihoods
 
 def m5_riskscores(cars_listings):
     try:
-        logger.info("Starting M5 model for calculating theft likelihoods...")
         theft_rates = get_theft_rates(cars_listings, "/var/task/src/models/nhtsa_theft_data.json")
         theft_likelihoods = calculate_likelihoods(theft_rates)
-        logger.info("M5 model execution completed successfully.")
+        logger.info("Model 5: M5 model execution completed successfully.")
         return theft_likelihoods
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error(f"Model 5: An error occurred: {e}")
         return [-1] * len(cars_listings)  
     

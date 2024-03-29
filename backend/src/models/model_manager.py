@@ -7,7 +7,7 @@ from ..utilities.database import (find_pending_risk_update,
                                   update_listing_scores)
 # form m1_sentiment import m1_riskscores
 from .m2_gptvision import m2_riskscores
-# from .m3_kbbprice import m3_riskscores
+from .m3_kbbprice import m3_riskscores
 from .m4_carfreq import m4_riskscores
 from .m5_theftlikelihood import m5_riskscores
 

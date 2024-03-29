@@ -56,8 +56,8 @@ def preprocess_listing(listing):
 
 # Load the model and preprocessor
 try:
-    model_path = '/var/task/isolation_forest_model.pkl'
-    preprocessor_path = '/var/task/preprocessor.pkl'
+    model_path = '/var/task/src/models/isolation_forest_model.pkl'
+    preprocessor_path = '/var/task/src/models/preprocessor.pkl'
 
     # Log the current working directory and the absolute path of the files
     cwd = os.getcwd()

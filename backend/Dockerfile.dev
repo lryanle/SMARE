@@ -26,8 +26,6 @@ COPY orchestrator.py ./
 COPY src ./src
 COPY app.py ./
 COPY .env ./
-COPY src/models/preprocessor.pkl /var/task/preprocessor.pkl
-COPY src/models/isolation_forest_model.pkl /var/task/isolation_forest_model.pkl
 
 CMD [ "app.craigslist" ]
 

@@ -1,4 +1,4 @@
-# from .m6_anomaly import m6_labels, preprocess_listing
+from .m6_anomaly import m6_labels, preprocess_listing
 import joblib
 
 from ..utilities import logger
@@ -154,43 +154,43 @@ def run(termination_timestamp):
     except Exception as e:
         logger.error(f"Model Manager: Model 5 failed to process listings. Error: {e}")
 
-    # Model 6: Anomaly/Luxury Model
-    # try:
-    #     # Assuming the filter_on_model function is already defined
-    #     model_6_cars = filter_on_model(all_cars, 6)
-    #     if not model_6_cars:
-    #         logger.error("Model Manager: No cars to process for Model 6.")
-    #         return
+    #Model 6: Anomaly/Luxury Model
+    try:
+        # Assuming the filter_on_model function is already defined
+        model_6_cars = filter_on_model(all_cars, 6)
+        if not model_6_cars:
+            logger.error("Model Manager: No cars to process for Model 6.")
+            return
 
-    #     input_size = len(model_6_cars)
-    #     logger.info(f"Model Manager: Model 6 started processing {input_size} listings.")
+        input_size = len(model_6_cars)
+        logger.info(f"Model Manager: Model 6 started processing {input_size} listings.")
 
-    #     # Load the model and preprocessor for Model 6
-    #     try:
-    #         model_6 = joblib.load('isolation_forest_model.pkl')
-    #         preprocessor_6 = joblib.load('preprocessor.pkl')
-    #     except Exception as e:
-    #         logger.error(f"Model Manager: Failed to load Model 6 components. Error: {e}")
-    #         return
+        # Load the model and preprocessor for Model 6
+        try:
+            model_6 = joblib.load('isolation_forest_model.pkl')
+            preprocessor_6 = joblib.load('preprocessor.pkl')
+        except Exception as e:
+            logger.error(f"Model Manager: Failed to load Model 6 components. Error: {e}")
+            return
 
-    #     # Process listings with Model 6
-    #     model_6_predictions = []
-    #     for listing in model_6_cars:
-    #         try:
-    #             preprocessed_listing = preprocess_listing(listing)
-    #             features_preprocessed = preprocessor_6.transform(preprocessed_listing)
-    #             score = model_6.decision_function(features_preprocessed)
-    #             prediction = 1 if score <= 0.05 else 0
-    #             model_6_predictions.append(prediction)
-    #         except Exception as e:
-    #             logger.warning(f"Error processing listing for Model 6: {e}")
-    #             model_6_predictions.append(-1)
+        # Process listings with Model 6
+        model_6_predictions = []
+        for listing in model_6_cars:
+            try:
+                preprocessed_listing = preprocess_listing(listing)
+                features_preprocessed = preprocessor_6.transform(preprocessed_listing)
+                score = model_6.decision_function(features_preprocessed)
+                prediction = 1 if score <= 0.05 else 0
+                model_6_predictions.append(prediction)
+            except Exception as e:
+                logger.warning(f"Error processing listing for Model 6: {e}")
+                model_6_predictions.append(-1)
 
-    #     # Update scores in database
-    #     update_listing_scores(model_6_cars, m6_labels(model_6_cars), 6, MODEL_VERSIONS[5])
-    #     logger.success("Model Manager: Model 6 successfully processed listings.")
-    # except Exception as e:
-    #     logger.error(f"Model Manager: Model 6 failed. Error: {e}")
+        # Update scores in database
+        update_listing_scores(model_6_cars, m6_labels(model_6_cars), 6, MODEL_VERSIONS[5])
+        logger.success("Model Manager: Model 6 successfully processed listings.")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 6 failed. Error: {e}")
 
     logger.success("Model Manager: All models successfully processed listings")
 

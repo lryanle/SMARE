@@ -58,7 +58,7 @@ def calculate_likelihoods(theft_rates):
 def m5_riskscores(cars_listings):
     try:
         logger.info("Starting M5 model for calculating theft likelihoods...")
-        theft_rates = get_theft_rates(cars_listings, "nhtsa_theft_data.json")
+        theft_rates = get_theft_rates(cars_listings, "/var/task/src/models/nhtsa_theft_data.json")
         theft_likelihoods = calculate_likelihoods(theft_rates)
         logger.info("M5 model execution completed successfully.")
         return theft_likelihoods

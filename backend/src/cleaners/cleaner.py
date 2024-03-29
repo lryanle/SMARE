@@ -65,6 +65,7 @@ def run(termination_timestamp, version):
                 clean_fields["model_scores"] = {}
                 for i in range(1, 8):
                     clean_fields["model_scores"][f"model_{i}"] = -1
+                    clean_fields["model_versions"][f"model_{i}"] = -1
                 clean_fields["risk_score"] = -1
 
                 is_update_sucess = db.update(car["link"], clean_fields)

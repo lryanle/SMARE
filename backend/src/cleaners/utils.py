@@ -111,7 +111,7 @@ def best_fitting_make(title):
 
 def extract_model(title, make, regex):
     try:
-        with open("/var/task/src/utilities/car_models.json") as models_json:
+        with open("./src/utilities/car_models.json") as models_json:
             models = json.load(models_json)
             models = models[make.lower()]
 

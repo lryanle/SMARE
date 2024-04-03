@@ -182,8 +182,8 @@ def run(termination_timestamp):
 
         # Load the model and preprocessor for Model 6
         try:
-            model_6 = joblib.load('isolation_forest_model.pkl')
-            preprocessor_6 = joblib.load('preprocessor.pkl')
+            model_6 = joblib.load('./src/models/isolation_forest_model.pkl')
+            preprocessor_6 = joblib.load('./src/models/preprocessor.pkl')
         except Exception as e:
             logger.error(f"Model Manager: Failed to load Model 6 components. Error: {e}")
             return

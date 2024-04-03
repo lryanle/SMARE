@@ -5,8 +5,6 @@ import requests
 from dotenv import load_dotenv
 from ..utilities import logger
 
-MODEL_2_WEIGHT = 0.2
-
 logger = logger.SmareLogger()
 
 load_dotenv()
@@ -48,7 +46,6 @@ def m2_riskscores(listings):
                             r"\b\d+\b", response.choices[0].message.content
                         ).group(0)
                     )
-                    * MODEL_2_WEIGHT
                 )
             else:
                 output.append(-1)

@@ -21,6 +21,15 @@ MODEL_VERSIONS = [
     1, # Model 7: Anomaly Model
 ]
 
+MODEL_WEIGHTS = [
+    0,  # Model 1: Sentiment Analysis Model
+    60, # Model 2: GPT Vision Model
+    40, # Model 3: KBB Price Model
+    10, # Model 4: Car Frequency Model
+    20, # Model 5: Theft Likelihood Model
+    10, # Model 6: Luxury Model
+]
+
 logger = logger.SmareLogger()
 
 
@@ -39,16 +48,16 @@ def update_risk_scores():
         for i, car in enumerate(listings_to_update):
             new_score = -1
 
-            for score in car["model_scores"].values():
+            for i, score in enumerate(car["model_scores"].values()):
                 if score < 0:
                     continue
 
                 if new_score < 0:
                     new_score = 0
 
-                new_score += score
+                new_score += score * MODEL_WEIGHTS[i]
 
-            listings_to_update[i]["risk_score"] = new_score
+            listings_to_update[i]["risk_score"] = max(new_score, 100)
             listings_to_update[i]["pending_risk_update"] = False
 
         return update_db_risk_scores(listings_to_update)

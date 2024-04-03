@@ -45,13 +45,13 @@ def m2_riskscores(listings):
                         re.search(
                             r"\b\d+\b", response.choices[0].message.content
                         ).group(0)
-                    )
+                    ) * 0.2
                 )
             else:
                 output.append(-1)
 
         except Exception as e:
-            logger.warning(f"Error with model2: {e}")
+            logger.warning(f"Error with model 2: {e}")
             output.append(-1)
             continue
 

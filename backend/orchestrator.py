@@ -6,8 +6,8 @@ from src.models.model_manager import run as run_analyzer
 from src.utilities.logger import SmareLogger
 
 SCRAPER_DURATION = 4 * 60
-CLEANER_DURATION = 3 * 60
-ANALYZER_DURATION = 4 * 60
+CLEANER_DURATION = 2 * 60
+ANALYZER_DURATION = 6 * 60
 
 CL_SCRAPER_VERSION = 6
 FB_SCRAPER_VERSION = 6

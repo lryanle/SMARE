@@ -13,7 +13,7 @@ from .m5_theftlikelihood import m5_riskscores
 
 MODEL_VERSIONS = [
     1, # Model 1: Sentiment Analysis Model
-    1, # Model 2: GPT Vision Model
+    2, # Model 2: GPT Vision Model
     1, # Model 3: KBB Price Model
     1, # Model 4: Car Frequency Model
     1, # Model 5: Theft Likelihood Model
@@ -46,6 +46,11 @@ def update_risk_scores():
         listings_to_update = find_pending_risk_update()
 
         for i, car in enumerate(listings_to_update):
+            if "model_scores" not in car:
+                logger.error(f"Listing with id: {car['_id']} does not have 'model_scores' property")
+                listings_to_update[i]["risk_score"] = -1
+                continue
+
             new_score = -1
 
             for i, score in enumerate(car["model_scores"].values()):
@@ -56,9 +61,11 @@ def update_risk_scores():
                     new_score = 0
 
                 new_score += score * MODEL_WEIGHTS[i]
+                logger.debug(new_score)
 
-            listings_to_update[i]["risk_score"] = max(new_score, 100)
-            listings_to_update[i]["pending_risk_update"] = False
+            if new_score >= 0:
+                listings_to_update[i]["risk_score"] = max(0, min(new_score, 100))
+                listings_to_update[i]["pending_risk_update"] = False
 
         return update_db_risk_scores(listings_to_update)
     except Exception as e:

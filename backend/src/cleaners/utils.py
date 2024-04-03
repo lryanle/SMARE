@@ -80,8 +80,8 @@ CAR_MAKES = [
 def extract_make(title):
     try:
         for make in CAR_MAKES:
-            if make in title.lower():
-                return make
+            if make.lower() in title.lower():
+                return make.lower()
 
         return best_fitting_make(title)
     except Exception as e:
@@ -113,7 +113,7 @@ def extract_model(title, make, regex):
     try:
         with open("/var/task/src/utilities/car_models.json") as models_json:
             models = json.load(models_json)
-            models = models[make]
+            models = models[make.lower()]
 
         match = re.search(regex, title)
 
@@ -145,7 +145,7 @@ def incremental_model_search(title, make, models):
             search_substring.append(word)
 
             close_match = get_close_matches(
-                " ".join(search_substring), models, n=1, cutoff=0.4
+                " ".join(search_substring), models, n=1, cutoff=0.1
             )
 
             if close_match:

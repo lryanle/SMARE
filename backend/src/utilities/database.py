@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import date
+from datetime import datetime
 from urllib.parse import quote, unquote
 
 from dotenv import load_dotenv
@@ -153,7 +153,7 @@ def post_raw(scraper_version, source, car):
         "_id": extract_id_from_link(car["link"]),
         "source": source,
         "scraper_version": scraper_version,
-        "scrape_date": str(date.today()),
+        "scrape_date": datetime.now().isoformat(),
         "stage": "scrape",
     }
 

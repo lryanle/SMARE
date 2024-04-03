@@ -175,7 +175,6 @@ def run(termination_timestamp):
         model_6_cars = filter_on_model(all_cars, 6)
         if not model_6_cars:
             logger.error("Model Manager: No cars to process for Model 6.")
-            return
 
         input_size = len(model_6_cars)
         logger.info(f"Model Manager: Model 6 started processing {input_size} listings.")

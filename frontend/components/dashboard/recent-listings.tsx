@@ -27,7 +27,7 @@ export function RecentListings() {
   }, []);
 
   return (
-    <div className="space-y-3  overflow-y-scroll h-80">
+    <div className="space-y-3 overflow-y-scroll h-[30rem]">
       {data ? (
         data.map((item) => <ListingsItem source={item.source} make={item.make} model={item.model} year={item.year} scrape_date={item.scrape_date} risk_score={item.risk_score} key={item._id} />)
       ) : (

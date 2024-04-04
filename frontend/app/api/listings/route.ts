@@ -15,7 +15,7 @@ async function getRecentListings() {
       .collection("listings")
       .find({})
       .sort({ scrape_date: -1 })
-      .limit(50)
+      .limit(100)
       .toArray();
     
     return listings;

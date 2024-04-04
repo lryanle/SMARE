@@ -3,11 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Clock4, FileText, ShieldAlert } from "lucide-react";
+import { dashboardCardTypes } from "@/types/smare";
 
 type Props = {};
 
 export default function DashboardCards({}: Props) {
-  const [data, setData] = useState<{totalListings: number, riskScoreOver50: number, percentIncreaseToday: number, percentIncreaseThisMonth: number, percentIncreaseRiskScoreThisMonth: number, percentIncreaseLastMonth: number, listingsToday: number, listingsThisMonth: number, listingsLastMonth: number}>();
+  const [data, setData] = useState<dashboardCardTypes>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,8 +26,6 @@ export default function DashboardCards({}: Props) {
 
     fetchData();
   }, []);
-
-  console.log(data)
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -72,7 +71,7 @@ export default function DashboardCards({}: Props) {
         <CardContent>
           <div className="text-2xl font-bold">{`+${data?.listingsToday}`}</div>
           <p className="text-xs text-muted-foreground">
-            {`+${data?.percentIncreaseToday} from last 24 hours`}
+            {`+${data?.listingsThisWeek} this week`}
           </p>
         </CardContent>
       </Card>

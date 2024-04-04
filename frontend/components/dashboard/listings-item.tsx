@@ -15,7 +15,7 @@ export default function ListingsItem({source, make, model, year, scrape_date, ri
         <p className={cn("text-sm leading-none", risk_score > 50 ? "text-white font-bold" : "font-medium")}>{`${capitalize(make)} ${capitalize(model)} ${year ? `(${year})` : ""}`}</p>
         <p className={cn("text-sm", risk_score > 50 ? "text-white font-bold" : "text-muted-foreground")}>{scrape_date.toLocaleUpperCase()}</p>
       </div>
-      <div className={cn("ml-auto", risk_score > 50 ? "text-white font-bold" : "font-medium")}>{`${risk_score}%`}</div>
+      <div className={cn("ml-auto", risk_score > 50 ? "text-white font-bold" : "font-medium")}>{`${risk_score.toFixed(2)}%`}</div>
     </div>
   );
 }

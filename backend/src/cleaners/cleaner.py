@@ -8,7 +8,12 @@ from . import utils
 
 logger = logger.SmareLogger()
 
-CONSECUTIVE_ERROR_LIMIT = 3
+CONSECUTIVE_ERROR_LIMIT = 20
+
+
+class MakeModelException(Exception):
+    def __init__(self, *args: object):
+        super().__init__(*args)
 
 
 def clean(car):
@@ -16,6 +21,7 @@ def clean(car):
         clean_car = {}
 
         if car["source"] == "facebook":
+            clean_car["year"] = fb.extract_year(car["title"])
             attributes = clean_car["attributes"] = fb.extract_attributes(
                 car["attributes"]
             )
@@ -33,13 +39,24 @@ def clean(car):
                 car["makemodel"], clean_car["make"]
             )
 
-        if not attributes or not make or not model:
-            raise Exception("Failed cleaning attributes, make, or model")
+        if not attributes:
+            raise MakeModelException("Failed cleaning attributes")
+
+        if not make:
+            logger.debug(f"car: {car['makemodel']}")
+            raise MakeModelException("Failed cleaning make")
+
+        if not model:
+            logger.debug(f"car {make}: {car['makemodel']}")
+            raise MakeModelException("Failed cleaning model")
 
         clean_car["price"] = utils.clean_currency(car["price"])
         clean_car["odometer"] = clean_car["attributes"]["odometer"]
 
         return clean_car
+    except MakeModelException as error:
+        logger.warning(f"Error extracting make and mode: {error}")
+        return None
     except Exception as error:
         logger.error(f"Error cleaning car data: {error}")
         return None
@@ -63,8 +80,10 @@ def run(termination_timestamp, version):
                 clean_fields["cleaner_version"] = version
                 # Initializing additional model fields and risk_score
                 clean_fields["model_scores"] = {}
+                clean_fields["model_versions"] = {}
                 for i in range(1, 8):
                     clean_fields["model_scores"][f"model_{i}"] = -1
+                    clean_fields["model_versions"][f"model_{i}"] = -1
                 clean_fields["risk_score"] = -1
 
                 is_update_sucess = db.update(car["link"], clean_fields)

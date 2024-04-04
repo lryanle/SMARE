@@ -1,6 +1,7 @@
 import pandas as pd
 import joblib
 from ..utilities import logger
+import os
 
 logger = logger.SmareLogger()
 
@@ -55,12 +56,24 @@ def preprocess_listing(listing):
 
 # Load the model and preprocessor
 try:
-    model = joblib.load('isolation_forest_model.pkl')
-    preprocessor = joblib.load('preprocessor.pkl')
+    model_path = './src/models/isolation_forest_model.pkl'
+    preprocessor_path = './src/models/preprocessor.pkl'
+
+    # Log the current working directory and the absolute path of the files
+    cwd = os.getcwd()
+    logger.info(f"Current working directory: {cwd}")
+    logger.info(f"Attempting to load model from: {os.path.join(cwd, model_path)}")
+    logger.info(f"Attempting to load preprocessor from: {os.path.join(cwd, preprocessor_path)}")
+
+    model = joblib.load(model_path)
+    preprocessor = joblib.load(preprocessor_path)
     logger.success("Model and preprocessor successfully loaded.")
+except FileNotFoundError as e:
+    logger.error(f"File not found: {e}")
+    raise
 except Exception as e:
     logger.error(f"Failed to load model or preprocessor: {e}")
-    raise e
+    raise
 
 # Function to predict anomalies on new listings
 def m6_labels(listings):

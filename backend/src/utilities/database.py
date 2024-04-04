@@ -1,10 +1,11 @@
 import os
 import re
-from datetime import date
+from datetime import datetime
 from urllib.parse import quote, unquote
 
-import pymongo
 from dotenv import load_dotenv
+from pymongo import MongoClient, UpdateOne
+from pymongo.errors import ConfigurationError
 
 from .logger import SmareLogger
 
@@ -30,10 +31,10 @@ def get_conn(db=DATABASE):
     try:
         db_uri = os.environ.get("DB_URI")
         # deepcode ignore Ssrf: .env's content is controlled by the developer
-        client = pymongo.MongoClient(db_uri)
+        client = MongoClient(db_uri)
 
     # return a friendly error if a URI error is thrown
-    except pymongo.errors.ConfigurationError:
+    except ConfigurationError:
         logger.critical(
             "Database: "
             "An Invalid URI host error was received."
@@ -91,7 +92,9 @@ def find_all_cars():
     try:
         conn = get_conn(DATABASE)
 
-        return conn["db"][SCRAPE_COLLECTION].find()
+        return [
+            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find()
+        ]
     except Exception as e:
         logger.error(f"Database: Failed to find all cars. Error: {e}")
         return None
@@ -152,7 +155,7 @@ def post_raw(scraper_version, source, car):
         "_id": extract_id_from_link(car["link"]),
         "source": source,
         "scraper_version": scraper_version,
-        "scrape_date": str(date.today()),
+        "scrape_date": datetime.now().isoformat(),
         "stage": "scrape",
     }
 
@@ -228,15 +231,13 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
     try:
         update_operations = []
         for k, car in enumerate(cars_array):
-            model_field_score = f"model_scores.model_{model_number}"
-            model_field_version = f"model_versions.model_{model_number}"
-
-            update_operation = update_one(
+            update_operation = UpdateOne(
                 {"_id": car["_id"]},
                 {
                     "$set": {
-                        model_field_score: new_scores[k],
-                        model_field_version: model_version,
+                        f"model_scores.model_{model_number}": new_scores[k],
+                        f"model_versions.model_{model_number}": model_version,
+                        "pending_risk_update": True
                     }
                 },
             )
@@ -251,6 +252,64 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
         return False
 
     return True
+
+
+def update_db_risk_scores(cars_array):
+    logger.debug(f"Database: Bulk updating {len(cars_array)} risk scores.")
+    try:
+        conn = get_conn(DATABASE)
+        if not conn["success"]:
+            logger.error("Database: Failed to connect to DB.")
+            return False
+    except Exception as e:
+        logger.error(f"Database: Failed to connect to DB. Error: {e}")
+        return False
+
+    if not cars_array:
+        logger.warning("Database: No cars to update")
+        return False
+
+    try:
+        update_operations = []
+        for car in cars_array:
+            update_operation = UpdateOne(
+                {"_id": car["_id"]},
+                {
+                    "$set": {
+                        "risk_score": car["risk_score"],
+                        "pending_risk_update": False,
+                        "human_flag": False
+                    }
+                },
+            )
+            update_operations.append(update_operation)
+
+        if update_operations:
+            result = conn["db"][SCRAPE_COLLECTION].bulk_write(update_operations)
+            return result.modified_count
+
+    except Exception as e:
+        logger.error(f"Database: Failed to update risk scores. Error: {e}")
+        return False
+
+    return True
+
+
+def find_pending_risk_update():
+    try:
+        conn = get_conn(DATABASE)
+        if not conn["success"]:
+            logger.error("Database: Failed to connect to DB.")
+            return False
+    except Exception as e:
+        logger.error(f"Database: Failed to connect to DB. Error: {e}")
+        return False
+
+    try:
+        return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"pending_risk_update": True, "stage": "clean"})]
+    except Exception as e:
+        logger.error(f"Database: Failed to find cars pending a risk score update. Error: {e}")
+        return None
 
 
 def post_log(

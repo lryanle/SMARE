@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python@sha256:f0c3116a56d167eba8021a5d7c595f969835fbe78826303326f80de00d044733 as build
+FROM public.ecr.aws/lambda/python@sha256:f0c3116a56d167eba8021a5d7c595f969835fbe78826303326f80de00d044733 as dependencies
 RUN yum install -y unzip-* && \
     curl -Lo "/tmp/chromedriver-linux64.zip" "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chromedriver-linux64.zip" && \
     curl -Lo "/tmp/chrome-linux64.zip" "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chrome-linux64.zip" && \
@@ -6,21 +6,22 @@ RUN yum install -y unzip-* && \
     unzip /tmp/chrome-linux64.zip -d /opt/ && \
     yum clean all
 
+WORKDIR /var/task
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
 FROM public.ecr.aws/lambda/python@sha256:f0c3116a56d167eba8021a5d7c595f969835fbe78826303326f80de00d044733
 RUN yum install atk-* cups-libs-* gtk3-* libXcomposite-* alsa-lib-* \
     libXcursor-* libXdamage-* libXext-* libXi-* libXrandr-* libXScrnSaver-* \
     libXtst-* pango-* at-spi2-atk-* libXt-* xorg-x11-server-Xvfb-* \
     xorg-x11-xauth-* dbus-glib-* dbus-glib-devel-* -y && \
     yum clean all
-COPY --from=build /opt/chrome-linux64 /opt/chrome
-COPY --from=build /opt/chromedriver-linux64 /opt/
+COPY --from=dependencies /opt/chrome-linux64 /opt/chrome
+COPY --from=dependencies /opt/chromedriver-linux64 /opt/
+COPY --from=dependencies /var/lang/lib/python3.11/site-packages /var/lang/lib/python3.11/site-packages
 
 WORKDIR /var/task
 COPY orchestrator.py ./
 COPY src ./src
-COPY src/models ./src/models
-COPY requirements.txt ./
-
-RUN pip install --no-cache-dir -r requirements.txt
 
 CMD [ "orchestrator.smare_cragigslist" ]

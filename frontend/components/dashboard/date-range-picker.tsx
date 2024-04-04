@@ -15,13 +15,17 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+type Props = {
+  date: DateRange | undefined;
+  setDate: (date: DateRange | undefined) => void;
+};
+
 export function CalendarDateRangePicker({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: addDays(new Date(), -30),
-    to: new Date(),
-  });
+  date,
+  setDate,
+}: React.HTMLAttributes<HTMLDivElement> & Props) {
+
 
   return (
     <div className={cn("grid gap-2", className)}>

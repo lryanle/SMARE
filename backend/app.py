@@ -3,7 +3,10 @@ from src.cleaners import cleaner
 from src.scrapers import scraper
 from src.models import model_manager
 
-DURATION = float('inf')
+from datetime import datetime, timedelta
+
+TERMINATION_TIMESTAMP = datetime.now() + timedelta(days=7)
+
 
 def pipeline_facebook():
     smare_facebook()
@@ -14,16 +17,16 @@ def pipeline_craigslist():
 
 
 def craigslist():
-    scraper.run(DURATION, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    scraper.run(TERMINATION_TIMESTAMP, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
 def facebook():
-    scraper.run(DURATION, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+    scraper.run(TERMINATION_TIMESTAMP, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
 
 
 def clean():
-    cleaner.run(DURATION, CLEANER_VERSION)
+    cleaner.run(TERMINATION_TIMESTAMP, CLEANER_VERSION)
 
 
 def model():
-    model_manager.run(DURATION)
+    model_manager.run(TERMINATION_TIMESTAMP)

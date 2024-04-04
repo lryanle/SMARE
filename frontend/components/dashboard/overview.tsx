@@ -1,14 +1,21 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { DateRange } from 'react-day-picker';
+import { BarChart, Bar, Brush, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, ComposedChart, LineChart, Line } from 'recharts';
 
-export function Overview() {
+type Props = {
+  date: DateRange | undefined;
+};
+
+export function Overview({ date }: Props) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('/api/listings/month');
+      const a = date?.from?.toJSON();
+      const b = date?.to?.toJSON();
+      const response = await fetch(`/api/listings/day?before=${b}&after=${a}`);
       if (!response.ok) {
         console.error('Failed to fetch data');
         return;
@@ -16,32 +23,45 @@ export function Overview() {
 
       const result = await response.json();
       if (result.success && result.data) {
-        setData(result.data);
+        const transformedData = result.data.map((item: any) => ({
+          ...item,
+          formattedDate: item.name.substring(5).replace(/-/g, '/')
+        }));
+        setData(transformedData);
       }
     };
 
     fetchData();
-  }, []);
+  }, [date]);
+
 
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={data}>
-        <XAxis
-          dataKey="name"
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value: any) => `${value}`}
-        />
-        <Bar dataKey="total" fill="#f01716" radius={[4, 4, 0, 0]} />
-      </BarChart>
+    <ResponsiveContainer width="100%" height={512}>
+      <ComposedChart
+        width={500}
+        height={400}
+        data={data}
+        margin={{
+          top: 20,
+          right: 60,
+          bottom: 20,
+          left: 20,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="formattedDate" scale="band" />
+        <YAxis label={{ value: "Total", angle: -90, position: "insideLeft" }}/>
+        <Tooltip />
+        <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
+        <Brush dataKey="formattedDate" height={30} stroke="#f01716">
+          <LineChart>
+            <Line dataKey="total" stroke="#000000cc" dot={false} />
+          </LineChart>
+        </Brush>
+        <Area type="monotone" name="Flagged" dataKey="flaggedTrue" stackId="0" stroke="#FE4A4A" fill="#FE7C7C" />
+        <Area type="monotone" name="Not Flagged" dataKey="flaggedFalse" stackId="1" stroke="#3B69FF" fill="#6F90FF" />
+        <Bar type="monotone" name="Total" dataKey="total" barSize={20} fill="#00000088" />
+      </ComposedChart>
     </ResponsiveContainer>
   );
 }

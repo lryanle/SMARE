@@ -271,13 +271,14 @@ def update_db_risk_scores(cars_array):
 
     try:
         update_operations = []
-        for i, car in enumerate(cars_array):
+        for car in cars_array:
             update_operation = UpdateOne(
                 {"_id": car["_id"]},
                 {
                     "$set": {
-                        "risk_score": cars_array[i]["risk_score"],
-                        "pending_risk_update": False
+                        "risk_score": car["risk_score"],
+                        "pending_risk_update": False,
+                        "human_flag": False
                     }
                 },
             )

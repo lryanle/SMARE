@@ -21,6 +21,7 @@ def clean(car):
         clean_car = {}
 
         if car["source"] == "facebook":
+            clean_car["year"] = fb.extract_year(car["title"])
             attributes = clean_car["attributes"] = fb.extract_attributes(
                 car["attributes"]
             )

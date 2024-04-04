@@ -3,8 +3,6 @@ from src.cleaners import cleaner
 from src.scrapers import scraper
 from src.models import model_manager
 
-from src.utilities.database import reset_risk_flags
-
 from datetime import datetime, timedelta
 
 TERMINATION_TIMESTAMP = datetime.now() + timedelta(days=7)
@@ -32,6 +30,3 @@ def clean():
 
 def model():
     model_manager.run(TERMINATION_TIMESTAMP)
-
-# TODO: REMOVE
-reset_risk_flags()

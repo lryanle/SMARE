@@ -419,41 +419,5 @@ def decode_arr(arr):
     return decoded_arr
 
 
-# TODO: REMOVE
-def reset_risk_flags():
-    cars_array = find_all_cars()
-
-    logger.debug(f"Database: Bulk updating {len(cars_array)} risk scores.")
-    try:
-        conn = get_conn(DATABASE)
-        if not conn["success"]:
-            logger.error("Database: Failed to connect to DB.")
-    except Exception as e:
-        logger.error(f"Database: Failed to connect to DB. Error: {e}")
-
-    if not cars_array:
-        logger.warning("Database: No cars to update")
-
-    try:
-        update_operations = []
-        for car in cars_array:
-            update_operation = UpdateOne(
-                {"_id": car["_id"]},
-                {
-                    "$set": {
-                        "pending_risk_update": True
-                    }
-                },
-            )
-            update_operations.append(update_operation)
-
-        if update_operations:
-            result = conn["db"][SCRAPE_COLLECTION].bulk_write(update_operations)
-            logger.success(f"Updated {result.modified_count} cars")
-
-    except Exception as e:
-        logger.error(f"Database: Failed to update risk scores. Error: {e}")
-
-
 def __init__():
     logger.info("Database: Initialized")

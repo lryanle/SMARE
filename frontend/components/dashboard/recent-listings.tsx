@@ -3,30 +3,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import ListingsItem from "@/components/dashboard/listings-item";
+import { scrapeListing } from "@/types/smare";
 
 export function RecentListings() {
   const [data, setData] =
-    useState<
-      {
-        _id: string;
-        title: string;
-        price: string;
-        odometer: string;
-        link: string;
-        seller_website: string;
-        post_body: string;
-        year: string;
-        makemodel: string;
-        latitude: string;
-        longitude: string;
-        attributes?: { label: string; value: string }[];
-        images: string[];
-        source: string;
-        scraper_version: number;
-        scrape_date: string;
-        stage: string;
-      }[]
-    >();
+    useState<scrapeListing[]>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,9 +27,9 @@ export function RecentListings() {
   }, []);
 
   return (
-    <div className="space-y-8  overflow-y-scroll h-80">
+    <div className="space-y-3  overflow-y-scroll h-80">
       {data ? (
-        data.map((item) => <ListingsItem source={item.source} name={item.makemodel} year={item.year} date={item.scrape_date} riskScore={0} key={item._id} />)
+        data.map((item) => <ListingsItem source={item.source} make={item.make} model={item.model} year={item.year} scrape_date={item.scrape_date} risk_score={item.risk_score} key={item._id} />)
       ) : (
         <div>Loading...</div>
       )}

@@ -1,40 +1,21 @@
+/* eslint-disable camelcase */
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { displayListing, scrapeListing } from "@/types/smare";
+import { capitalize, cn } from "@/lib/utils";
 
-type Props = {
-  source: string;
-  name: string;
-  year: string;
-  date: string;
-  riskScore: number;
-  _id?: string;
-  title?: string;
-  price?: string;
-  odometer?: string;
-  link?: string;
-  seller_website?: string;
-  post_body?: string;
-  makemodel?: string;
-  latitude?: string;
-  longitude?: string;
-  attributes?: { label: string; value: string }[];
-  images?: string[];
-  scraper_version?: number;
-  scrape_date?: string;
-  stage?: string;
-};
-
-export default function ListingsItem({source, name, year, date, riskScore}: Props) {
+export default function ListingsItem({source, make, model, year, scrape_date, risk_score}: displayListing) {
+  risk_score = risk_score === -1 ? 0 : risk_score
   return (
-    <div className="flex items-center">
+    <div className={cn("flex items-center p-2", risk_score > 50 ? "bg-red-500 rounded-lg text-white font-bold py-3" : "")}>
       <Avatar className="h-9 w-9">
         <AvatarImage src={`/logos/${source}.png`} alt="Avatar" />
       </Avatar>
       <div className="ml-4 space-y-1">
-        <p className="text-sm font-medium leading-none">{`${decodeURI(name)} (${year})`}</p>
-        <p className="text-sm text-muted-foreground">{date}</p>
+        <p className={cn("text-sm leading-none", risk_score > 50 ? "text-white font-bold" : "font-medium")}>{`${capitalize(make)} ${capitalize(model)} ${year ? `(${year})` : ""}`}</p>
+        <p className={cn("text-sm", risk_score > 50 ? "text-white font-bold" : "text-muted-foreground")}>{scrape_date.toLocaleUpperCase()}</p>
       </div>
-      <div className="ml-auto font-medium">{`${riskScore * 100}/100`}</div>
+      <div className={cn("ml-auto", risk_score > 50 ? "text-white font-bold" : "font-medium")}>{`${risk_score}%`}</div>
     </div>
   );
 }

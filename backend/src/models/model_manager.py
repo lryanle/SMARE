@@ -28,6 +28,7 @@ MODEL_WEIGHTS = [
     10, # Model 4: Car Frequency Model
     20, # Model 5: Theft Likelihood Model
     10, # Model 6: Luxury Model
+    0,  # Model 7: DEPRECATED
 ]
 
 logger = logger.SmareLogger()
@@ -44,29 +45,27 @@ def filter_on_model(all_cars, model_num):
 def update_risk_scores():
     try:
         listings_to_update = find_pending_risk_update()
+        logger.info(f"Found {len(listings_to_update)} that can be re-evaluated")
 
-        for i, car in enumerate(listings_to_update):
+        for car in listings_to_update:
             if "model_scores" not in car:
-                logger.error(f"Listing with id: {car['_id']} does not have 'model_scores' property")
-                listings_to_update[i]["risk_score"] = -1
+                logger.error(f"Listing with id: {car['_id']} (stage: '{car['stage']}') does not have 'model_scores' property")
+                car["risk_score"] = -1
                 continue
 
-            new_score = -1
+            new_risk_score = car["risk_score"]
 
-            for i, score in enumerate(car["model_scores"].values()):
-                if score < 0:
+            for i, model_score in enumerate(car["model_scores"].values()):
+                if model_score < 0:
                     continue
 
-                if new_score < 0:
-                    new_score = 0
+                new_risk_score = max(new_risk_score, 0)
+                new_risk_score += model_score * MODEL_WEIGHTS[i]
 
-                new_score += score * MODEL_WEIGHTS[i]
-                logger.debug(new_score)
-
-            if new_score >= 0:
-                listings_to_update[i]["risk_score"] = max(0, min(new_score, 100))
-                listings_to_update[i]["pending_risk_update"] = False
-
+            if new_risk_score >= 0:
+                car["risk_score"] = min(new_risk_score, 100)
+                car["pending_risk_update"] = False
+            
         return update_db_risk_scores(listings_to_update)
     except Exception as e:
         logger.critical(f"Failed to update risk scores. Error: {e}")

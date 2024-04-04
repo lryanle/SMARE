@@ -92,7 +92,9 @@ def find_all_cars():
     try:
         conn = get_conn(DATABASE)
 
-        return conn["db"][SCRAPE_COLLECTION].find()
+        return [
+            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find()
+        ]
     except Exception as e:
         logger.error(f"Database: Failed to find all cars. Error: {e}")
         return None
@@ -303,7 +305,7 @@ def find_pending_risk_update():
         return False
 
     try:
-        return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"pending_risk_update": True})]
+        return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"pending_risk_update": True, "stage": "clean"})]
     except Exception as e:
         logger.error(f"Database: Failed to find cars pending a risk score update. Error: {e}")
         return None

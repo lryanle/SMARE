@@ -55,17 +55,19 @@ def update_risk_scores():
 
             for i, score in enumerate(car["model_scores"].values()):
                 if score < 0:
+                    logger.debug(car["model_scores"])
                     continue
 
                 if new_score < 0:
                     new_score = 0
 
                 new_score += score * MODEL_WEIGHTS[i]
-                logger.debug(new_score)
 
             if new_score >= 0:
-                listings_to_update[i]["risk_score"] = max(0, min(new_score, 100))
+                listings_to_update[i]["risk_score"] = min(new_score, 100)
+                logger.debug(new_score)
                 listings_to_update[i]["pending_risk_update"] = False
+
 
         return update_db_risk_scores(listings_to_update)
     except Exception as e:

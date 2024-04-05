@@ -69,7 +69,7 @@ def smare(scraper_name):
 def smare_craigslist(event, context):
     try:
         logger.debug("Attempting to start SMARE with Craigslist scraper")
-        smare("c")
+        smare("craigslist")
     except Exception as e:
         logger.critical(f"SMARE failed running the craigslist pipeline. Error: {e}")
 

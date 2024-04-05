@@ -55,7 +55,7 @@ export function DataTableToolbar<TData>({
           <DataTableFacetedFilter
             column={table.getColumn("year")}
             title="year"
-            options={years}
+            options={years.map(year => ({ label: year.label, value: year.value.toString() }))}
           />
         )}
         {/* TODO: Datetime selector here */}

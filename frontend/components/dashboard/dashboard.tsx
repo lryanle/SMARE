@@ -22,9 +22,12 @@ import DownloadCSV from "@/components/dashboard/DownloadCSV";
 type Props = {};
 
 export default function Dashboard({}: Props) {
+  const localTime = new Date();
+  const today = new Date(localTime.getTime() + (localTime.getTimezoneOffset() * 60000));
+
   const [date, setDate] = useState<DateRange | undefined>({
-    from: addDays(new Date(), -30),
-    to: new Date(),
+    from: addDays(today, -30),
+    to: today,
   });
 
   return (

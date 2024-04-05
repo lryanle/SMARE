@@ -28,10 +28,6 @@ export default function DownloadCSV({date}: Props) {
     fetchData();
   }, [date]);
 
-  useEffect(() => {
-    console.log(data)
-  }, [data])
-
   const convertToCSV = (data: any) => {
     const headers = Object.keys(data[0]).join(',');
     const rows = data.map((row: any) => 
@@ -44,7 +40,6 @@ export default function DownloadCSV({date}: Props) {
 
   const DownloadButton = ({ data }: { data: any[] }) => {
     const handleDownload = () => {
-      console.log(data)
       if (!data || data.length === 0) {
         alert('No data available to download');
         return;

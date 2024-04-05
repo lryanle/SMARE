@@ -13,7 +13,7 @@ async function getRecentListings() {
     const db = client.db("scrape");
     const listings = await db
       .collection("listings")
-      .find({})
+      .find({ stage: 'clean' })
       .sort({ scrape_date: -1 })
       .limit(100)
       .toArray();

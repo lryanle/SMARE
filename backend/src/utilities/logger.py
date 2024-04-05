@@ -109,7 +109,7 @@ def post_log(
 
 class SmareLogger:
     def __init__(self):
-        logger.add("logs/log_{time}.log", rotation="12:00", compression="zip")
+        # logger.add("logs/log_{time}.log", rotation="12:00", compression="zip")
 
         self.db_conn = get_conn()
         if not self.db_conn["success"]:
@@ -121,7 +121,7 @@ class SmareLogger:
             serialize=True,
             backtrace=True,
             diagnose=True,
-            enqueue=True,
+            enqueue=False,
             filter=(lambda record: record["level"].no >= 30),
         )
 

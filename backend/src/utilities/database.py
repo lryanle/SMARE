@@ -155,7 +155,7 @@ def post_raw(scraper_version, source, car):
         "_id": extract_id_from_link(car["link"]),
         "source": source,
         "scraper_version": scraper_version,
-        "scrape_date": datetime.now().isoformat(),
+        "scrape_date": datetime.utcnow().isoformat(),
         "stage": "scrape",
     }
 
@@ -271,13 +271,14 @@ def update_db_risk_scores(cars_array):
 
     try:
         update_operations = []
-        for i, car in enumerate(cars_array):
+        for car in cars_array:
             update_operation = UpdateOne(
                 {"_id": car["_id"]},
                 {
                     "$set": {
-                        "risk_score": cars_array[i]["risk_score"],
-                        "pending_risk_update": False
+                        "risk_score": car["risk_score"],
+                        "pending_risk_update": False,
+                        "human_flag": False
                     }
                 },
             )

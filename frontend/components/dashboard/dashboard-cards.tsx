@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Clock4, FileText, ShieldAlert } from "lucide-react";
 import { dashboardCardTypes } from "@/types/smare";
+import { Skeleton } from "../ui/skeleton";
 
 type Props = {};
 
@@ -27,6 +28,11 @@ export default function DashboardCards({}: Props) {
     fetchData();
   }, []);
 
+  // get today's locale month
+  const today = new Date();
+  const locale = "en-US";
+  const month = today.toLocaleDateString(locale, { month: "long" });
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
@@ -35,10 +41,10 @@ export default function DashboardCards({}: Props) {
           <FileText size={16} strokeWidth={2} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{data?.totalListings}</div>
-          <p className="text-xs text-muted-foreground">
+          <div className="text-2xl font-bold">{data ? data?.totalListings : <Skeleton className="h-6 w-32 my-1" />}</div>
+          {data ? <p className="text-xs text-muted-foreground">
             {`+${data?.percentIncreaseThisMonth}% from last month`}
-          </p>
+          </p> : <Skeleton className="h-3 w-40 my-1 rounded-lg" />}
         </CardContent>
       </Card>
       <Card>
@@ -49,18 +55,18 @@ export default function DashboardCards({}: Props) {
           <ShieldAlert size={16} strokeWidth={2} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{`+${data?.riskScoreOver50}`}</div>
-          <p className="text-xs text-muted-foreground">{`+${data?.percentIncreaseRiskScoreThisMonth}% from last month`}</p>
+          <div className="text-2xl font-bold">{data ? `+${data?.riskScoreOver50}` : <Skeleton className="h-6 w-32 my-1" />}</div>
+          {data ? <p className="text-xs text-muted-foreground">{`+${data?.percentIncreaseRiskScoreThisMonth}% from last month`}</p> : <Skeleton className="h-3 w-40 my-1 rounded-lg" />}
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">New Listings</CardTitle>
+          <CardTitle className="text-sm font-medium">{month} Listings</CardTitle>
           <CalendarDays size={16} strokeWidth={2} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{`+${data?.listingsThisMonth}`}</div>
-          <p className="text-xs text-muted-foreground">{`+${data?.percentIncreaseLastMonth} from last month`}</p>
+          <div className="text-2xl font-bold">{data ? `+${data?.listingsThisMonth}` : <Skeleton className="h-6 w-32 my-1" />}</div>
+          {data ? <p className="text-xs text-muted-foreground">{`+${data?.listingsLastMonth} from last month`}</p> : <Skeleton className="h-3 w-40 my-1 rounded-lg" />}
         </CardContent>
       </Card>
       <Card>
@@ -69,10 +75,10 @@ export default function DashboardCards({}: Props) {
           <Clock4 size={16} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{`+${data?.listingsToday}`}</div>
-          <p className="text-xs text-muted-foreground">
+          <div className="text-2xl font-bold">{data  ?`+${data?.listingsToday}` : <Skeleton className="h-6 w-32 my-1" />}</div>
+          {data ? <p className="text-xs text-muted-foreground">
             {`+${data?.listingsThisWeek} this week`}
-          </p>
+          </p> : <Skeleton className="h-3 w-40 my-1 rounded-lg" />}
         </CardContent>
       </Card>
     </div>

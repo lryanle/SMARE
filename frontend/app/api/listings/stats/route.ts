@@ -9,7 +9,7 @@ type Data = {
 };
 
 function getMongoFormattedDate(date: Date) {
-  return date.toISOString(); // This will ensure the format aligns with the MongoDB standard
+  return date.toISOString();
 }
 
 function calculatePercentIncrease(previous: number, current: number) {
@@ -17,7 +17,7 @@ function calculatePercentIncrease(previous: number, current: number) {
 }
 
 function startOfWeek(date: Date) {
-  const diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 0); // Adjust if week start is different
+  const diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 0);
   return new Date(date.setDate(diff));
 }
 

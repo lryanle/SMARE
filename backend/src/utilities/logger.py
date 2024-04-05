@@ -121,7 +121,7 @@ class SmareLogger:
             serialize=True,
             backtrace=True,
             diagnose=True,
-            enqueue=True,
+            enqueue=False,
             filter=(lambda record: record["level"].no >= 30),
         )
 

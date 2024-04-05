@@ -5,9 +5,9 @@ from src.scrapers.scraper import run as run_scraper
 from src.models.model_manager import run as run_analyzer
 from src.utilities.logger import SmareLogger
 
-SCRAPER_DURATION = 4 * 60
+SCRAPER_DURATION = 3 * 60
 CLEANER_DURATION = 2 * 60
-ANALYZER_DURATION = 6 * 60
+ANALYZER_DURATION = 8 * 60
 
 CL_SCRAPER_VERSION = 6
 FB_SCRAPER_VERSION = 6
@@ -47,7 +47,9 @@ def smare(scraper_name):
         elif scraper_name == "craigslist":
             logger.info("Starting SMARE with craigslist...")
             scraper = craigslist
-
+        else:
+            logger.critical(f"Invalid scraper name specified '{scraper_name}'")
+            return None
 
         scraper(calculate_timestamp(SCRAPER_DURATION))
     except Exception as e:
@@ -63,21 +65,19 @@ def smare(scraper_name):
     except Exception as e:
         logger.critical(f"Orchestrator failed runnning analyzer module (model manager). Error: {e}")
 
-
-def smare_cragigslist():
+# event and context are needed to work in AWS lambda
+def smare_craigslist(event, context):
     try:
-        smare("craigslist")
+        logger.debug("Attempting to start SMARE with Craigslist scraper")
+        smare("c")
     except Exception as e:
         logger.critical(f"SMARE failed running the craigslist pipeline. Error: {e}")
-    
 
-def smare_facebook():
+
+# event and context are needed to work in AWS lambda
+def smare_facebook(event, context):
     try:
+        logger.debug("Attempting to start SMARE with Facebook scraper")
         smare("facebook")
     except Exception as e:
         logger.critical(f"SMARE failed running the facebook pipeline. Error: {e}")
-
-
-if __name__ == "__main__":
-    smare_facebook()
-    # smare_cragigslist()

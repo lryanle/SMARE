@@ -36,7 +36,7 @@ export function Overview({ date }: Props) {
 
 
   return (
-    <ResponsiveContainer width="100%" height={512}>
+    <ResponsiveContainer width="100%" height={384}>
       <ComposedChart
         width={500}
         height={400}
@@ -48,17 +48,17 @@ export function Overview({ date }: Props) {
           left: 20,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid strokeDasharray="4 4" />
         <XAxis dataKey="formattedDate" scale="band" />
         <YAxis label={{ value: "Total", angle: -90, position: "insideLeft" }}/>
         <Tooltip />
         <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
-        <Brush dataKey="formattedDate" height={30} stroke="#f01716">
+        <Brush dataKey="formattedDate" height={30} stroke="#000000cc">
           <LineChart>
             <Line dataKey="total" stroke="#000000cc" dot={false} />
           </LineChart>
         </Brush>
-        <Area type="monotone" name="Flagged" dataKey="flaggedTrue" stackId="0" stroke="#FE4A4A" fill="#FE7C7C" />
+        <Area type="monotone" name="Flagged" dataKey="flaggedTrue" stackId="1" stroke="#FE4A4A" fill="#FE7C7C" />
         <Area type="monotone" name="Not Flagged" dataKey="flaggedFalse" stackId="1" stroke="#3B69FF" fill="#6F90FF" />
         <Bar type="monotone" name="Total" dataKey="total" barSize={20} fill="#00000088" />
       </ComposedChart>

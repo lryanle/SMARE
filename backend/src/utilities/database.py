@@ -155,7 +155,7 @@ def post_raw(scraper_version, source, car):
         "_id": extract_id_from_link(car["link"]),
         "source": source,
         "scraper_version": scraper_version,
-        "scrape_date": datetime.now().isoformat(),
+        "scrape_date": datetime.utcnow().isoformat(),
         "stage": "scrape",
     }
 

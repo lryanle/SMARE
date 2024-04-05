@@ -15,12 +15,16 @@ async function getListingsByDay(before?: string, after?: string) {
    
     // Normalize and format the dates
     const beforeDate = before ? new Date(before) : new Date();
-    beforeDate.setUTCHours(0, 0, 0, 0);
+    beforeDate.setUTCHours(23, 59, 59, 999);
+    beforeDate.setDate(beforeDate.getDate() - 1);
     const afterDate = after ? new Date(after) : new Date();
-    afterDate.setUTCHours(23, 59, 59, 999);
+    afterDate.setUTCHours(0, 0, 0, 0);
+    afterDate.setDate(afterDate.getDate() - 1);
 
     const formattedBeforeDate = beforeDate.toISOString();
     const formattedAfterDate = afterDate.toISOString();
+
+    console.log('formattedBeforeDate', formattedBeforeDate, 'formattedAfterDate', formattedAfterDate);
 
     const results = await db.collection('listings').aggregate([
       {

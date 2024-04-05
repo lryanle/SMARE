@@ -79,9 +79,9 @@ export const columns: ColumnDef<Listing>[] = [
 
       return (
         <div className="flex w-[100px] items-center">
-          {make.icon && (
+          {/* {make.icon && (
             <make.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
+          )} */}
           <span>{make.label}</span>
         </div>
       )
@@ -106,9 +106,9 @@ export const columns: ColumnDef<Listing>[] = [
 
       return (
         <div className="flex w-[200px] items-center">
-          {model.icon && (
+          {/* {model.icon && (
             <model.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
+          )} */}
           <span>{model.label}</span>
         </div>
       )
@@ -133,9 +133,9 @@ export const columns: ColumnDef<Listing>[] = [
 
       return (
         <div className="flex w-[50px] items-center">
-          {year.icon && (
+          {/* {year.icon && (
             <year.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
+          )} */}
           <span>{year.label}</span>
         </div>
       )

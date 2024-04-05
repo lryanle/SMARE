@@ -66,7 +66,7 @@ def smare(scraper_name):
         logger.critical(f"Orchestrator failed runnning analyzer module (model manager). Error: {e}")
 
 # event and context are needed to work in AWS lambda
-def smare_craigslist(event, context):
+def smare_craigslist(event="", context=""):
     try:
         logger.debug("Attempting to start SMARE with Craigslist scraper")
         smare("craigslist")
@@ -75,7 +75,7 @@ def smare_craigslist(event, context):
 
 
 # event and context are needed to work in AWS lambda
-def smare_facebook(event, context):
+def smare_facebook(event="", context=""):
     try:
         logger.debug("Attempting to start SMARE with Facebook scraper")
         smare("facebook")

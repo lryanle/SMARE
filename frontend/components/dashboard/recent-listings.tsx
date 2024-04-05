@@ -11,7 +11,7 @@ export function RecentListings() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("/api/listings");
+      const response = await fetch("/api/listings?max=100");
       if (!response.ok) {
         console.error("Failed to fetch data");
         return;

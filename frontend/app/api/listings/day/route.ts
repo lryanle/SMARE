@@ -22,9 +22,6 @@ async function getListingsByDay(before?: string, after?: string) {
     const formattedBeforeDate = beforeDate.toISOString();
     const formattedAfterDate = afterDate.toISOString();
 
-    console.log('formattedBeforeDate', formattedBeforeDate, 'formattedAfterDate', formattedAfterDate);
-    // formattedBeforeDate 2024-04-04T23:59:59.999Z formattedAfterDate 2024-03-05T00:00:00.000Z
-
     const results = await db.collection('listings').aggregate([
       {
         $match: {

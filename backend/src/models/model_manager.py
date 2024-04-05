@@ -65,8 +65,8 @@ def update_risk_scores():
             if new_risk_score >= 0:
                 car["risk_score"] = min(new_risk_score, 100)
                 car["pending_risk_update"] = False
-            
-        return update_db_risk_scores(listings_to_update)
+
+        return update_db_risk_scores(listings_to_update), listings_to_update
     except Exception as e:
         logger.critical(f"Failed to update risk scores. Error: {e}")
         return None
@@ -110,7 +110,7 @@ def run(termination_timestamp):
     except Exception as e:
         logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 
-  
+
     # Model 3: KBB Price Model
     try:
         success=1
@@ -215,7 +215,7 @@ def run(termination_timestamp):
     logger.success("Model Manager: All models successfully processed listings")
 
     try:
-        update_count = update_risk_scores()
+        update_count, updated_listings = update_risk_scores()
 
         logger.success(f"Updated {update_count} risk scores")
     except Exception as e:

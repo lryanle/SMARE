@@ -15,17 +15,22 @@ def run(termination_timestamp, website, scraper_version, duplicate_threshold):
 
     if website == "craigslist":
         scraper = craigslist
+        use_proxy = False
     elif website == "facebook":
         scraper = facebook
+        use_proxy = True
+    else:
+        logger.critical(f"Unsuported website! '{website}'")
+        return None
 
     city_urls = scraper.setup_urls(2011)
-    browser = setup_browser()
+    browser = setup_browser(use_proxy)
 
     for url in city_urls:
         if datetime.now() >= termination_timestamp:
                 logger.info("Scraping process is done.")
                 break
-        
+
         logger.debug(f"Going to {url}")
         browser.get(url)
 
@@ -33,6 +38,10 @@ def run(termination_timestamp, website, scraper_version, duplicate_threshold):
         load_page_resources(browser)
 
         car_posts = scraper.get_all_posts(browser)
+        if not car_posts:
+            logger.warning(f"No posts found in {url}")
+
+        logger.info(f"Found {len(car_posts)} in {url}")
 
         duplicate_post_count = 0
 

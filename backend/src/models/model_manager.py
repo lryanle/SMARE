@@ -11,6 +11,7 @@ from .m2_gptvision import m2_riskscores
 from .m3_kbbprice import m3_riskscores
 from .m4_carfreq import m4_riskscores
 from .m5_theftlikelihood import m5_riskscores
+from ..sendGrid import notifs
 
 MODEL_VERSIONS = [
     1, # Model 1: Sentiment Analysis Model
@@ -26,6 +27,7 @@ MODEL_WEIGHTS = [int(w) for w in os.environ.get("MODEL_WEIGHTS", "0,60,40,10,20,
 
 logger = logger.SmareLogger()
 
+flagged_listings = []
 
 def filter_on_model(all_cars, model_num):
     try:
@@ -58,7 +60,8 @@ def update_risk_scores():
             if new_risk_score >= 0:
                 car["risk_score"] = min(new_risk_score, 100)
                 car["pending_risk_update"] = False
-
+            if new_risk_score > 50:
+                flagged_listings.append(car)      
         return update_db_risk_scores(listings_to_update), listings_to_update
     except Exception as e:
         logger.critical(f"Failed to update risk scores. Error: {e}")
@@ -213,3 +216,16 @@ def run(termination_timestamp):
         logger.success(f"Updated {update_count} risk scores")
     except Exception as e:
         logger.error(f"Failed updating risk scores. Error: {e}")
+
+    # Send daily email report
+    #recipient_emails = ['dawsen_richins@yahoo.com','alsimone00@gmail.com','caitlynary@gmail.com', 'tadero230@gmail.com']
+    recipient_emails = ['caitlynary@gmail.com', 'tadero230@gmail.com']
+    notifs.send_daily_email_report(recipient_emails,updated_listings)
+    logger.success("Model Manager: Successfully Emailed Recipent")
+
+    # Send flagged report notification for flagged listings
+    for flagged_listing in flagged_listings:
+        notifs.send_flagged_report_notification(recipient_emails,flagged_listing)
+    logger.success("Model Manager Flagged: Successfully Emailed Recipent Flagged Report")
+
+

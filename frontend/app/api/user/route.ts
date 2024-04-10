@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
             gte: afterDate,
             lte: beforeDate,
           },
+          stage: "clean",
         },
       });
 

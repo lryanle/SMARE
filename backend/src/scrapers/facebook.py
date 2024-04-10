@@ -35,7 +35,7 @@ bodyClass = (
 
 def setup_urls(oldest_allowed_cars):
     # List of TX cities to scrape; can be expanded
-    cities = ["houston", "dallas", "austin", "fortworth", "elpaso", "sanantonio"]
+    cities = ["dallas", "fortworth", "austin", "houston", "elpaso", "sanantonio"]
 
     # Set the URL of the Facebook Marketplace automotive category
     base_url = "https://www.facebook.com/marketplace/{}/vehicles?minYear={}&exact=false"

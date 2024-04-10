@@ -1,19 +1,21 @@
+import os
 from datetime import datetime, timedelta
 
+from dotenv import load_dotenv
 from src.cleaners.cleaner import run as run_cleaner
-from src.scrapers.scraper import run as run_scraper
 from src.models.model_manager import run as run_analyzer
+from src.scrapers.scraper import run as run_scraper
 from src.utilities.logger import SmareLogger
 
-SCRAPER_DURATION = 3 * 60
-CLEANER_DURATION = 2 * 60
-ANALYZER_DURATION = 8 * 60
+load_dotenv()
+
+SCRAPER_DURATION = int(os.environ.get("SCRAPE_MINUTES", 6)) * 60
+CLEANER_DURATION = int(os.environ.get("CLEAN_MINUTES", 2)) * 60
+ANALYZER_DURATION = int(os.environ.get("ANALYZE_MINUTES", 4)) * 60
 
 CL_SCRAPER_VERSION = 6
 FB_SCRAPER_VERSION = 6
 CLEANER_VERSION = 3
-
-DUPLICATE_TERMINATION_LIMIT = 5
 
 logger = SmareLogger()
 
@@ -27,14 +29,14 @@ def calculate_timestamp(seconds):
 
 def facebook(termination_timestamp):
     try:
-        run_scraper(termination_timestamp, "facebook", FB_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+        run_scraper(termination_timestamp, "facebook", FB_SCRAPER_VERSION)
     except Exception as e:
         logger.critical(f"Orchestrator failed runnning facebook scraper. Error: {e}")
 
 
 def craigslist(termination_timestamp):
     try:
-        run_scraper(termination_timestamp, "craigslist", CL_SCRAPER_VERSION, DUPLICATE_TERMINATION_LIMIT)
+        run_scraper(termination_timestamp, "craigslist", CL_SCRAPER_VERSION)
     except Exception as e:
         logger.critical(f"Orchestrator failed runnning craigslist scraper. Error: {e}")
 

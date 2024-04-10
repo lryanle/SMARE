@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from pymongo.errors import DuplicateKeyError
@@ -7,24 +8,26 @@ from ..utilities import logger
 from . import craigslist, facebook
 from .utils import load_page_resources, setup_browser
 
+DUP_LIMIT = int(os.environ.get("SCRAPE_DUP_LIMIT", 5))
+
 logger = logger.SmareLogger()
 
 
-def run(termination_timestamp, website, scraper_version, duplicate_threshold):
+def run(termination_timestamp, website, scraper_version):
     logger.info(f"Starting {website} scraper...")
 
     if website == "craigslist":
         scraper = craigslist
-        use_proxy = False
+        is_proxy_enabled = False
     elif website == "facebook":
         scraper = facebook
-        use_proxy = True
+        is_proxy_enabled = bool(os.environ.get("PROD_ENV", False)) # true only in production
     else:
         logger.critical(f"Unsuported website! '{website}'")
         return None
 
     city_urls = scraper.setup_urls(2011)
-    browser = setup_browser(use_proxy)
+    browser = setup_browser(is_proxy_enabled)
 
     for url in city_urls:
         if datetime.now() >= termination_timestamp:
@@ -50,8 +53,8 @@ def run(termination_timestamp, website, scraper_version, duplicate_threshold):
                 logger.info("Scraping process is done.")
                 break
 
-            if duplicate_post_count >= duplicate_threshold:
-                logger.warning(f"Reached duplicate threshold of {duplicate_threshold}")
+            if duplicate_post_count >= DUP_LIMIT:
+                logger.warning(f"Reached duplicate threshold of {DUP_LIMIT}")
                 break
 
             try:
@@ -68,7 +71,7 @@ def run(termination_timestamp, website, scraper_version, duplicate_threshold):
             except DuplicateKeyError:
                 duplicate_post_count += 1
                 logger.warning(
-                    f"Duplicate post found ({duplicate_post_count} / {duplicate_threshold})"
+                    f"Duplicate post found ({duplicate_post_count} / {DUP_LIMIT})"
                 )
             except Exception as error:
                 logger.error(f"Encountered an error: {error}")

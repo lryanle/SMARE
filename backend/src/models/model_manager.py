@@ -1,3 +1,4 @@
+import os
 from .m6_anomaly import m6_labels, preprocess_listing
 import joblib
 
@@ -21,15 +22,7 @@ MODEL_VERSIONS = [
     1, # Model 7: Anomaly Model
 ]
 
-MODEL_WEIGHTS = [
-    0,  # Model 1: Sentiment Analysis Model
-    60, # Model 2: GPT Vision Model
-    40, # Model 3: KBB Price Model
-    10, # Model 4: Car Frequency Model
-    20, # Model 5: Theft Likelihood Model
-    10, # Model 6: Luxury Model
-    0,  # Model 7: DEPRECATED
-]
+MODEL_WEIGHTS = [int(w) for w in os.environ.get("MODEL_WEIGHTS", "0,60,40,10,20,10,0").split(",")]
 
 logger = logger.SmareLogger()
 

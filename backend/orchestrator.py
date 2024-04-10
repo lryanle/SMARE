@@ -27,18 +27,26 @@ def calculate_timestamp(seconds):
         logger.critical(f"Orchestrator failed to generate module termination-timestamp. Error: {e}")
 
 
-def facebook(termination_timestamp):
+def facebook(termination_timestamp=calculate_timestamp(7 * 24 * 60 * 60)):
     try:
         run_scraper(termination_timestamp, "facebook", FB_SCRAPER_VERSION)
     except Exception as e:
         logger.critical(f"Orchestrator failed runnning facebook scraper. Error: {e}")
 
 
-def craigslist(termination_timestamp):
+def craigslist(termination_timestamp=calculate_timestamp(7 * 24 * 60 * 60)):
     try:
         run_scraper(termination_timestamp, "craigslist", CL_SCRAPER_VERSION)
     except Exception as e:
         logger.critical(f"Orchestrator failed runnning craigslist scraper. Error: {e}")
+
+
+def clean(termination_timestamp=calculate_timestamp(7 * 24 * 60 * 60)):
+    run_cleaner(calculate_timestamp(termination_timestamp), CLEANER_VERSION)
+
+
+def model(termination_timestamp=calculate_timestamp(7 * 24 * 60 * 60)):
+    run_analyzer(calculate_timestamp(termination_timestamp))
 
 
 def smare(scraper_name):
@@ -58,12 +66,12 @@ def smare(scraper_name):
         logger.critical(f"Orchestrator failed while runnning the scraper module. Error: {e}")
 
     try:
-        run_cleaner(calculate_timestamp(SCRAPER_DURATION), CLEANER_VERSION)
+        clean(calculate_timestamp(CLEANER_DURATION))
     except Exception as e:
         logger.critical(f"Orchestrator failed runnning the cleaner module. Error: {e}")
 
     try:
-        run_analyzer(calculate_timestamp(ANALYZER_DURATION))
+        model(calculate_timestamp(ANALYZER_DURATION))
     except Exception as e:
         logger.critical(f"Orchestrator failed runnning analyzer module (model manager). Error: {e}")
 

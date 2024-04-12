@@ -9,9 +9,9 @@ from src.utilities.logger import SmareLogger
 
 load_dotenv()
 
-SCRAPER_DURATION = int(os.environ.get("SCRAPE_MINUTES", 6)) * 60
-CLEANER_DURATION = int(os.environ.get("CLEAN_MINUTES", 2)) * 60
-ANALYZER_DURATION = int(os.environ.get("ANALYZE_MINUTES", 4)) * 60
+SCRAPER_DURATION = float(os.environ.get("SCRAPE_MINUTES", 6)) * 60
+CLEANER_DURATION = float(os.environ.get("CLEAN_MINUTES", 2)) * 60
+ANALYZER_DURATION = float(os.environ.get("ANALYZE_MINUTES", 4)) * 60
 
 CL_SCRAPER_VERSION = 6
 FB_SCRAPER_VERSION = 6
@@ -42,11 +42,11 @@ def craigslist(termination_timestamp=calculate_timestamp(7 * 24 * 60 * 60)):
 
 
 def clean(termination_timestamp=calculate_timestamp(7 * 24 * 60 * 60)):
-    run_cleaner(calculate_timestamp(termination_timestamp), CLEANER_VERSION)
+    run_cleaner(termination_timestamp, CLEANER_VERSION)
 
 
 def model(termination_timestamp=calculate_timestamp(7 * 24 * 60 * 60)):
-    run_analyzer(calculate_timestamp(termination_timestamp))
+    run_analyzer(termination_timestamp)
 
 
 def smare(scraper_name):

@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import { promises as fs } from "fs"
+import path from "path"
+import { z } from "zod"
+import React, { useEffect, useState } from "react";
 import { CalendarDateRangePicker } from "@/components/dashboard/date-range-picker";
 import { Overview } from "@/components/dashboard/overview";
 import { RecentListings } from "@/components/dashboard/recent-listings";
 import { RecentListingsCount } from "@/components/dashboard/recent-listings-count";
 import DashboardCards from "@/components/dashboard/dashboard-cards";
-import { Button } from "@/components/ui/button";
 import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
 import {
@@ -18,14 +20,57 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DownloadCSV from "@/components/dashboard/DownloadCSV";
+import { DataTable } from "@/components/datatable/data-table";
+import { rawListingSchema, listingSchema } from "@/components/datatable/schema";
+import { columns } from "@/components/datatable/columns";
 
 type Props = {};
 
+interface Listing {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  riskscore: number;
+  url: string;
+  marketplace: string,
+  date: string;
+}
+
 export default function Dashboard({}: Props) {
+  const localTime = new Date();
+  const today = new Date(localTime.getTime() + (localTime.getTimezoneOffset() * 60000));
+
   const [date, setDate] = useState<DateRange | undefined>({
-    from: addDays(new Date(), -30),
-    to: new Date(),
+    from: addDays(today, -30),
+    to: today,
   });
+
+  const [listings, setListings] = useState<Listing[]>([]);
+
+  useEffect(() => {
+    async function fetchTasks() {
+      const response = await fetch('/api/listings');
+      const data = await response.json();
+      const validTasks = z.array(rawListingSchema).parse(data.data);
+  
+      const transformedTasks = validTasks.map(task => ({
+        url: task.link,
+        make: task.make,
+        model: task.model,
+        riskscore: task.risk_score,
+        marketplace: task.source,
+        year: task.year,
+        id: task._id,
+        date: task.scrape_date,
+      }));
+  
+      console.log(transformedTasks);
+      setListings(transformedTasks);
+    }
+  
+    fetchTasks().catch(console.error);
+  }, []);  
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -41,8 +86,8 @@ export default function Dashboard({}: Props) {
       <Tabs defaultValue="overview" className="space-y-4 flex-col md:flex-row">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics" disabled>
-            Analytics
+          <TabsTrigger value="listings">
+            Listings
           </TabsTrigger>
           <TabsTrigger value="reports" disabled>
             Reports
@@ -59,7 +104,7 @@ export default function Dashboard({}: Props) {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4">
               <CardHeader>
-                <CardTitle>Overview</CardTitle>
+                <CardTitle>Flagged Listings</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
                 <Overview date={date}/>
@@ -77,6 +122,19 @@ export default function Dashboard({}: Props) {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+        <TabsContent value="listings" className="space-y-4">
+          <Card className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+            <div className="flex items-center justify-between space-y-2">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold tracking-tight">Listings View</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  View and filter through all social marketplace listings
+                </CardDescription>
+              </CardHeader>
+            </div>
+            <DataTable data={listings} columns={columns} />
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

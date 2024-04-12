@@ -28,4 +28,3 @@ COPY app.py ./
 COPY .env ./
 
 CMD [ "app.craigslist" ]
-

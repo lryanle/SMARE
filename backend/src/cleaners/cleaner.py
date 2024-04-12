@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from ..utilities import database as db
@@ -8,7 +9,7 @@ from . import utils
 
 logger = logger.SmareLogger()
 
-CONSECUTIVE_ERROR_LIMIT = 20
+CONSECUTIVE_ERROR_LIMIT = int(os.environ.get("CLEAN_CONS_ERR_LIMIT", 20))
 
 
 class MakeModelException(Exception):

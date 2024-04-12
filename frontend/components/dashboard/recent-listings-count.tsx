@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { dashboardCardTypes } from "@/types/smare";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function RecentListingsCount() {
-  const [data, setData] =
-    useState<dashboardCardTypes>();
+  const [data, setData] = useState<dashboardCardTypes>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,8 +24,11 @@ export function RecentListingsCount() {
     fetchData();
   }, []);
 
-  return (
-    
-      `${data ? data?.listingsToday : "X"} listings flagged today (${new Date().toLocaleDateString()})`
-  );
+  return `${
+    data ? data?.listingsToday : "..."
+  } listings flagged today (${new Date().toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })})`;
 }

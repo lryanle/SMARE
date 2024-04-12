@@ -21,7 +21,8 @@ async function getListingsByMonth() {
     const results = await db.collection('listings').aggregate([
       {
         $match: {
-          scrape_date: { $gte: formattedDate }
+          scrape_date: { $gte: formattedDate },
+          stage: 'clean'
         }
       },
       {

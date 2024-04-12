@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest } from "next/server";
 import clientPromise from '@/lib/mongodb';
 
@@ -14,9 +15,9 @@ async function getListingsByDay(before?: string, after?: string) {
    
     // Normalize and format the dates
     const beforeDate = before ? new Date(before) : new Date();
-    beforeDate.setUTCHours(0, 0, 0, 0);
+    beforeDate.setUTCHours(23, 59, 59, 999);
     const afterDate = after ? new Date(after) : new Date();
-    afterDate.setUTCHours(23, 59, 59, 999);
+    afterDate.setUTCHours(0, 0, 0, 0);
 
     const formattedBeforeDate = beforeDate.toISOString();
     const formattedAfterDate = afterDate.toISOString();
@@ -27,7 +28,8 @@ async function getListingsByDay(before?: string, after?: string) {
           scrape_date: {
             $gte: formattedAfterDate,
             $lte: formattedBeforeDate
-          }
+          },
+          stage: 'clean'
         }
       },
       {
@@ -37,7 +39,8 @@ async function getListingsByDay(before?: string, after?: string) {
               dateString: '$scrape_date',
             }
           },
-          flagged: 1,
+          risk_score: 1,
+          human_flag: 1,
           count: { $literal: 1 }
         }
       },
@@ -46,24 +49,35 @@ async function getListingsByDay(before?: string, after?: string) {
           yearMonthDay: { 
             $dateToString: { format: "%Y-%m-%d", date: "$convertedDate" }
           },
-          flagged: 1, 
+          risk_score: 1,
+          human_flag: 1,
           count: 1
         }
       },
       {
         $group: {
           _id: '$yearMonthDay',
-          total: { $sum: '$count' },
           flaggedTrue: { 
             $sum: {
-              $cond: [{ $eq: ['$flagged', true] }, 1, 0]
+              $cond: [
+                { $or: [{ $gte: ['$risk_score', 50] }, { $eq: ['$human_flag', true] }] },
+                1, 
+                0
+              ]
             }
           },
           flaggedFalse: {
             $sum: {
-              $cond: [{ $ne: ['$flagged', true] }, 1, 0]
+              $cond: [{ $or: [{ $lt: ['$risk_score', 50] }, { $ne: ['$human_flag', true] }] }, 1, 0]
             }
           }
+        }
+      },
+      {
+        $project: {
+          total: { $add: ['$flaggedTrue', '$flaggedFalse'] },
+          flaggedTrue: 1,
+          flaggedFalse: 1
         }
       },
       { $sort: { '_id': 1 } }
@@ -88,7 +102,9 @@ export async function GET(request: NextRequest) {
 
     // default to before today
     if (!before) {
-      before = new Date().toISOString();
+      const tempbeforedate = new Date()
+      tempbeforedate.setUTCHours(23, 59, 59, 999)
+      before = tempbeforedate.toISOString();
     }
 
     // default to after 1 year ago
@@ -98,7 +114,15 @@ export async function GET(request: NextRequest) {
       after = oneYearAgo.toISOString();
     }
 
-    const data = await getListingsByDay(before, after);
+    // Normalize the dates
+    const before2 = new Date(before)
+    before2.setUTCHours(23, 59, 59, 999)
+
+    const after2 = new Date(after)
+    after2.setUTCHours(0, 0, 0, 0)
+
+    const data = await getListingsByDay(before2.toISOString(), after2.toISOString());
+
     return Response.json({ success: true, data, before, after});
   } catch (error) {
     return Response.json({ success: false, error: error.message });

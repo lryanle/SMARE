@@ -28,30 +28,29 @@ export default function DownloadCSV({date}: Props) {
     fetchData();
   }, [date]);
 
-  useEffect(() => {
-    console.log(data)
-  }, [data])
-
-  const convertToCSV = (data: any) => {
-    const headers = Object.keys(data[0]).join(',');
-    const rows = data.map((row: any) => 
-      Object.values(row).map((value: any) => 
-        `"${value.toString().replace(/"/g, '""')}"`).join(',')
-    );
-
-    return [headers].concat(rows).join('\n');
+  const convertToCSV = (data: any[]) => {
+    const headersSet = new Set(data.flatMap(row => Object.keys(row)));
+    const headers = Array.from(headersSet);
+  
+    const headerRow = headers.join(',');
+  
+    const rows = data.map(row => {
+      return headers.map(header => {
+        const cellValue = row[header];
+        const formattedCellValue = cellValue !== undefined ? cellValue.toString().replace(/"/g, '""') : '';
+        return `"${formattedCellValue}"`;
+      }).join(',');
+    });
+  
+    return [headerRow].concat(rows).join('\n');
   };
 
   const DownloadButton = ({ data }: { data: any[] }) => {
     const handleDownload = () => {
-      console.log(data)
       if (!data || data.length === 0) {
         alert('No data available to download');
         return;
       }
-  
-      // Log data for debugging
-      console.log('Downloading data:', data);
   
       const csvData = convertToCSV(data);
       const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });

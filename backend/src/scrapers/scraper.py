@@ -21,7 +21,7 @@ def run(termination_timestamp, website, scraper_version):
         is_proxy_enabled = False
     elif website == "facebook":
         scraper = facebook
-        is_proxy_enabled = bool(os.environ.get("PROD_ENV", False)) # true only in production
+        is_proxy_enabled = os.environ.get("PROD_ENV", False) # true only in production
     else:
         logger.critical(f"Unsuported website! '{website}'")
         return None

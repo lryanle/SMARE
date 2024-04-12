@@ -22,7 +22,7 @@ def clean_currency(price_str):
 
 def clean_odometer(odometer_str):
     try:
-        clean_str = odometer_str.replace("k", "000").replace(",", "").replace(" mi", "")
+        clean_str = odometer_str.lower().replace("k", "000").replace(",", "").replace("miles", "").replace("mi", "").replace(" ", "")
         return int(clean_str)
     except ValueError as e:
         logger.error(f"Error converting odometer to int: {odometer_str} | Error: {e}")
@@ -115,7 +115,7 @@ def extract_model(title, make, regex):
             models = json.load(models_json)
             models = models[make.lower()]
 
-        match = re.search(regex, title)
+        match = re.search(regex, title.lower())
 
         if match:
             model_search_area = match.group(1)
@@ -136,7 +136,7 @@ def extract_model(title, make, regex):
 
 def incremental_model_search(title, make, models):
     try:
-        title_words = title.split(" ")
+        title_words = title.lower().split(" ")
         search_substring = []
 
         for word in title_words:

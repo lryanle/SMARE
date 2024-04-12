@@ -163,13 +163,9 @@ def post_raw(scraper_version, source, car):
     if encoded_car is not None:
         encoded_car.update(metadata)
 
-        try:
-            # push encoded car (with metadata) to db
-            result = conn["db"][SCRAPE_COLLECTION].insert_one(encoded_car)
-            return result.acknowledged
-        except Exception as e:
-            logger.error(f"Database: Failed to post raw car data to the db. Error: {e}")
-            return False
+    # push encoded car (with metadata) to db
+    result = conn["db"][SCRAPE_COLLECTION].insert_one(encoded_car)
+    return result.acknowledged
 
 
 def update(link, new_fields, conn=None):

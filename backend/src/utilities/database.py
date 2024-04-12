@@ -4,7 +4,7 @@ from datetime import datetime
 from urllib.parse import quote, unquote
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, UpdateOne
+from pymongo import MongoClient, UpdateOne, DESCENDING
 from pymongo.errors import ConfigurationError
 
 from .logger import SmareLogger
@@ -81,7 +81,7 @@ def find_cars_in_stage(stage):
         conn = get_conn(DATABASE)
 
         return [
-            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage})
+            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage}).sort([("scrape_date", DESCENDING)])
         ]
     except Exception as e:
         logger.error(f"Database: Failed to find cars in stage. Error: {e}")

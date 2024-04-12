@@ -24,7 +24,6 @@ COPY --from=dependencies /var/lang/lib/python3.11/site-packages /var/lang/lib/py
 WORKDIR /var/task
 COPY orchestrator.py ./
 COPY src ./src
-COPY app.py ./
 COPY .env ./
 
 CMD [ "app.craigslist" ]

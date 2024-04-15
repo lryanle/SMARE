@@ -13,6 +13,7 @@ from .m3_kbbprice import m3_riskscores
 from .m4_carfreq import m4_riskscores
 from .m5_theftlikelihood import m5_riskscores
 from ..sendGrid import notifs
+from openai import RateLimitError
 
 MODEL_VERSIONS = [
     1, # Model 1: Sentiment Analysis Model
@@ -115,6 +116,8 @@ def run(termination_timestamp):
         batch_process(model_2_cars, m2_riskscores, 2)
 
         logger.success("Model Manager: Model 2 successfully processed listings")
+    except RateLimitError as e:
+        logger.critical(f"Model Manager: Model 2 failed to process listings. Ran out of OpenAI credits {e}")
     except Exception as e:
         logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 

@@ -53,7 +53,7 @@ def extract_attributes(attributes):
 
 def extract_year(title_str):
     try:
-        year = re.match(r"^20\d{2}", title_str)
+        year = re.match(r"^(19|20)\d{2}", title_str)
         if year:
             return int(year.group(0))
     except ValueError as e:

@@ -123,100 +123,99 @@ export function DataTable<TData, TValue>({
                     <CollapsibleContent asChild>
                       <>
                         <TableRow>
+                          <TableCell>Model&nbsp;1</TableCell>
                           <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 1 Score</span>
-                              <span className="text-nowrap">{row.original.model_scores["model_1"]}</span>
+                            <div className="flex flex-col items-center justify-center w-[15rem]">
+                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_1}`}</span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 1 Version</span>
-                              <span className="text-nowrap">{row.original.model_versions.model_1}</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 2 Score</span>
-                              <span className="text-nowrap">{row.original.model_scores.model_2}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 2 Version</span>
-                              <span className="text-nowrap">{row.original.model_versions.model_2}</span>
+                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_1}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
+
+                        <TableCell>Model&nbsp;2</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 3 Score</span>
-                              <span className="text-nowrap">{row.original.model_scores.model_3}</span>
+                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_2}`}</span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 3 Version</span>
-                              <span className="text-nowrap">{row.original.model_versions.model_3}</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 4 Score</span>
-                              <span className="text-nowrap">{row.original.model_scores.model_4}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 4 Version</span>
-                              <span className="text-nowrap">{row.original.model_versions.model_4}</span>
+                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_2}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
+
+                        <TableCell>Model&nbsp;3</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 5 Score</span>
-                              <span className="text-nowrap">{row.original.model_scores.model_5}</span>
+                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_3}`}</span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 5 Version</span>
-                              <span className="text-nowrap">{row.original.model_versions.model_5}</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 6 Score</span>
-                              <span className="text-nowrap">{row.original.model_scores.model_6}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Model 6 Version</span>
-                              <span className="text-nowrap">{row.original.model_versions.model_6}</span>
+                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_3}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
+
+                        <TableCell>Model&nbsp;4</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Scraper Version</span>
-                              <span className="text-nowrap">{row.original.scraper_version}</span>
+                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_4}`}</span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">Cleaner Version</span>
-                              <span className="text-nowrap">{row.original.cleaner_version}</span>
+                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_4}`}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                          <TableCell>Model&nbsp;5</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_5}`}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_5}`}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                        <TableCell>Model&nbsp;6</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_6}`}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_6}`}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                          <TableCell>Utils</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Scraper: ${row.original.scraper_version}`}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Cleaner: ${row.original.cleaner_version}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>

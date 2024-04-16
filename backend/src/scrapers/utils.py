@@ -31,6 +31,8 @@ def create_driver_options(use_proxy=False):
     options.add_argument("--disable-dev-tools")
     options.add_argument("--no-zygote")
 
+    options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
+
     if use_proxy:
         logger.info("Setting up proxy")
 

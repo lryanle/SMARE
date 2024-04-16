@@ -213,7 +213,7 @@ export const columns: ColumnDef<Listing>[] = [
       const marketplace = marketplaces.find(
         (marketplace) => marketplace.value === row.getValue("marketplace")
       )
-      const url = String(row.getValue("url"))
+      const url = String(row.original.url)
 
       if (!marketplace) {
         return null
@@ -236,8 +236,8 @@ export const columns: ColumnDef<Listing>[] = [
       return value.includes(row.getValue(id))
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => <DataTableRowActions row={row} />,
+  // },
 ]

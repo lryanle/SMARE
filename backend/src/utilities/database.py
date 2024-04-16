@@ -4,7 +4,7 @@ from datetime import datetime
 from urllib.parse import quote, unquote
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, UpdateOne
+from pymongo import MongoClient, UpdateOne, DESCENDING
 from pymongo.errors import ConfigurationError
 
 from .logger import SmareLogger
@@ -45,6 +45,15 @@ def get_conn(db=DATABASE):
     return {"success": True, "db": client.get_database(db)}
 
 
+def delete_all_outdated(year):
+    try:
+        conn = get_conn(DATABASE)
+
+        return conn["db"][SCRAPE_COLLECTION].delete_many({"$or": [{"year": None}, {"year": {"$lt": year}}]})
+    except Exception as e:
+        logger.error(f"Database: Failed to delete listings older than {year}. Error: {e}")
+        return None
+
 def extract_id_from_link(link):
     try:
         id = re.search(r"^\d+$", link)
@@ -81,7 +90,7 @@ def find_cars_in_stage(stage):
         conn = get_conn(DATABASE)
 
         return [
-            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage})
+            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage}).sort([("scrape_date", DESCENDING)])
         ]
     except Exception as e:
         logger.error(f"Database: Failed to find cars in stage. Error: {e}")
@@ -163,13 +172,9 @@ def post_raw(scraper_version, source, car):
     if encoded_car is not None:
         encoded_car.update(metadata)
 
-        try:
-            # push encoded car (with metadata) to db
-            result = conn["db"][SCRAPE_COLLECTION].insert_one(encoded_car)
-            return result.acknowledged
-        except Exception as e:
-            logger.error(f"Database: Failed to post raw car data to the db. Error: {e}")
-            return False
+    # push encoded car (with metadata) to db
+    result = conn["db"][SCRAPE_COLLECTION].insert_one(encoded_car)
+    return result.acknowledged
 
 
 def update(link, new_fields, conn=None):
@@ -208,7 +213,7 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
 
     if len(cars_array) != len(new_scores):
         logger.critical(
-            "Database: Length of cars array and scores array do not match. Please fix your model :)"
+            f"Database: Length of cars array ({len(cars_array)}) and scores array ({len(new_scores)}) do not match. Please fix your model :)"
         )
         return False
 

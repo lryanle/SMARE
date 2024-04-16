@@ -1,5 +1,5 @@
 from ..utilities import logger
-from .utils import clean_odometer
+from .utils import clean_odometer, extract_year
 from .utils import extract_model as model_parser
 
 logger = logger.SmareLogger()
@@ -25,14 +25,19 @@ def str_to_num(car):
     clean_car = {}
 
     try:
-        clean_car["year"] = int(car["year"])
-        clean_car["latitude"] = float(car["latitude"])
-        clean_car["longitude"] = float(car["longitude"])
+        if "year" in car:
+            clean_car["year"] = int(car["year"])
+        else:
+            clean_car["year"] = extract_year(car["title"])
+
+        if "latitude" in car and "longitude" in car:
+            clean_car["latitude"] = float(car["latitude"])
+            clean_car["longitude"] = float(car["longitude"])
     except ValueError as e:
-        logger.error(f"Error converting string to number for car: {car} | Error: {e}")
+        logger.error(f"Error converting string to number for car: {car['_id']} | Error: {e}")
     except KeyError as e:
         logger.error(
-            f"Key missing when converting string to number for car: {car} | Error: {e}"
+            f"Key missing when converting string to number for car: {car['_id']} | Error: {e}"
         )
 
     return clean_car

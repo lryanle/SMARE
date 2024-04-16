@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from pymongo.errors import DuplicateKeyError
@@ -7,24 +8,42 @@ from ..utilities import logger
 from . import craigslist, facebook
 from .utils import load_page_resources, setup_browser
 
+DUP_LIMIT = int(os.environ.get("SCRAPE_DUP_LIMIT", 5))
+
 logger = logger.SmareLogger()
 
 
-def run(termination_timestamp, website, scraper_version, duplicate_threshold):
+def check(car):
+    required_checks= [
+        "title" in car,
+        "price" in car,
+        "odometer" in car,
+        "link" in car,
+        "post_body" in car,
+        "images" in car and len(car["images"]) > 0,
+        int(car["year"]) > 2000 if "year" in car else True
+    ]
+
+    logger.debug(f"Checks: {required_checks}")
+
+    return False not in required_checks
+
+
+def run(termination_timestamp, website, scraper_version):
     logger.info(f"Starting {website} scraper...")
 
     if website == "craigslist":
         scraper = craigslist
-        use_proxy = False
+        is_proxy_enabled = False
     elif website == "facebook":
         scraper = facebook
-        use_proxy = True
+        is_proxy_enabled = os.environ.get("PROD_ENV", False) # true only in production
     else:
         logger.critical(f"Unsuported website! '{website}'")
         return None
 
     city_urls = scraper.setup_urls(2011)
-    browser = setup_browser(use_proxy)
+    browser = setup_browser(is_proxy_enabled)
 
     for url in city_urls:
         if datetime.now() >= termination_timestamp:
@@ -50,8 +69,8 @@ def run(termination_timestamp, website, scraper_version, duplicate_threshold):
                 logger.info("Scraping process is done.")
                 break
 
-            if duplicate_post_count >= duplicate_threshold:
-                logger.warning(f"Reached duplicate threshold of {duplicate_threshold}")
+            if duplicate_post_count >= DUP_LIMIT:
+                logger.warning(f"Reached duplicate threshold of {DUP_LIMIT}")
                 break
 
             try:
@@ -59,6 +78,10 @@ def run(termination_timestamp, website, scraper_version, duplicate_threshold):
                 stage2 = scraper.scrape_listing(post["link"], browser)
 
                 post.update(stage2)
+
+                if not check(post):
+                    logger.warning(f"Not adding post to DB. {post['link']}")
+                    continue
 
                 success = db.post_raw(scraper_version, website, post)
                 if success:
@@ -68,7 +91,7 @@ def run(termination_timestamp, website, scraper_version, duplicate_threshold):
             except DuplicateKeyError:
                 duplicate_post_count += 1
                 logger.warning(
-                    f"Duplicate post found ({duplicate_post_count} / {duplicate_threshold})"
+                    f"Duplicate post found ({duplicate_post_count} / {DUP_LIMIT})"
                 )
             except Exception as error:
                 logger.error(f"Encountered an error: {error}")

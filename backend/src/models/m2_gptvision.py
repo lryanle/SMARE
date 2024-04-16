@@ -1,6 +1,6 @@
 import os
 import re
-from openai import OpenAI
+from openai import OpenAI, RateLimitError
 import requests
 from dotenv import load_dotenv
 from ..utilities import logger
@@ -49,7 +49,8 @@ def m2_riskscores(listings):
                 )
             else:
                 output.append(-1)
-
+        except RateLimitError as e:
+            raise RateLimitError(e)
         except Exception as e:
             logger.warning(f"Error with model 2: {e}")
             output.append(-1)

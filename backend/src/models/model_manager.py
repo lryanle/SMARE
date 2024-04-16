@@ -1,5 +1,7 @@
+import os
 from .m6_anomaly import m6_labels, preprocess_listing
 import joblib
+from math import ceil
 
 from ..utilities import logger
 from ..utilities.database import (find_pending_risk_update,
@@ -11,6 +13,7 @@ from .m3_kbbprice import m3_riskscores
 from .m4_carfreq import m4_riskscores
 from .m5_theftlikelihood import m5_riskscores
 from ..sendGrid import notifs
+from openai import RateLimitError
 
 MODEL_VERSIONS = [
     1, # Model 1: Sentiment Analysis Model
@@ -22,15 +25,8 @@ MODEL_VERSIONS = [
     1, # Model 7: Anomaly Model
 ]
 
-MODEL_WEIGHTS = [
-    0,  # Model 1: Sentiment Analysis Model
-    60, # Model 2: GPT Vision Model
-    40, # Model 3: KBB Price Model
-    10, # Model 4: Car Frequency Model
-    20, # Model 5: Theft Likelihood Model
-    10, # Model 6: Luxury Model
-    0,  # Model 7: DEPRECATED
-]
+MODEL_WEIGHTS = [int(w) for w in os.environ.get("MODEL_WEIGHTS", "0,60,40,10,20,10,0").split(",")]
+BATCH_SIZE = int(os.environ.get("MODEL_BATCH_SIZE", 15))
 
 logger = logger.SmareLogger()
 
@@ -68,11 +64,21 @@ def update_risk_scores():
                 car["risk_score"] = min(new_risk_score, 100)
                 car["pending_risk_update"] = False
             if new_risk_score > 50:
-                flagged_listings.append(car)      
+                flagged_listings.append(car)
         return update_db_risk_scores(listings_to_update), listings_to_update
     except Exception as e:
         logger.critical(f"Failed to update risk scores. Error: {e}")
         return None
+
+
+def batch_process(model_cars, model_fn, model_num):
+    num_of_cars = len(model_cars)
+
+    for i in range(0, num_of_cars, BATCH_SIZE):
+        batch = model_cars[i:i + BATCH_SIZE]
+
+        logger.info(f"Model {model_num} processing batch {int(i/BATCH_SIZE) + 1}/{ceil(num_of_cars/BATCH_SIZE)}")
+        update_listing_scores(batch, model_fn(batch), model_num, MODEL_VERSIONS[model_num - 1])
 
 
 # todo: calculate post-weight-product scores here, and not in each individual function.
@@ -102,14 +108,16 @@ def run(termination_timestamp):
             logger.error(
                 f"Model Manager: Model 2 failed to filter listings. Error: {e}"
             )
-            return
+            return None
+
         input_size = len(model_2_cars)
 
         logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
-
-        update_listing_scores(model_2_cars, m2_riskscores(model_2_cars), 2, MODEL_VERSIONS[1])
+        batch_process(model_2_cars, m2_riskscores, 2)
 
         logger.success("Model Manager: Model 2 successfully processed listings")
+    except RateLimitError as e:
+        logger.critical(f"Model Manager: Model 2 failed to process listings. Ran out of OpenAI credits {e}")
     except Exception as e:
         logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 
@@ -129,8 +137,10 @@ def run(termination_timestamp):
             return
         if(success):
             input_size = len(model_3_cars)
+
             logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
-            update_listing_scores(model_3_cars, m3_riskscores(model_3_cars), 3, MODEL_VERSIONS[2])
+            batch_process(model_3_cars, m3_riskscores, 3)
+
             logger.success("Model Manager: Model 3 successfully processed listings")
     except Exception as e:
         logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
@@ -230,9 +240,7 @@ def run(termination_timestamp):
     notifs.send_daily_email_report(recipient_emails,updated_listings)
     logger.success("Model Manager: Successfully Emailed Recipent")
 
-    # Send flagged report notification for flagged listings
-    for flagged_listing in flagged_listings:
-        notifs.send_flagged_report_notification(recipient_emails,flagged_listing)
-    logger.success("Model Manager Flagged: Successfully Emailed Recipent Flagged Report")
-
-
+    # # Send flagged report notification for flagged listings
+    # for flagged_listing in flagged_listings:
+    #     notifs.send_flagged_report_notification(recipient_emails,flagged_listing)
+    # logger.success("Model Manager Flagged: Successfully Emailed Recipent Flagged Report")

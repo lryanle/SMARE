@@ -35,6 +35,26 @@ interface Listing {
   url: string;
   marketplace: string,
   date: string;
+
+  model_scores: {
+    model_1: number;
+    model_2: number;
+    model_3: number;
+    model_4: number;
+    model_5: number;
+    model_6: number;
+  };
+  model_versions: {
+    model_1: number;
+    model_2: number;
+    model_3: number;
+    model_4: number;
+    model_5: number;
+    model_6: number;
+  };
+  cleaner_version: number;
+  scraper_version: number;
+  price: number;
 }
 
 export default function Dashboard({}: Props) {
@@ -63,9 +83,30 @@ export default function Dashboard({}: Props) {
         year: task.year,
         id: task._id,
         date: task.scrape_date,
+
+        model_scores: {
+          model_1: task.model_scores.model_1,
+          model_2: task.model_scores.model_2,
+          model_3: task.model_scores.model_3,
+          model_4: task.model_scores.model_4,
+          model_5: task.model_scores.model_5,
+          model_6: task.model_scores.model_6,
+        },
+        model_versions: {
+          model_1: task.model_versions.model_1,
+          model_2: task.model_versions.model_2,
+          model_3: task.model_versions.model_3,
+          model_4: task.model_versions.model_4,
+          model_5: task.model_versions.model_5,
+          model_6: task.model_versions.model_6,
+        
+        },
+        cleaner_version: task.cleaner_version,
+        scraper_version: task.scraper_version,
+        // human_flag: task.human_flag,
+        price: task.price,
       }));
   
-      console.log(transformedTasks);
       setListings(transformedTasks);
     }
   

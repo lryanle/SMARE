@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from ..utilities import database as db
@@ -8,7 +9,7 @@ from . import utils
 
 logger = logger.SmareLogger()
 
-CONSECUTIVE_ERROR_LIMIT = 20
+CONSECUTIVE_ERROR_LIMIT = int(os.environ.get("CLEAN_CONS_ERR_LIMIT", 20))
 
 
 class MakeModelException(Exception):
@@ -21,37 +22,41 @@ def clean(car):
         clean_car = {}
 
         if car["source"] == "facebook":
-            clean_car["year"] = fb.extract_year(car["title"])
-            attributes = clean_car["attributes"] = fb.extract_attributes(
-                car["attributes"]
-            )
-            make = clean_car["make"] = utils.extract_make(car["title"])
-            model = clean_car["model"] = fb.extract_model(
-                car["title"], clean_car["make"]
-            )
+            if "attributes" in car:
+                clean_car["attributes"] = fb.extract_attributes(car["attributes"])
+            clean_car["year"] = utils.extract_year(car["title"])
+            clean_car["make"] = utils.extract_make(car["title"])
+            clean_car["model"] = fb.extract_model(car["title"], clean_car["make"])
         elif car["source"] == "craigslist":
-            attributes = clean_car["attributes"] = cl.extract_attributes(
-                car["attributes"]
-            )
+            if "attributes" in car:
+                clean_car["attributes"] = cl.extract_attributes(car["attributes"])
+
+            if "makemodel" in car:
+                clean_car["make"] = utils.extract_make(car["makemodel"])
+                clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
+            else:
+                clean_car["make"] = utils.extract_make(car["title"])
+                clean_car["model"] = cl.extract_model(car["title"], clean_car["make"])
+
             clean_car.update(cl.str_to_num(car))
-            make = clean_car["make"] = utils.extract_make(car["makemodel"])
-            model = clean_car["model"] = cl.extract_model(
-                car["makemodel"], clean_car["make"]
-            )
 
-        if not attributes:
-            raise MakeModelException("Failed cleaning attributes")
+        if "attributes" not in clean_car and "attributes" not in car:
+            logger.warning(f"Attributes not found in car {car['_id']}")
 
-        if not make:
+        if not clean_car["make"]:
             logger.debug(f"car: {car['makemodel']}")
             raise MakeModelException("Failed cleaning make")
 
-        if not model:
-            logger.debug(f"car {make}: {car['makemodel']}")
+        if not clean_car["model"]:
+            logger.debug(f"car {clean_car['make']}: {car['makemodel']}")
             raise MakeModelException("Failed cleaning model")
 
         clean_car["price"] = utils.clean_currency(car["price"])
-        clean_car["odometer"] = clean_car["attributes"]["odometer"]
+
+        if "attributes" in clean_car and "odometer" in clean_car["attributes"] and isinstance(clean_car["attributes"]["odometer"], int):
+            clean_car["odometer"] = clean_car["attributes"]["odometer"]
+        else:
+            clean_car["odometer"] = utils.clean_odometer(car["odometer"])
 
         return clean_car
     except MakeModelException as error:
@@ -60,6 +65,20 @@ def clean(car):
     except Exception as error:
         logger.error(f"Error cleaning car data: {error}")
         return None
+
+
+def check(car):
+    required_checks = [
+        "price" in car and car["price"] > 0,
+        "odometer" in car and car["odometer"] > 0,
+        "year" in car and car["year"] >= 2000,
+        "make" in car,
+        "model" in car,
+    ]
+
+    logger.debug(f"Checks: {required_checks}")
+
+    return False not in required_checks
 
 
 def run(termination_timestamp, version):
@@ -75,10 +94,10 @@ def run(termination_timestamp, version):
     for car in cars:
         try:
             clean_fields = clean(db.decode(car))
-            if clean_fields:
+            if clean_fields and check(clean_fields):
                 clean_fields["stage"] = "clean"
                 clean_fields["cleaner_version"] = version
-                # Initializing additional model fields and risk_score
+
                 clean_fields["model_scores"] = {}
                 clean_fields["model_versions"] = {}
                 for i in range(1, 8):
@@ -112,7 +131,7 @@ def run(termination_timestamp, version):
             break
 
     logger.info(
-        f"Cleaning summary: {total_errs} errors, {total_cleaned} cleaned, "
+        f"Cleaning summary: {total_errs} errors, {total_cleaned} cleaned"
         f"{len(cars) - total_cleaned} unreached (due to errors or incomplete processing)."
     )
 

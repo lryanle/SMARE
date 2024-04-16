@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,7 +14,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -23,27 +23,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-import { DataTablePagination } from "./data-table-pagination"
-import { DataTableToolbar } from "./data-table-toolbar"
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
+import { ChevronDown } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
     data,
@@ -65,7 +71,7 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -85,7 +91,7 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -93,19 +99,131 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                <Collapsible key={row.id} asChild>
+                  <>
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+
+                      <CollapsibleTrigger asChild>
+                        <TableCell className="flex justify-center items-center">
+                          <ChevronDown className="cursor-pointer" />
+                        </TableCell>
+                      </CollapsibleTrigger>
+                    </TableRow>
+                    <CollapsibleContent asChild>
+                      <>
+                        <TableRow>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 1 Score</span>
+                              <span className="text-nowrap">{row.original.model_scores["model_1"]}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 1 Version</span>
+                              <span className="text-nowrap">{row.original.model_versions.model_1}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 2 Score</span>
+                              <span className="text-nowrap">{row.original.model_scores.model_2}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 2 Version</span>
+                              <span className="text-nowrap">{row.original.model_versions.model_2}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 3 Score</span>
+                              <span className="text-nowrap">{row.original.model_scores.model_3}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 3 Version</span>
+                              <span className="text-nowrap">{row.original.model_versions.model_3}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 4 Score</span>
+                              <span className="text-nowrap">{row.original.model_scores.model_4}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 4 Version</span>
+                              <span className="text-nowrap">{row.original.model_versions.model_4}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 5 Score</span>
+                              <span className="text-nowrap">{row.original.model_scores.model_5}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 5 Version</span>
+                              <span className="text-nowrap">{row.original.model_versions.model_5}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 6 Score</span>
+                              <span className="text-nowrap">{row.original.model_scores.model_6}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Model 6 Version</span>
+                              <span className="text-nowrap">{row.original.model_versions.model_6}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Scraper Version</span>
+                              <span className="text-nowrap">{row.original.scraper_version}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">Cleaner Version</span>
+                              <span className="text-nowrap">{row.original.cleaner_version}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    </CollapsibleContent>
+                  </>
+                </Collapsible>
               ))
             ) : (
               <TableRow>
@@ -122,5 +240,5 @@ export function DataTable<TData, TValue>({
       </div>
       <DataTablePagination table={table} />
     </div>
-  )
+  );
 }

@@ -35,6 +35,12 @@ interface Listing {
   url: string;
   marketplace: string,
   date: string;
+
+  model_scores: Object;
+  model_versions: Object;
+  cleaner_version: number;
+  scraper_version: number;
+  price: number;
 }
 
 export default function Dashboard({}: Props) {
@@ -63,9 +69,15 @@ export default function Dashboard({}: Props) {
         year: task.year,
         id: task._id,
         date: task.scrape_date,
+
+        model_scores: task.model_scores,
+        model_versions: task.model_versions,
+        cleaner_version: task.cleaner_version,
+        scraper_version: task.scraper_version,
+        // human_flag: task.human_flag,
+        price: task.price,
       }));
   
-      console.log(transformedTasks);
       setListings(transformedTasks);
     }
   

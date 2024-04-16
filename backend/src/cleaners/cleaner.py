@@ -30,12 +30,12 @@ def clean(car):
         elif car["source"] == "craigslist":
             if "attributes" in car:
                 clean_car["attributes"] = cl.extract_attributes(car["attributes"])
-            
+
             if "makemodel" in car:
                 clean_car["make"] = utils.extract_make(car["makemodel"])
-            else: 
+            else:
                 clean_car["make"] = utils.extract_make(car["title"])
-            
+
             clean_car.update(cl.str_to_num(car))
             clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
 
@@ -51,7 +51,7 @@ def clean(car):
             raise MakeModelException("Failed cleaning model")
 
         clean_car["price"] = utils.clean_currency(car["price"])
-        
+
         if "attributes" in clean_car and "odometer" in clean_car["attributes"] and isinstance(clean_car["attributes"]["odometer"], int):
             clean_car["odometer"] = clean_car["attributes"]["odometer"]
         else:
@@ -64,6 +64,18 @@ def clean(car):
     except Exception as error:
         logger.error(f"Error cleaning car data: {error}")
         return None
+
+
+def check(car):
+    required_checks= [
+        "price" in car and car["price"] > 0,
+        "odometer" in car and car["odometer"] > 0,
+        "year" in car and car["year"] >= 2000,
+        "make" in car,
+        "model" in car,
+    ]
+
+    return False not in required_checks
 
 
 def run(termination_timestamp, version):
@@ -82,7 +94,7 @@ def run(termination_timestamp, version):
             if clean_fields:
                 clean_fields["stage"] = "clean"
                 clean_fields["cleaner_version"] = version
-                # Initializing additional model fields and risk_score
+
                 clean_fields["model_scores"] = {}
                 clean_fields["model_versions"] = {}
                 for i in range(1, 8):
@@ -116,7 +128,7 @@ def run(termination_timestamp, version):
             break
 
     logger.info(
-        f"Cleaning summary: {total_errs} errors, {total_cleaned} cleaned, "
+        f"Cleaning summary: {total_errs} errors, {total_cleaned} cleaned"
         f"{len(cars) - total_cleaned} unreached (due to errors or incomplete processing)."
     )
 

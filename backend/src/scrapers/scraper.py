@@ -13,6 +13,20 @@ DUP_LIMIT = int(os.environ.get("SCRAPE_DUP_LIMIT", 5))
 logger = logger.SmareLogger()
 
 
+def check(car):
+    required_checks= [
+        "title" in car,
+        "price" in car,
+        "odometer" in car,
+        "link" in car,
+        "post_body" in car,
+        "images" in car and len(car["images"]) > 0,
+        int(car["year"]) if "year" in car else False
+    ]
+
+    return False not in required_checks
+
+
 def run(termination_timestamp, website, scraper_version):
     logger.info(f"Starting {website} scraper...")
 
@@ -62,6 +76,9 @@ def run(termination_timestamp, website, scraper_version):
                 stage2 = scraper.scrape_listing(post["link"], browser)
 
                 post.update(stage2)
+
+                if not check(post):
+                    continue
 
                 success = db.post_raw(scraper_version, website, post)
                 if success:

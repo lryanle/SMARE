@@ -6,11 +6,11 @@ import os
 logger = logger.SmareLogger()
 
 # Define luxury brands and their average prices
-luxury_brands = ['Mercedes-Benz', 'BMW', 'Audi', 'Lexus', 'Porsche', 'Tesla', 
-                 'Jaguar', 'Land Rover', 'Maserati', 'Ferrari', 'Lamborghini', 
+luxury_brands = ['Mercedes-Benz', 'BMW', 'Audi', 'Lexus', 'Porsche', 'Tesla',
+                 'Jaguar', 'Land Rover', 'Maserati', 'Ferrari', 'Lamborghini',
                  'Bentley', 'Rolls-Royce']
-average_prices = {'Mercedes-Benz': 38000, 'BMW': 32000, 'Audi': 30000, 'Lexus': 30000, 'Porsche': 72000, 'Tesla': 34000, 
-                  'Jaguar': 28500, 'Land Rover': 43000, 'Maserati': 43800, 'Ferrari': 192000, 'Lamborghini': 227000, 
+average_prices = {'Mercedes-Benz': 38000, 'BMW': 32000, 'Audi': 30000, 'Lexus': 30000, 'Porsche': 72000, 'Tesla': 34000,
+                  'Jaguar': 28500, 'Land Rover': 43000, 'Maserati': 43800, 'Ferrari': 192000, 'Lamborghini': 227000,
                   'Bentley': 122600, 'Rolls-Royce': 173800}
 
 # Functions for feature engineering
@@ -37,8 +37,8 @@ def preprocess_listing(listing):
     price = listing['price']
     source = listing['source']
     location = ''  # Assuming location is not provided
-    odometer = listing['attributes']['odometer'] if 'odometer' in listing['attributes'] else None
-    image_count = len(listing['images'])
+    odometer = listing['odometer'] if 'odometer' in listing else None
+    image_count = len(listing['images']) if 'images' in listing else 0
 
     is_luxury_val = is_luxury(title)
     make = extract_make(title)
@@ -47,11 +47,11 @@ def preprocess_listing(listing):
 
     # Create a DataFrame with the features
     features = pd.DataFrame([{
-        'source': source, 'title': title, 'location': location, 
-        'price': price, 'odometer': odometer, 'image_count': image_count, 
+        'source': source, 'title': title, 'location': location,
+        'price': price, 'odometer': odometer, 'image_count': image_count,
         'is_luxury_scaled': is_luxury_scaled
     }])
-    
+
     return features
 
 # Load the model and preprocessor

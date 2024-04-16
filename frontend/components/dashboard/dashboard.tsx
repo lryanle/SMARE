@@ -84,8 +84,23 @@ export default function Dashboard({}: Props) {
         id: task._id,
         date: task.scrape_date,
 
-        model_scores: task.model_scores,
-        model_versions: task.model_versions,
+        model_scores: {
+          model_1: task.model_scores.model_1,
+          model_2: task.model_scores.model_2,
+          model_3: task.model_scores.model_3,
+          model_4: task.model_scores.model_4,
+          model_5: task.model_scores.model_5,
+          model_6: task.model_scores.model_6,
+        },
+        model_versions: {
+          model_1: task.model_versions.model_1,
+          model_2: task.model_versions.model_2,
+          model_3: task.model_versions.model_3,
+          model_4: task.model_versions.model_4,
+          model_5: task.model_versions.model_5,
+          model_6: task.model_versions.model_6,
+        
+        },
         cleaner_version: task.cleaner_version,
         scraper_version: task.scraper_version,
         // human_flag: task.human_flag,

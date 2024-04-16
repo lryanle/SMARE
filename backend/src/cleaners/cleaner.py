@@ -24,7 +24,7 @@ def clean(car):
         if car["source"] == "facebook":
             if "attributes" in car:
                 clean_car["attributes"] = fb.extract_attributes(car["attributes"])
-            clean_car["year"] = fb.extract_year(car["title"])
+            clean_car["year"] = utils.extract_year(car["title"])
             clean_car["make"] = utils.extract_make(car["title"])
             clean_car["model"] = fb.extract_model(car["title"], clean_car["make"])
         elif car["source"] == "craigslist":
@@ -33,14 +33,15 @@ def clean(car):
 
             if "makemodel" in car:
                 clean_car["make"] = utils.extract_make(car["makemodel"])
+                clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
             else:
                 clean_car["make"] = utils.extract_make(car["title"])
+                clean_car["model"] = cl.extract_model(car["title"], clean_car["make"])
 
             clean_car.update(cl.str_to_num(car))
-            clean_car["model"] = cl.extract_model(car["makemodel"], clean_car["make"])
 
-        if not clean_car["attributes"] and "attributes" not in car:
-            raise MakeModelException("Failed cleaning attributes")
+        if "attributes" not in clean_car and "attributes" not in car:
+            logger.warning(f"Attributes not found in car {car['_id']}")
 
         if not clean_car["make"]:
             logger.debug(f"car: {car['makemodel']}")
@@ -67,7 +68,7 @@ def clean(car):
 
 
 def check(car):
-    required_checks= [
+    required_checks = [
         "price" in car and car["price"] > 0,
         "odometer" in car and car["odometer"] > 0,
         "year" in car and car["year"] >= 2000,

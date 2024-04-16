@@ -51,16 +51,6 @@ def extract_attributes(attributes):
     return output
 
 
-def extract_year(title_str):
-    try:
-        year = re.match(r"^(19|20)\d{2}", title_str)
-        if year:
-            return int(year.group(0))
-    except ValueError as e:
-        logger.error(f"Error extracting year from title {title_str}: {e}")
-    return None
-
-
 def extract_model(title, make):
     try:
         return parse_model(title, make, r"^\d{4}\s+\w+\s+(([^\s\n]+\s+){0,4})")

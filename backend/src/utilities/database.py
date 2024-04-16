@@ -204,7 +204,7 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
 
     if len(cars_array) != len(new_scores):
         logger.critical(
-            "Database: Length of cars array and scores array do not match. Please fix your model :)"
+            f"Database: Length of cars array ({len(cars_array)}) and scores array ({len(new_scores)}) do not match. Please fix your model :)"
         )
         return False
 

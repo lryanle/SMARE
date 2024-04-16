@@ -163,7 +163,7 @@ export const columns: ColumnDef<Listing>[] = [
             <riskscore.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
           <span>{riskscore.label}</span> */}
-          <Gauge value={Math.ceil(riskscore*100)} size="small" showValue={true} />
+          <Gauge value={Math.ceil(riskscore)} size="small" showValue={true} />
           {/* <span>{parseFloat(String(riskscore)).toFixed(2)}%</span> */}
         </div>
       )

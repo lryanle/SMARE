@@ -29,6 +29,16 @@ def clean_odometer(odometer_str):
         return None
 
 
+def extract_year(title_str):
+    try:
+        year = re.match(r"(19|20)\d{2}", title_str)
+        if year:
+            return int(year.group(0))
+    except ValueError as e:
+        logger.error(f"Error extracting year from title {title_str}: {e}")
+    return None
+
+
 CAR_MAKES = [
     "acura",
     "alfa-romeo",

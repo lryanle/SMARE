@@ -45,6 +45,15 @@ def get_conn(db=DATABASE):
     return {"success": True, "db": client.get_database(db)}
 
 
+def delete_all_outdated(year):
+    try:
+        conn = get_conn(DATABASE)
+
+        return conn["db"][SCRAPE_COLLECTION].delete_many({"$or": [{"year": None}, {"year": {"$lt": year}}]})
+    except Exception as e:
+        logger.error(f"Database: Failed to delete listings older than {year}. Error: {e}")
+        return None
+
 def extract_id_from_link(link):
     try:
         id = re.search(r"^\d+$", link)

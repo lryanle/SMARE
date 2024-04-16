@@ -114,9 +114,9 @@ export default function Dashboard({}: Props) {
   }, []);  
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="flex-1 space-y-4 md:p-8 pt-24 md:pt-6">
       <div className="flex flex-col md:flex-row justify-center items-center md:justify-between text-center md:text-left space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">
+        <h2 className="text-3xl font-bold tracking-tight my-4 md:my-0">
           Marketplace Listings Dashboard
         </h2>
         <div className="flex items-center space-x-2">
@@ -151,7 +151,7 @@ export default function Dashboard({}: Props) {
                 <Overview date={date}/>
               </CardContent>
             </Card>
-            <Card className="col-span-3">
+            <Card className="col-span-4 md:col-span-3">
               <CardHeader>
                 <CardTitle>Recent Listings</CardTitle>
                 <CardDescription>
@@ -165,7 +165,7 @@ export default function Dashboard({}: Props) {
           </div>
         </TabsContent>
         <TabsContent value="listings" className="space-y-4">
-          <Card className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+          <Card className="h-full flex-1 flex-col space-y-8 md:p-8 md:flex">
             <div className="flex items-center justify-between space-y-2">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold tracking-tight">Listings View</CardTitle>

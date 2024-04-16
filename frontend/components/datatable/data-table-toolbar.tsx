@@ -20,7 +20,7 @@ export function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between overflow-x-scroll py-2 md:py-0 md:overflow-auto">
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter listings..."

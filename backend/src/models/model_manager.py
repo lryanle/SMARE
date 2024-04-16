@@ -240,7 +240,7 @@ def run(termination_timestamp):
     notifs.send_daily_email_report(recipient_emails,updated_listings)
     logger.success("Model Manager: Successfully Emailed Recipent")
 
-    # Send flagged report notification for flagged listings
-    for flagged_listing in flagged_listings:
-        notifs.send_flagged_report_notification(recipient_emails,flagged_listing)
-    logger.success("Model Manager Flagged: Successfully Emailed Recipent Flagged Report")
+    # # Send flagged report notification for flagged listings
+    # for flagged_listing in flagged_listings:
+    #     notifs.send_flagged_report_notification(recipient_emails,flagged_listing)
+    # logger.success("Model Manager Flagged: Successfully Emailed Recipent Flagged Report")

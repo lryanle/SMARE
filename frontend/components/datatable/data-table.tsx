@@ -33,9 +33,9 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../ui/collapsible";
+} from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { Gauge } from "../ui/guage";
+import { Gauge } from "@/components/ui/guage";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -118,7 +118,7 @@ export function DataTable<TData, TValue>({
                       ))}
 
                       <CollapsibleTrigger asChild>
-                        <TableCell className="flex justify-center items-center">
+                        <TableCell className="flex justify-center items-center h-[3.45rem]">
                           <ChevronDown className="cursor-pointer" />
                         </TableCell>
                       </CollapsibleTrigger>
@@ -126,85 +126,85 @@ export function DataTable<TData, TValue>({
                     <CollapsibleContent asChild>
                       <>
                         <TableRow>
-                          <TableCell>Model&nbsp;1&nbsp;Score:</TableCell>
+                          <TableCell>Model&nbsp;1:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center w-[15rem]">
-                              {row.original.model_scores.model_1 === -1 ? "Not evaluated" : <Gauge value={Math.ceil(row.original.model_scores.model_1*100)} size="small" showValue={true} />}
+                              {row.original.model_scores.model_1 === -1 ? <span>Not&nbsp;evaluated</span> : <Gauge value={Math.ceil(row.original.model_scores.model_1*100)} size="small" showValue={true} />}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                            {row.original.model_versions.model_1 === -1 ? "Not evaluated" : <span className="text-nowrap">{`v${row.original.model_versions.model_1}`}</span>}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-
-                        <TableCell>Model&nbsp;2&nbsp;Score:</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                            {row.original.model_scores.model_2 === -1 ? "Not evaluated" : <Gauge value={Math.ceil(row.original.model_scores.model_2*100)} size="small" showValue={true} />}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              {row.original.model_versions.model_2 === -1 ? "Not evaluated" : <span className="text-nowrap">{`v${row.original.model_versions.model_2}`}</span>}
+                            {row.original.model_versions.model_1 === -1 ? "" : <span className="text-nowrap">{`v${row.original.model_versions.model_1}`}</span>}
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
 
-                        <TableCell>Model&nbsp;3&nbsp;Score:</TableCell>
+                        <TableCell>Model&nbsp;2:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                            {row.original.model_scores.model_3 === -1 ? "Not evaluated" : <Gauge value={Math.ceil(row.original.model_scores.model_3*100)} size="small" showValue={true} />}
+                            {row.original.model_scores.model_2 === -1 ? <span>Not&nbsp;evaluated</span> : <Gauge value={Math.ceil(row.original.model_scores.model_2*100)} size="small" showValue={true} />}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                            {row.original.model_versions.model_3 === -1 ? "Not evaluated" : <span className="text-nowrap">{`v${row.original.model_versions.model_3}`}</span>}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-
-                        <TableCell>Model&nbsp;4&nbsp;Score:</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                            {row.original.model_scores.model_4 === -1 ? "Not evaluated" : <Gauge value={Math.ceil(row.original.model_scores.model_4*100)} size="small" showValue={true} />}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                            {row.original.model_versions.model_4 === -1 ? "Not evaluated" : <span className="text-nowrap">{`v${row.original.model_versions.model_4}`}</span>}
+                              {row.original.model_versions.model_2 === -1 ? "" : <span className="text-nowrap">{`v${row.original.model_versions.model_2}`}</span>}
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
 
-                          <TableCell>Model&nbsp;5&nbsp;Score:</TableCell>
+                        <TableCell>Model&nbsp;3:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                            {row.original.model_scores.model_5 === -1 ? "Not evaluated" : <Gauge value={Math.ceil(row.original.model_scores.model_5*100)} size="small" showValue={true} />}
+                            {row.original.model_scores.model_3 === -1 ? <span>Not&nbsp;evaluated</span> : <Gauge value={Math.ceil(row.original.model_scores.model_3*100)} size="small" showValue={true} />}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                            {row.original.model_versions.model_5 === -1 ? "Not evaluated" : <span className="text-nowrap">{`v${row.original.model_versions.model_5}`}</span>}
+                            {row.original.model_versions.model_3 === -1 ? "" : <span className="text-nowrap">{`v${row.original.model_versions.model_3}`}</span>}
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
 
-                        <TableCell>Model&nbsp;6&nbsp;Score:</TableCell>
+                        <TableCell>Model&nbsp;4:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                            {row.original.model_scores.model_6 === -1 ? "Not evaluated" : <Gauge value={Math.ceil(row.original.model_scores.model_6*100)} size="small" showValue={true} />}
+                            {row.original.model_scores.model_4 === -1 ? <span>Not&nbsp;evaluated</span> : <Gauge value={Math.ceil(row.original.model_scores.model_4*100)} size="small" showValue={true} />}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                            {row.original.model_versions.model_6 === -1 ? "Not evaluated" : <span className="text-nowrap">{`v${row.original.model_versions.model_6}`}</span>}
+                            {row.original.model_versions.model_4 === -1 ? "" : <span className="text-nowrap">{`v${row.original.model_versions.model_4}`}</span>}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                          <TableCell>Model&nbsp;5:</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                            {row.original.model_scores.model_5 === -1 ? <span>Not&nbsp;evaluated</span> : <Gauge value={Math.ceil(row.original.model_scores.model_5*100)} size="small" showValue={true} />}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                            {row.original.model_versions.model_5 === -1 ? "" : <span className="text-nowrap">{`v${row.original.model_versions.model_5}`}</span>}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                        <TableCell>Model&nbsp;6:</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                            {row.original.model_scores.model_6 === -1 ? <span>Not&nbsp;evaluated</span> : <Gauge value={Math.ceil(row.original.model_scores.model_6*100)} size="small" showValue={true} />}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                            {row.original.model_versions.model_6 === -1 ? "" : <span className="text-nowrap">{`v${row.original.model_versions.model_6}`}</span>}
                             </div>
                           </TableCell>
                         </TableRow>

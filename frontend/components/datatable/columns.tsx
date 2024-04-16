@@ -10,6 +10,7 @@ import { Listing } from "@/components/datatable/schema"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
 import Link from "next/link";
+import { Gauge } from "@/components/ui/guage";
 
 export const columns: ColumnDef<Listing>[] = [
   {
@@ -162,7 +163,8 @@ export const columns: ColumnDef<Listing>[] = [
             <riskscore.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
           <span>{riskscore.label}</span> */}
-          <span>{parseFloat(String(riskscore)).toFixed(2)}%</span>
+          <Gauge value={Math.ceil(riskscore*100)} size="small" showValue={true} />
+          {/* <span>{parseFloat(String(riskscore)).toFixed(2)}%</span> */}
         </div>
       )
     },

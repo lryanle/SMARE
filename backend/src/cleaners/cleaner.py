@@ -76,6 +76,8 @@ def check(car):
         "model" in car,
     ]
 
+    logger.debug(f"Checks: {required_checks}")
+
     return False not in required_checks
 
 
@@ -92,7 +94,7 @@ def run(termination_timestamp, version):
     for car in cars:
         try:
             clean_fields = clean(db.decode(car))
-            if clean_fields:
+            if clean_fields and check(clean_fields):
                 clean_fields["stage"] = "clean"
                 clean_fields["cleaner_version"] = version
 

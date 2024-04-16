@@ -33,10 +33,7 @@ def create_driver_options(use_proxy=False):
 
     options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
 
-    logger.debug(use_proxy)
-
     if use_proxy:
-        logger.debug(use_proxy)
         logger.info("Setting up proxy")
 
         username = os.getenv("PROXY_USERNAME")

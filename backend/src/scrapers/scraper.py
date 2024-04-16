@@ -21,8 +21,10 @@ def check(car):
         "link" in car,
         "post_body" in car,
         "images" in car and len(car["images"]) > 0,
-        int(car["year"]) if "year" in car else False
+        int(car["year"]) > 2000 if "year" in car else True
     ]
+
+    logger.debug(f"Checks: {required_checks}")
 
     return False not in required_checks
 
@@ -78,6 +80,7 @@ def run(termination_timestamp, website, scraper_version):
                 post.update(stage2)
 
                 if not check(post):
+                    logger.warning(f"Not adding post to DB. {post['link']}")
                     continue
 
                 success = db.post_raw(scraper_version, website, post)

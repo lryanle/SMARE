@@ -33,6 +33,7 @@ import {
   CollapsibleTrigger,
 } from "../ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { Gauge } from "../ui/guage";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -72,6 +73,8 @@ export function DataTable<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
+
+  console.log(data)
 
   return (
     <div className="space-y-4">
@@ -123,99 +126,99 @@ export function DataTable<TData, TValue>({
                     <CollapsibleContent asChild>
                       <>
                         <TableRow>
-                          <TableCell>Model&nbsp;1</TableCell>
+                          <TableCell>Model&nbsp;1&nbsp;Score:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center w-[15rem]">
-                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_1}`}</span>
+                              <Gauge value={Math.ceil(row.original.model_scores.model_1*100)} size="small" showValue={true} />
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_1}`}</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-
-                        <TableCell>Model&nbsp;2</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_2}`}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_2}`}</span>
+                              <span className="text-nowrap">{`v${row.original.model_versions.model_1}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
 
-                        <TableCell>Model&nbsp;3</TableCell>
+                        <TableCell>Model&nbsp;2&nbsp;Score:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_3}`}</span>
+                            <Gauge value={Math.ceil(row.original.model_scores.model_2*100)} size="small" showValue={true} />
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_3}`}</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-
-                        <TableCell>Model&nbsp;4</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_4}`}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_4}`}</span>
+                              <span className="text-nowrap">{`v${row.original.model_versions.model_2}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
 
-                          <TableCell>Model&nbsp;5</TableCell>
+                        <TableCell>Model&nbsp;3&nbsp;Score:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_5}`}</span>
+                              <Gauge value={Math.ceil(row.original.model_scores.model_3*100)} size="small" showValue={true} />
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_5}`}</span>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-
-                        <TableCell>Model&nbsp;6</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Score: ${row.original.model_scores.model_6}`}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Version: ${row.original.model_versions.model_6}`}</span>
+                              <span className="text-nowrap">{`v${row.original.model_versions.model_3}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>
                         <TableRow>
 
-                          <TableCell>Utils</TableCell>
+                        <TableCell>Model&nbsp;4&nbsp;Score:</TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Scraper: ${row.original.scraper_version}`}</span>
+                              <Gauge value={Math.ceil(row.original.model_scores.model_4*100)} size="small" showValue={true} />
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-nowrap">{`Cleaner: ${row.original.cleaner_version}`}</span>
+                              <span className="text-nowrap">{`v${row.original.model_versions.model_4}`}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                          <TableCell>Model&nbsp;5&nbsp;Score:</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <Gauge value={Math.ceil(row.original.model_scores.model_5*100)} size="small" showValue={true} />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`v${row.original.model_versions.model_5}`}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                        <TableCell>Model&nbsp;6&nbsp;Score:</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <Gauge value={Math.ceil(row.original.model_scores.model_6*100)} size="small" showValue={true} />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`v${row.original.model_versions.model_6}`}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+
+                          <TableCell>Utilities</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Scraper: v${row.original.scraper_version}`}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col items-center justify-center">
+                              <span className="text-nowrap">{`Cleaner: v${row.original.cleaner_version}`}</span>
                             </div>
                           </TableCell>
                         </TableRow>

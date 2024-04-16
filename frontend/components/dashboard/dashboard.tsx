@@ -36,8 +36,22 @@ interface Listing {
   marketplace: string,
   date: string;
 
-  model_scores: Object;
-  model_versions: Object;
+  model_scores: {
+    model_1: number;
+    model_2: number;
+    model_3: number;
+    model_4: number;
+    model_5: number;
+    model_6: number;
+  };
+  model_versions: {
+    model_1: number;
+    model_2: number;
+    model_3: number;
+    model_4: number;
+    model_5: number;
+    model_6: number;
+  };
   cleaner_version: number;
   scraper_version: number;
   price: number;

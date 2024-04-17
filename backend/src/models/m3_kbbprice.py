@@ -1,9 +1,11 @@
 import json
-import numpy as np
 from difflib import SequenceMatcher
-from ..utilities import logger
+
+import numpy as np
 import requests
 from bs4 import BeautifulSoup
+
+from ..utilities import logger
 
 # Initialize logger
 logger = logger.SmareLogger()

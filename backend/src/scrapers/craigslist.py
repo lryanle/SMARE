@@ -127,7 +127,7 @@ def scrape_listing(url, browser):
 
         description = soup.find("section", id="postingbody").text.strip()
         year = soup.find("span", class_="valu year").text.strip()
-        make_model = soup.find("a", class_="valu makemodel").text.strip()
+        make_model = soup.find("span", class_="valu makemodel").text.strip()
 
         attribute_groups = soup.find_all("div", class_="attr")
         attributes = process_attributes(attribute_groups[1:])

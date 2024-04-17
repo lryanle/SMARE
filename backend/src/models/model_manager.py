@@ -1,19 +1,19 @@
 import os
-from .m6_anomaly import m6_labels, preprocess_listing
-import joblib
 from math import ceil
 
+import joblib
+from openai import RateLimitError
+
+from ..sendGrid import notifs
 from ..utilities import logger
 from ..utilities.database import (find_pending_risk_update,
                                   find_unanalyzed_cars, update_db_risk_scores,
                                   update_listing_scores)
-# form m1_sentiment import m1_riskscores
 from .m2_gptvision import m2_riskscores
 from .m3_kbbprice import m3_riskscores
 from .m4_carfreq import m4_riskscores
 from .m5_theftlikelihood import m5_riskscores
-from ..sendGrid import notifs
-from openai import RateLimitError
+from .m6_anomaly import m6_labels, preprocess_listing
 
 MODEL_VERSIONS = [
     1, # Model 1: Sentiment Analysis Model

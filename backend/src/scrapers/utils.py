@@ -1,10 +1,10 @@
-import time
 import os
+import time
+
+from selenium import webdriver
 
 from ..utilities import logger
 from .extension import proxies
-
-from selenium import webdriver
 
 logger = logger.SmareLogger()
 

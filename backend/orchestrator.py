@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
+
 from src.cleaners.cleaner import run as run_cleaner
 from src.models.model_manager import run as run_analyzer
 from src.scrapers.scraper import run as run_scraper

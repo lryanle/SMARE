@@ -4,7 +4,7 @@ from datetime import datetime
 from urllib.parse import quote, unquote
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, UpdateOne, DESCENDING
+from pymongo import DESCENDING, MongoClient, UpdateOne
 from pymongo.errors import ConfigurationError
 
 from .logger import SmareLogger

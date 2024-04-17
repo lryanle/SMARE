@@ -1,15 +1,21 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table";
 
 // import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox";
 
-import { marketplaces, makes, models, years } from "@/components/datatable/data"
-import { Listing } from "@/components/datatable/schema"
-import { DataTableColumnHeader } from "./data-table-column-header"
-import { DataTableRowActions } from "./data-table-row-actions"
+import {
+  marketplaces,
+  makes,
+  models,
+  years,
+} from "@/components/datatable/data";
+import { Listing } from "@/components/datatable/schema";
+import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableRowActions } from "./data-table-row-actions";
 import Link from "next/link";
+import { Gauge } from "@/components/ui/guage";
 
 export const columns: ColumnDef<Listing>[] = [
   {
@@ -26,12 +32,14 @@ export const columns: ColumnDef<Listing>[] = [
       />
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px] space-x-4"
-      />
+      <div className="w-[26px]">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-[2px] space-x-4"
+        />
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -69,12 +77,10 @@ export const columns: ColumnDef<Listing>[] = [
       <DataTableColumnHeader column={column} title="Make" />
     ),
     cell: ({ row }) => {
-      const make = makes.find(
-        (make) => make.value === row.getValue("make")
-      )
+      const make = makes.find((make) => make.value === row.getValue("make"));
 
       if (!make) {
-        return null
+        return null;
       }
 
       return (
@@ -84,10 +90,10 @@ export const columns: ColumnDef<Listing>[] = [
           )} */}
           <span>{make.label}</span>
         </div>
-      )
+      );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      return value.includes(row.getValue(id));
     },
   },
   {
@@ -98,10 +104,10 @@ export const columns: ColumnDef<Listing>[] = [
     cell: ({ row }) => {
       const model = models.find(
         (model) => model.value === row.getValue("model")
-      )
+      );
 
       if (!model) {
-        return null
+        return null;
       }
 
       return (
@@ -111,10 +117,10 @@ export const columns: ColumnDef<Listing>[] = [
           )} */}
           <span>{model.label}</span>
         </div>
-      )
+      );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      return value.includes(row.getValue(id));
     },
   },
   {
@@ -123,12 +129,10 @@ export const columns: ColumnDef<Listing>[] = [
       <DataTableColumnHeader column={column} title="Year" />
     ),
     cell: ({ row }) => {
-      const year = years.find(
-        (year) => year.value === row.getValue("year")
-      )
+      const year = years.find((year) => year.value === row.getValue("year"));
 
       if (!year) {
-        return null
+        return null;
       }
 
       return (
@@ -138,10 +142,10 @@ export const columns: ColumnDef<Listing>[] = [
           )} */}
           <span>{year.label}</span>
         </div>
-      )
+      );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      return value.includes(row.getValue(id));
     },
   },
   {
@@ -150,10 +154,10 @@ export const columns: ColumnDef<Listing>[] = [
       <DataTableColumnHeader column={column} title="Risk Score" />
     ),
     cell: ({ row }) => {
-      const riskscore = parseFloat(row.getValue("riskscore"))
+      const riskscore = parseFloat(row.getValue("riskscore"));
 
       if (!riskscore) {
-        return null
+        return null;
       }
 
       return (
@@ -162,12 +166,13 @@ export const columns: ColumnDef<Listing>[] = [
             <riskscore.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
           <span>{riskscore.label}</span> */}
-          <span>{parseFloat(String(riskscore)).toFixed(2)}%</span>
+          <Gauge value={Math.ceil(riskscore)} size="small" showValue={true} />
+          {/* <span>{parseFloat(String(riskscore)).toFixed(2)}%</span> */}
         </div>
-      )
+      );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      return value.includes(row.getValue(id));
     },
   },
   {
@@ -176,18 +181,21 @@ export const columns: ColumnDef<Listing>[] = [
       <DataTableColumnHeader column={column} title="Date" />
     ),
     cell: ({ row }) => {
-      console.log(row.getValue("date"))
-      const date = new Date(String(row.getValue("date"))).toLocaleString("en-US", {  
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        timeZoneName: "short"
-      });
+      console.log(row.getValue("date"));
+      const date = new Date(String(row.getValue("date"))).toLocaleString(
+        "en-US",
+        {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          timeZoneName: "short",
+        }
+      );
 
       if (!date) {
-        return null
+        return null;
       }
 
       return (
@@ -198,10 +206,10 @@ export const columns: ColumnDef<Listing>[] = [
           <span>{date.label}</span> */}
           <span>{date}</span>
         </div>
-      )
+      );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      return value.includes(row.getValue(id));
     },
   },
   {
@@ -212,15 +220,15 @@ export const columns: ColumnDef<Listing>[] = [
     cell: ({ row }) => {
       const marketplace = marketplaces.find(
         (marketplace) => marketplace.value === row.getValue("marketplace")
-      )
-      const url = String(row.getValue("url"))
+      );
+      const url = String(row.original.url);
 
       if (!marketplace) {
-        return null
+        return null;
       }
 
       if (!url) {
-        return null
+        return null;
       }
 
       return (
@@ -228,16 +236,18 @@ export const columns: ColumnDef<Listing>[] = [
           {marketplace.icon && (
             <marketplace.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
-          <Link href={url} target="_blank">{marketplace.label}</Link>
+          <Link href={url} target="_blank">
+            {marketplace.label}
+          </Link>
         </div>
-      )
+      );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      return value.includes(row.getValue(id));
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
-]
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => <DataTableRowActions row={row} />,
+  // },
+];

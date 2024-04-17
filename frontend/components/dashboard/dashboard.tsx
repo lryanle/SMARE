@@ -35,6 +35,26 @@ interface Listing {
   url: string;
   marketplace: string,
   date: string;
+
+  model_scores: {
+    model_1: number;
+    model_2: number;
+    model_3: number;
+    model_4: number;
+    model_5: number;
+    model_6: number;
+  };
+  model_versions: {
+    model_1: number;
+    model_2: number;
+    model_3: number;
+    model_4: number;
+    model_5: number;
+    model_6: number;
+  };
+  cleaner_version: number;
+  scraper_version: number;
+  price: number;
 }
 
 export default function Dashboard({}: Props) {
@@ -63,9 +83,30 @@ export default function Dashboard({}: Props) {
         year: task.year,
         id: task._id,
         date: task.scrape_date,
+
+        model_scores: {
+          model_1: task.model_scores.model_1,
+          model_2: task.model_scores.model_2,
+          model_3: task.model_scores.model_3,
+          model_4: task.model_scores.model_4,
+          model_5: task.model_scores.model_5,
+          model_6: task.model_scores.model_6,
+        },
+        model_versions: {
+          model_1: task.model_versions.model_1,
+          model_2: task.model_versions.model_2,
+          model_3: task.model_versions.model_3,
+          model_4: task.model_versions.model_4,
+          model_5: task.model_versions.model_5,
+          model_6: task.model_versions.model_6,
+        
+        },
+        cleaner_version: task.cleaner_version,
+        scraper_version: task.scraper_version,
+        // human_flag: task.human_flag,
+        price: task.price,
       }));
   
-      console.log(transformedTasks);
       setListings(transformedTasks);
     }
   
@@ -73,9 +114,9 @@ export default function Dashboard({}: Props) {
   }, []);  
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="flex-1 space-y-4 md:p-8 pt-24 md:pt-6">
       <div className="flex flex-col md:flex-row justify-center items-center md:justify-between text-center md:text-left space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">
+        <h2 className="text-3xl font-bold tracking-tight my-4 md:my-0">
           Marketplace Listings Dashboard
         </h2>
         <div className="flex items-center space-x-2">
@@ -110,7 +151,7 @@ export default function Dashboard({}: Props) {
                 <Overview date={date}/>
               </CardContent>
             </Card>
-            <Card className="col-span-3">
+            <Card className="col-span-4 md:col-span-3">
               <CardHeader>
                 <CardTitle>Recent Listings</CardTitle>
                 <CardDescription>
@@ -124,7 +165,7 @@ export default function Dashboard({}: Props) {
           </div>
         </TabsContent>
         <TabsContent value="listings" className="space-y-4">
-          <Card className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+          <Card className="h-full flex-1 flex-col space-y-8 md:p-8 md:flex">
             <div className="flex items-center justify-between space-y-2">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold tracking-tight">Listings View</CardTitle>

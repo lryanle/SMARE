@@ -16,6 +16,21 @@ import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import Link from "next/link";
 import { Gauge } from "@/components/ui/guage";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { BorderDottedIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { capitalize } from "@/lib/utils";
 
 export const columns: ColumnDef<Listing>[] = [
   {
@@ -243,6 +258,106 @@ export const columns: ColumnDef<Listing>[] = [
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Actions" />
+    ),
+    cell: ({ row }) => {
+      const url = String(row.original.url);
+
+      if (!url) {
+        return null;
+      }
+
+      return (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">View More</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>{`Inspecting Listing #${row.original.id}`}</DialogTitle>
+              <DialogDescription>
+                {`${capitalize(row.original.make)} ${capitalize(
+                  row.original.model
+                )} ${row.original.year} from  ${capitalize(
+                  row.original.marketplace
+                )}`}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              {Object.entries(row.original).map(([key, value]) => {
+                if (key === "id" || key === "url") {
+                  return null;
+                }
+
+                if (typeof value === "object") {
+                  return (
+                    <div
+                      key={key}
+                      className="grid grid-cols-4 items-center gap-2"
+                    >
+                      {Object.entries(value).map(([nestedKey, nestedValue]) => {
+                        return (
+                          <>
+                            <Label htmlFor={nestedKey} className="text-right">
+                              {`${capitalize(nestedKey)}${
+                                key === "model_versions" ? " version" : ""
+                              }`}
+                            </Label>
+                            <Input
+                              key={nestedKey}
+                              id={nestedKey}
+                              defaultValue={
+                                nestedValue === -1
+                                  ? "Pending Evaluation"
+                                  : String(
+                                      key === "model_versions"
+                                        ? "v" + nestedValue
+                                        : nestedValue
+                                    )
+                              }
+                              className="col-span-3"
+                              disabled
+                            />
+                          </>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div
+                    key={key}
+                    className="grid grid-cols-4 items-center gap-2"
+                  >
+                    <Label htmlFor={key} className="text-right">
+                      {capitalize(key)}
+                    </Label>
+                    <Input
+                      id={key}
+                      defaultValue={String(value)}
+                      className="col-span-3"
+                      disabled
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      );
     },
   },
   // {

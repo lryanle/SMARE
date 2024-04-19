@@ -34,8 +34,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
 import { Gauge } from "@/components/ui/guage";
+import { cn } from "@/lib/utils";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -88,12 +89,16 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues()
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return (
     <div className="space-y-4 overflow-x-scroll w-screen md:w-full">
-      <DataTableToolbar<TData> table={table} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+      <DataTableToolbar<TData>
+        table={table}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+      />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -124,19 +129,20 @@ export function DataTable<TData, TValue>({
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell: any) => (
-                        <TableCell key={cell.id}>
+                        <TableCell key={cell.id} className={cn(cell.column.id==="riskscore" ? "flex flex-row" : "")}>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
                           )}
+                          {cell.column.id === "riskscore" && (
+                            <CollapsibleTrigger asChild>
+                              <TableCell className="flex justify-center items-center h-[3.45rem] px-0">
+                                <MagnifyingGlassIcon className="cursor-pointer h-5 w-5 -translate-x-2" />
+                              </TableCell>
+                            </CollapsibleTrigger>
+                          )}
                         </TableCell>
                       ))}
-
-                      <CollapsibleTrigger asChild>
-                        <TableCell className="flex justify-center items-center h-[3.45rem]">
-                          <ChevronDown className="cursor-pointer" />
-                        </TableCell>
-                      </CollapsibleTrigger>
                     </TableRow>
                     <CollapsibleContent asChild>
                       <>

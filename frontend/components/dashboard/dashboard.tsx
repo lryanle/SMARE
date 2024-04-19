@@ -70,7 +70,7 @@ export default function Dashboard({}: Props) {
 
   useEffect(() => {
     async function fetchTasks() {
-      const response = await fetch('/api/listings?max=100');
+      const response = await fetch('/api/listings');
       const data = await response.json();
       const validTasks = z.array(rawListingSchema).parse(data.data);
   

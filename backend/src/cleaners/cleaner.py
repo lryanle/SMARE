@@ -69,14 +69,17 @@ def clean(car):
 
 def check(car):
     required_checks = [
-        "price" in car and car["price"] > 0,
-        "odometer" in car and car["odometer"] > 0,
-        "year" in car and car["year"] >= 2000,
+        "price" in car and isinstance(car["price"], float) and car["price"] > 0,
+        "odometer" in car and isinstance(car["odometer"], int) and car["odometer"] > 0,
+        "year" in car and isinstance(car["year"], int) and car["year"] >= 2000,
         "make" in car,
         "model" in car,
     ]
 
     logger.debug(f"Checks: {required_checks}")
+
+    if car["post_body"] == car["attributes"][0]:
+        db.delete_with_id(car["_id"])
 
     return False not in required_checks
 

@@ -14,6 +14,7 @@ import {
   years,
 } from "@/components/datatable/data";
 import { DataTableFacetedFilter } from "@/components/datatable/data-table-faceted-filter";
+import { DateTableDateFilter } from "./data-table-datetime-filter";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -65,13 +66,35 @@ export function DataTableToolbar<TData>({
             column={table.getColumn("year")}
             title="year"
             options={years.map((year) => ({
+              label: String(year.label),
+              value: String(year.value),
+            }))}
+          />
+        )}
+        {/* TODO: Risk score slider selector here */}
+        {/* is flagged (riskscore value over 50) */}
+        {table.getColumn("riskscore") && (
+          <DataTableFacetedFilter 
+            column={table.getColumn("riskscore")}
+            title="riskscore"
+            options={[
+              { label: "Flagged", value: "50" },
+              { label: "Not Flagged", value: "0" },
+            ]}
+          />
+        )}
+
+        {/* TODO: Datetime selector here */}
+        {table.getColumn("date") && (
+          <DateTableDateFilter
+            column={table.getColumn("date")}
+            title="date"
+            options={years.map((year) => ({
               label: year.label,
               value: year.value.toString(),
             }))}
           />
         )}
-        {/* TODO: Datetime selector here */}
-        {/* TODO: Risk score slider selector here */}
         {isFiltered && (
           <Button
             variant="ghost"

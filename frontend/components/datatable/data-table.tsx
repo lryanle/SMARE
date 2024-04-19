@@ -43,18 +43,6 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-// Custom global filter function
-function globalFilterFn(rows:any, columnIds:any, filterValue:any) {
-  return rows.filter((row: any) => {
-    // Check if any of the required fields includes the filter value
-    return columnIds.some((columnId: any) => {
-      const rowValue = row.values[columnId];
-      return String(rowValue).toLowerCase().includes(filterValue.toLowerCase());
-    });
-  });
-}
-
-
 export function DataTable<TData, TValue>({
   columns,
   data,

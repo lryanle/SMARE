@@ -64,7 +64,21 @@ export const columns: ColumnDef<Listing>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("id")}</div>,
+    cell: ({ row }) => {
+      const url = String(row.original.url);
+
+      if (!url) {
+        return null;
+      }
+
+      return (
+        <div className="w-[150px]">
+          <Link href={url} target="_blank" className="underline">
+            {row.getValue("id")}
+          </Link>
+        </div>
+      );
+    },
     enableSorting: false,
     enableHiding: false,
   },
@@ -144,8 +158,8 @@ export const columns: ColumnDef<Listing>[] = [
       <DataTableColumnHeader column={column} title="Year" />
     ),
     cell: ({ row }) => {
-      const year = years.find((year) => year.value === row.getValue("year"));
-
+      const year = years.find((year) => year.value === String(row.getValue("year")));
+      
       if (!year) {
         return null;
       }
@@ -181,7 +195,11 @@ export const columns: ColumnDef<Listing>[] = [
             <riskscore.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
           <span>{riskscore.label}</span> */}
-          {riskscore === -1 ? <span>Pending Evaluation</span> : <Gauge value={Math.ceil(riskscore)} size="small" showValue={true} />}
+          {riskscore === -1 ? (
+            <span>Pending Evaluation</span>
+          ) : (
+            <Gauge value={Math.ceil(riskscore)} size="small" showValue={true} />
+          )}
           {/* <span>{parseFloat(String(riskscore)).toFixed(2)}%</span> */}
         </div>
       );
@@ -222,8 +240,20 @@ export const columns: ColumnDef<Listing>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+    filterFn: (row, columnId, filterValue) => {
+      const dateValue = new Date(row.getValue(columnId)).toLocaleString(
+        "en-US",
+        {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          timeZoneName: "short",
+        }
+      );
+      console.log(dateValue.toLowerCase().includes(filterValue.toLowerCase()));
+      return dateValue.toLowerCase().includes(filterValue.toLowerCase());
     },
   },
   {
@@ -235,13 +265,8 @@ export const columns: ColumnDef<Listing>[] = [
       const marketplace = marketplaces.find(
         (marketplace) => marketplace.value === row.getValue("marketplace")
       );
-      const url = String(row.original.url);
 
       if (!marketplace) {
-        return null;
-      }
-
-      if (!url) {
         return null;
       }
 
@@ -250,9 +275,7 @@ export const columns: ColumnDef<Listing>[] = [
           {marketplace.icon && (
             <marketplace.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
-          <Link href={url} target="_blank">
-            {marketplace.label}
-          </Link>
+          {marketplace.label}
         </div>
       );
     },

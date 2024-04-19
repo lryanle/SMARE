@@ -30,8 +30,8 @@ interface Listing {
   id: string;
   make: string;
   model: string;
-  year: number;
-  riskscore: number;
+  year: string;
+  riskscore: string;
   url: string;
   marketplace: string,
   date: string;
@@ -78,9 +78,9 @@ export default function Dashboard({}: Props) {
         url: task.link,
         make: task.make,
         model: task.model,
-        riskscore: task.risk_score,
+        riskscore: String(task.risk_score),
         marketplace: task.source,
-        year: task.year,
+        year: String(task.year),
         id: task._id,
         date: task.scrape_date,
 

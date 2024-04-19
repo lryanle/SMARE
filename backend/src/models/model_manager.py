@@ -97,6 +97,96 @@ def run(termination_timestamp):
         return
     logger.success("Model Manager: Data successfully imported from MongoDB")
 
+    
+    # Model 4: Car Frequency Model
+    try:
+        success=1
+        try:
+            model_4_cars = filter_on_model(all_cars, 4)
+            if not model_4_cars:
+                logger.error("Model Manager: No cars to process for Model 4.")
+                success= 0
+        except Exception as e:
+            logger.error(
+                f"Model Manager: Model 4 failed to filter listings. Error: {e}"
+            )
+            return
+        if(success):
+            input_size = len(model_4_cars)
+            logger.info(f"Model Manager: Model 4 started processing {input_size} listings")
+            batch_process(model_4_cars, m4_riskscores, 4)
+            logger.success("Model Manager: Model 4 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 4 failed to process listings. Error: {e}")
+
+
+    # Model 5: Theft Likelihood Model
+    try:
+        success= 1
+        try:
+            model_5_cars = filter_on_model(all_cars, 5)  # Filter cars for model 5
+            if not model_5_cars:
+                logger.error("Model Manager: No cars to process for Model 5.")
+                success= 0
+        except Exception as e:
+            logger.error(f"Model Manager: Model 5 failed to filter listings. Error: {e}")
+            return
+        if(success):
+            input_size = len(model_5_cars)
+            logger.info(f"Model Manager: Model 5 started processing {input_size} listings")
+            batch_process(model_5_cars, m5_riskscores, 5)
+            logger.success("Model Manager: Model 5 successfully processed listings")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 5 failed to process listings. Error: {e}")
+
+
+    #Model 6: Anomaly/Luxury Model
+    try:
+        # Assuming the filter_on_model function is already defined
+        model_6_cars = filter_on_model(all_cars, 6)
+        if not model_6_cars:
+            logger.error("Model Manager: No cars to process for Model 6.")
+
+        input_size = len(model_6_cars)
+        logger.info(f"Model Manager: Model 6 started processing {input_size} listings.")
+
+        # Load the model and preprocessor for Model 6
+        try:
+            model_6 = joblib.load('./src/models/isolation_forest_model.pkl')
+            preprocessor_6 = joblib.load('./src/models/preprocessor.pkl')
+        except Exception as e:
+            logger.error(f"Model Manager: Failed to load Model 6 components. Error: {e}")
+            return
+
+        # Process listings with Model 6
+        model_6_predictions = []
+        for listing in model_6_cars:
+            try:
+                preprocessed_listing = preprocess_listing(listing)
+                features_preprocessed = preprocessor_6.transform(preprocessed_listing)
+                score = model_6.decision_function(features_preprocessed)
+                prediction = 1 if score <= 0.05 else 0
+                model_6_predictions.append(prediction)
+            except Exception as e:
+                logger.warning(f"Error processing listing for Model 6: {e}")
+                model_6_predictions.append(-1)
+
+        # Update scores in database
+        update_listing_scores(model_6_cars, m6_labels(model_6_cars), 6, MODEL_VERSIONS[5])
+        logger.success("Model Manager: Model 6 successfully processed listings.")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 6 failed. Error: {e}")
+
+    logger.success("Model Manager: All models successfully processed listings")
+
+    try:
+        update_count, updated_listings = update_risk_scores()
+
+        logger.success(f"Updated {update_count} risk scores")
+    except Exception as e:
+        logger.error(f"Failed updating risk scores. Error: {e}")
+
+
     # Model 1: Sentiment Analysis Model
     # here...
 
@@ -144,95 +234,7 @@ def run(termination_timestamp):
             logger.success("Model Manager: Model 3 successfully processed listings")
     except Exception as e:
         logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
-
-
-    # Model 4: Car Frequency Model
-    try:
-        success=1
-        try:
-            model_4_cars = filter_on_model(all_cars, 4)
-            if not model_4_cars:
-                logger.error("Model Manager: No cars to process for Model 4.")
-                success= 0
-        except Exception as e:
-            logger.error(
-                f"Model Manager: Model 4 failed to filter listings. Error: {e}"
-            )
-            return
-        if(success):
-            input_size = len(model_4_cars)
-            logger.info(f"Model Manager: Model 4 started processing {input_size} listings")
-            update_listing_scores(model_4_cars, m4_riskscores(model_4_cars), 4, MODEL_VERSIONS[3])
-            logger.success("Model Manager: Model 4 successfully processed listings")
-    except Exception as e:
-        logger.error(f"Model Manager: Model 4 failed to process listings. Error: {e}")
-
-
-    # Model 5: Theft Likelihood Model
-    try:
-        success= 1
-        try:
-            model_5_cars = filter_on_model(all_cars, 5)  # Filter cars for model 5
-            if not model_5_cars:
-                logger.error("Model Manager: No cars to process for Model 5.")
-                success= 0
-        except Exception as e:
-            logger.error(f"Model Manager: Model 5 failed to filter listings. Error: {e}")
-            return
-        if(success):
-            input_size = len(model_5_cars)
-            logger.info(f"Model Manager: Model 5 started processing {input_size} listings")
-            theft_likelihoods = m5_riskscores(model_5_cars)
-            update_listing_scores(model_5_cars, theft_likelihoods, 5, MODEL_VERSIONS[4])
-            logger.success("Model Manager: Model 5 successfully processed listings")
-    except Exception as e:
-        logger.error(f"Model Manager: Model 5 failed to process listings. Error: {e}")
-
-    #Model 6: Anomaly/Luxury Model
-    try:
-        # Assuming the filter_on_model function is already defined
-        model_6_cars = filter_on_model(all_cars, 6)
-        if not model_6_cars:
-            logger.error("Model Manager: No cars to process for Model 6.")
-
-        input_size = len(model_6_cars)
-        logger.info(f"Model Manager: Model 6 started processing {input_size} listings.")
-
-        # Load the model and preprocessor for Model 6
-        try:
-            model_6 = joblib.load('./src/models/isolation_forest_model.pkl')
-            preprocessor_6 = joblib.load('./src/models/preprocessor.pkl')
-        except Exception as e:
-            logger.error(f"Model Manager: Failed to load Model 6 components. Error: {e}")
-            return
-
-        # Process listings with Model 6
-        model_6_predictions = []
-        for listing in model_6_cars:
-            try:
-                preprocessed_listing = preprocess_listing(listing)
-                features_preprocessed = preprocessor_6.transform(preprocessed_listing)
-                score = model_6.decision_function(features_preprocessed)
-                prediction = 1 if score <= 0.05 else 0
-                model_6_predictions.append(prediction)
-            except Exception as e:
-                logger.warning(f"Error processing listing for Model 6: {e}")
-                model_6_predictions.append(-1)
-
-        # Update scores in database
-        update_listing_scores(model_6_cars, m6_labels(model_6_cars), 6, MODEL_VERSIONS[5])
-        logger.success("Model Manager: Model 6 successfully processed listings.")
-    except Exception as e:
-        logger.error(f"Model Manager: Model 6 failed. Error: {e}")
-
-    logger.success("Model Manager: All models successfully processed listings")
-
-    try:
-        update_count, updated_listings = update_risk_scores()
-
-        logger.success(f"Updated {update_count} risk scores")
-    except Exception as e:
-        logger.error(f"Failed updating risk scores. Error: {e}")
+  
 
     # Send daily email report
     #recipient_emails = ['dawsen_richins@yahoo.com','alsimone00@gmail.com','caitlynary@gmail.com', 'tadero230@gmail.com']

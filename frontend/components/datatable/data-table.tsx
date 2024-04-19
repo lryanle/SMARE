@@ -42,6 +42,18 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
+// Custom global filter function
+function globalFilterFn(rows:any, columnIds:any, filterValue:any) {
+  return rows.filter((row: any) => {
+    // Check if any of the required fields includes the filter value
+    return columnIds.some((columnId: any) => {
+      const rowValue = row.values[columnId];
+      return String(rowValue).toLowerCase().includes(filterValue.toLowerCase());
+    });
+  });
+}
+
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -53,6 +65,7 @@ export function DataTable<TData, TValue>({
     []
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState<string>("");
 
   const table = useReactTable({
     data,
@@ -62,7 +75,9 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -73,12 +88,12 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedUniqueValues: getFacetedUniqueValues()
   });
 
   return (
     <div className="space-y-4 overflow-x-scroll w-screen md:w-full">
-      <DataTableToolbar table={table} />
+      <DataTableToolbar<TData> table={table} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

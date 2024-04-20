@@ -34,9 +34,9 @@ export function RecentListings() {
             source={item.source}
             make={item.make}
             model={item.model}
-            year={item.year}
+            year={String(item.year)}
             scrape_date={item.scrape_date}
-            risk_score={item.risk_score}
+            risk_score={String(item.risk_score)}
             key={item._id}
           />
         ))

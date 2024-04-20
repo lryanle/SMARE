@@ -19,7 +19,7 @@ export default async function DashboardPage() {
 
   return (
     session && (
-      <div className="py-24 w-10/12">
+      <div className="md:py-24 md:w-10/12">
         <div className="bg-whitehidden flex-col md:flex">
           <Dashboard />
         </div>

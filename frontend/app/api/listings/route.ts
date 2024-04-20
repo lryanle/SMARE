@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import clientPromise from "@/lib/mongodb";
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
 type Data = {
   success: boolean;
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   let max = parseInt(request.nextUrl.searchParams.get("max") as string);
 
   if (isNaN(max)) {
-    max = 0;
+    max = 1000;
   }
 
   try {

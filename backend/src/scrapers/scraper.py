@@ -80,7 +80,7 @@ def run(termination_timestamp, website, scraper_version):
                 post.update(stage2)
 
                 if not check(post):
-                    logger.warning(f"Not adding post to DB. {post['link']}")
+                    logger.warning(f"Not adding post to DB. {post}")
                     continue
 
                 success = db.post_raw(scraper_version, website, post)

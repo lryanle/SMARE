@@ -1,8 +1,10 @@
 import os
 import re
-from openai import OpenAI, RateLimitError
+
 import requests
 from dotenv import load_dotenv
+from openai import OpenAI, RateLimitError
+
 from ..utilities import logger
 
 logger = logger.SmareLogger()

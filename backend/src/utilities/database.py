@@ -4,7 +4,7 @@ from datetime import datetime
 from urllib.parse import quote, unquote
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, UpdateOne, DESCENDING
+from pymongo import DESCENDING, MongoClient, UpdateOne
 from pymongo.errors import ConfigurationError
 
 from .logger import SmareLogger
@@ -45,7 +45,19 @@ def get_conn(db=DATABASE):
     return {"success": True, "db": client.get_database(db)}
 
 
-def delete_all_outdated(year):
+def delete_with_id(id):
+    try:
+        conn = get_conn(DATABASE)
+
+        logger.info(f"Deleting listing with id {id}")
+
+        return conn["db"][SCRAPE_COLLECTION].delete_one({"_id": id})
+    except Exception as e:
+        logger.error(f"Database: Failed to delete listing with id {id}. Error: {e}")
+        return None
+
+
+def delete_all_invlaid(year):
     try:
         conn = get_conn(DATABASE)
 

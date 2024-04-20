@@ -31,9 +31,9 @@ export type displayListing = {
   source: string;
   make: string;
   model: string;
-  year: number;
+  year: string;
   scrape_date: string;
-  risk_score: number;
+  risk_score: string;
 }
 
 export type dashboardCardTypes = {

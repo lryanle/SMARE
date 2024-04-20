@@ -1,6 +1,7 @@
 from ..utilities import logger
-from .utils import clean_odometer, extract_year
+from .utils import clean_odometer
 from .utils import extract_model as model_parser
+from .utils import extract_year
 
 logger = logger.SmareLogger()
 

@@ -9,7 +9,7 @@ def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
 def get_theft(make, model, year, data):
-    theft_rate = None
+    theft_rate = 0
     max_similarity = 0
     input_string = f"{year} {make} {model}"
     for entry in data:
@@ -45,11 +45,8 @@ def calculate_likelihoods(theft_rates):
     theft_likelihoods = []
     for theft_rate in theft_rates:
         try:
-            if theft_rate is not None:
-                risk_score = theft_rate / 100 
-                theft_likelihoods.append(risk_score)
-            else:
-                theft_likelihoods.append(-1)  
+            risk_score = theft_rate / 100 if theft_rate is not None else 0
+            theft_likelihoods.append(risk_score)  
         except Exception as e:
             logger.error(f"Model 5: Failed to calculate risk score: {e}")
             theft_likelihoods.append(-1)  

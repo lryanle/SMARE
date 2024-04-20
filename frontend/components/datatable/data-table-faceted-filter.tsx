@@ -36,7 +36,14 @@ export function DataTableFacetedFilter<TData, TValue>({
   title,
   options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
+  // const facets = column?.getFacetedUniqueValues()
+  // const facets should convert all numeric keys to string keys
   const facets = column?.getFacetedUniqueValues()
+  // update facets on column.id that is year to convert all numeric keys to string keys
+  // if (column?.id === "year") {
+  //   facets = new Map(Array.from(column?.getFacetedUniqueValues()).map(([key, value]) => [key.toString(), value]))
+  // }
+
   const selectedValues = new Set(column?.getFilterValue() as string[])
   const filteredOptions = options.filter(option => facets?.has(option.value));
 
@@ -87,11 +94,11 @@ export function DataTableFacetedFilter<TData, TValue>({
           <CommandList>
             {filteredOptions.length === 0 && <CommandEmpty>No results found.</CommandEmpty>}
             <CommandGroup>
-              {filteredOptions.map((option) => {
+              {filteredOptions.map((option, index) => {
                 const isSelected = selectedValues.has(option.value);
                 return (
                   <CommandItem
-                    key={option.value}
+                    key={option.value + index}
                     onSelect={() => {
                       if (isSelected) {
                         selectedValues.delete(option.value)
@@ -120,7 +127,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                        {facets.get(option.value)}
+                        {facets?.get(option.value)}
                       </span>
                     )}
                   </CommandItem>

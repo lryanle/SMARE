@@ -46,9 +46,12 @@ def run(termination_timestamp, website, scraper_version):
     browser = setup_browser(is_proxy_enabled)
 
     try:
-        db_client = db.get_conn()
+        conn = db.connect()
+
+        if not conn:
+            raise Exception("Failed openning connection for cleaner")
     except Exception as e:
-        logger.critical(f"Failed to connect to DB. Quitting Scraper...")
+        logger.critical(f"Error: {e}")
         return None
 
 
@@ -90,7 +93,7 @@ def run(termination_timestamp, website, scraper_version):
                     logger.warning(f"Not adding post to DB. {post}")
                     continue
 
-                success = db.post_raw(scraper_version, website, post)
+                success = db.post_raw(conn, scraper_version, website, post)
                 if success:
                     logger.success("Posted to db")
                 else:
@@ -104,4 +107,5 @@ def run(termination_timestamp, website, scraper_version):
                 logger.error(f"Encountered an error: {error}")
 
     logger.success(f"Finished {website} scraper")
+    conn.close()
     browser.quit()

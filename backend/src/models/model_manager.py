@@ -8,7 +8,7 @@ from ..sendGrid import notifs
 from ..utilities import logger
 from ..utilities.database import (find_pending_risk_update,
                                   find_unanalyzed_cars, update_db_risk_scores,
-                                  update_listing_scores)
+                                  update_listing_scores, connect)
 from .m2_gptvision import m2_riskscores
 from .m3_kbbprice import m3_riskscores
 from .m4_carfreq import m4_riskscores
@@ -40,9 +40,9 @@ def filter_on_model(all_cars, model_num):
         return None
 
 
-def update_risk_scores():
+def update_risk_scores(conn):
     try:
-        listings_to_update = find_pending_risk_update()
+        listings_to_update = find_pending_risk_update(conn)
         logger.info(f"Found {len(listings_to_update)} that can be re-evaluated")
 
         for car in listings_to_update:
@@ -65,20 +65,20 @@ def update_risk_scores():
                 car["pending_risk_update"] = False
             if new_risk_score > 50:
                 flagged_listings.append(car)
-        return update_db_risk_scores(listings_to_update), listings_to_update
+        return update_db_risk_scores(conn, listings_to_update), listings_to_update
     except Exception as e:
         logger.critical(f"Failed to update risk scores. Error: {e}")
         return None
 
 
-def batch_process(model_cars, model_fn, model_num):
+def batch_process(conn, model_cars, model_fn, model_num):
     num_of_cars = len(model_cars)
 
     for i in range(0, num_of_cars, BATCH_SIZE):
         batch = model_cars[i:i + BATCH_SIZE]
 
         logger.info(f"Model {model_num} processing batch {int(i/BATCH_SIZE) + 1}/{ceil(num_of_cars/BATCH_SIZE)}")
-        update_listing_scores(batch, model_fn(batch), model_num, MODEL_VERSIONS[model_num - 1])
+        update_listing_scores(conn, batch, model_fn(batch), model_num, MODEL_VERSIONS[model_num - 1])
 
 
 # todo: calculate post-weight-product scores here, and not in each individual function.
@@ -89,7 +89,12 @@ def run(termination_timestamp):
     # Importing data from MongoDB
     logger.info("Model Manager: Importing data from MongoDB...")
     try:
-        all_cars = find_unanalyzed_cars(MODEL_VERSIONS)
+        conn = connect()
+
+        if not conn:
+             raise Exception("Failed connecting to DB for model manager")
+        
+        all_cars = find_unanalyzed_cars(conn, MODEL_VERSIONS)
     except Exception as e:
         logger.critical(
             f"Model Manager: Failed to import data from MongoDB. Error: {e}"
@@ -172,7 +177,7 @@ def run(termination_timestamp):
                 model_6_predictions.append(-1)
 
         # Update scores in database
-        update_listing_scores(model_6_cars, m6_labels(model_6_cars), 6, MODEL_VERSIONS[5])
+        update_listing_scores(conn, model_6_cars, m6_labels(model_6_cars), 6, MODEL_VERSIONS[5])
         logger.success("Model Manager: Model 6 successfully processed listings.")
     except Exception as e:
         logger.error(f"Model Manager: Model 6 failed. Error: {e}")
@@ -180,7 +185,7 @@ def run(termination_timestamp):
     logger.success("Model Manager: All models successfully processed listings")
 
     try:
-        update_count, updated_listings = update_risk_scores()
+        update_count, updated_listings = update_risk_scores(conn)
 
         logger.success(f"Updated {update_count} risk scores")
     except Exception as e:
@@ -237,7 +242,7 @@ def run(termination_timestamp):
 
 
     try:
-        update_count, new_updated_listings = update_risk_scores()
+        update_count, new_updated_listings = update_risk_scores(conn)
 
         logger.success(f"Updated {update_count} risk scores")
     except Exception as e:

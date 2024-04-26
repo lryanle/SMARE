@@ -18,22 +18,38 @@ DONT_DECODE = ["link", "_id", "price", "odometer", "images"]
 logger = SmareLogger()
 
 
-def get_conn(db=DATABASE):
-    # load environment variable containing db uri
-    # (which includes username and password)
+def connect(db=DATABASE):
     try:
         load_dotenv()
     except Exception as e:
         logger.critical(f"Database: Failed to load .env file. Error: {e}")
         return {"success": False, "db": 0}
 
-    # create a mongodb connection
     try:
         db_uri = os.environ.get("DB_URI")
-        # deepcode ignore Ssrf: .env's content is controlled by the developer
         client = MongoClient(db_uri)
 
-    # return a friendly error if a URI error is thrown
+    except ConfigurationError:
+        logger.critical(
+            "Database: "
+            "An Invalid URI host error was received."
+            " Is your Atlas host name correct in your connection string (found the .env)?"
+        )
+        return None
+
+    return client
+
+def get_conn(db=DATABASE):
+    try:
+        load_dotenv()
+    except Exception as e:
+        logger.critical(f"Database: Failed to load .env file. Error: {e}")
+        return {"success": False, "db": 0}
+
+    try:
+        db_uri = os.environ.get("DB_URI")
+        client = MongoClient(db_uri)
+
     except ConfigurationError:
         logger.critical(
             "Database: "
@@ -44,27 +60,6 @@ def get_conn(db=DATABASE):
 
     return {"success": True, "db": client.get_database(db)}
 
-
-def delete_with_id(id):
-    try:
-        conn = get_conn(DATABASE)
-
-        logger.info(f"Deleting listing with id {id}")
-
-        return conn["db"][SCRAPE_COLLECTION].delete_one({"_id": id})
-    except Exception as e:
-        logger.error(f"Database: Failed to delete listing with id {id}. Error: {e}")
-        return None
-
-
-def delete_all_invlaid(year):
-    try:
-        conn = get_conn(DATABASE)
-
-        return conn["db"][SCRAPE_COLLECTION].delete_many({"$or": [{"year": None}, {"year": {"$lt": year}}]})
-    except Exception as e:
-        logger.error(f"Database: Failed to delete listings older than {year}. Error: {e}")
-        return None
 
 def extract_id_from_link(link):
     try:
@@ -85,91 +80,64 @@ def extract_id_from_link(link):
         return None
 
 
-def find_post_with_link(link):
+def find_cars_in_stage(client, stage):
     try:
-        conn = get_conn(DATABASE)
-
-        return conn["db"][SCRAPE_COLLECTION].find_one(
-            {"_id": extract_id_from_link(link)}
-        )
-    except Exception as e:
-        logger.error(f"Database: Failed to find post with link. Error: {e}")
-        return None
-
-
-def find_cars_in_stage(stage):
-    try:
-        conn = get_conn(DATABASE)
+        conn = client.get_database(DATABASE)
 
         return [
-            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"stage": stage}).sort([("scrape_date", DESCENDING)])
+            decode(car) for car in conn[SCRAPE_COLLECTION].find({"stage": stage}).sort([("scrape_date", DESCENDING)])
         ]
     except Exception as e:
         logger.error(f"Database: Failed to find cars in stage. Error: {e}")
         return None
 
 
-def find_all_cars():
+def find_unanalyzed_cars(client, current_versions):
     try:
-        conn = get_conn(DATABASE)
-
-        return [
-            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find()
-        ]
-    except Exception as e:
-        logger.error(f"Database: Failed to find all cars. Error: {e}")
-        return None
-
-
-def find_unanalyzed_cars(current_versions):
-    try:
-        conn = get_conn(DATABASE)
+        conn = client.get_database(DATABASE)
 
         query = {
             "stage": "clean",
             "$or": [
                 {"$or": [
-                    {"model_scores.model_1": -1},
+                    # {"model_scores.model_1": -1},
                     {"model_scores.model_2": -1},
                     {"model_scores.model_3": -1},
                     {"model_scores.model_4": -1},
                     {"model_scores.model_5": -1},
                     {"model_scores.model_6": -1},
-                    {"model_scores.model_7": -1},
                 ]},
                 {"$or": [
-                    {"model_versions.model_1": {"$not": {"$eq": current_versions[0]}}},
+                    # {"model_versions.model_1": {"$not": {"$eq": current_versions[0]}}},
                     {"model_versions.model_2": {"$not": {"$eq": current_versions[1]}}},
                     {"model_versions.model_3": {"$not": {"$eq": current_versions[2]}}},
                     {"model_versions.model_4": {"$not": {"$eq": current_versions[3]}}},
                     {"model_versions.model_5": {"$not": {"$eq": current_versions[4]}}},
                     {"model_versions.model_6": {"$not": {"$eq": current_versions[5]}}},
-                    {"model_versions.model_7": {"$not": {"$eq": current_versions[6]}}},
                 ]}
             ],
         }
 
-        return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find(query)]
+        return [decode(car) for car in conn[SCRAPE_COLLECTION].find(query)]
     except Exception as e:
         logger.error(f"Database: Failed to find unanalyzed cars. Error: {e}")
         return None
 
 
-def post_raw(scraper_version, source, car):
+def post_raw(client, scraper_version, source, car):
     logger.info("Database: Connecting to DB...")
     try:
-        conn = get_conn(DATABASE)
+        conn = client.get_database(DATABASE)
+
+        if not conn:
+            logger.error("Database (post_raw): Failed to connect to DB.")
+            return False
     except Exception as e:
         logger.error(f"Database: Failed to connect to DB. Error: {e}")
         return False
-
-    if not conn["success"]:
-        logger.error("Database (post_raw): Failed to connect to DB.")
-        return False
-
+    
     logger.success("Database: Connected to DB")
 
-    # Encode car listing
     encoded_car = encode(car)
 
     metadata = {
@@ -180,29 +148,22 @@ def post_raw(scraper_version, source, car):
         "stage": "scrape",
     }
 
-    # attach metadata to car before pushing to db
     if encoded_car is not None:
         encoded_car.update(metadata)
 
-    # push encoded car (with metadata) to db
-    result = conn["db"][SCRAPE_COLLECTION].insert_one(encoded_car)
+    result = conn[SCRAPE_COLLECTION].insert_one(encoded_car)
     return result.acknowledged
 
 
-def update(link, new_fields, conn=None):
+def update(client, link, new_fields, conn=None):
     try:
-        if conn is None:
-            conn = get_conn(DATABASE)
-
-            if not conn["success"]:
-                logger.error("Database: Failed to connect to DB.")
-                return False
+        conn = client.get_database(DATABASE)
     except Exception as e:
         logger.error(f"Database: Failed to connect to DB. Error: {e}")
         return False
 
     try:
-        result = conn["db"][SCRAPE_COLLECTION].update_one(
+        result = conn[SCRAPE_COLLECTION].update_one(
             {"_id": extract_id_from_link(link)}, {"$set": new_fields}
         )
     except Exception as e:
@@ -212,11 +173,11 @@ def update(link, new_fields, conn=None):
     return result.acknowledged
 
 
-def update_listing_scores(cars_array, new_scores, model_number, model_version):
+def update_listing_scores(client, cars_array, new_scores, model_number, model_version):
     logger.debug(f"Database: Bulk updating listing scores. new scores: {new_scores}")
     try:
-        conn = get_conn(DATABASE)
-        if not conn["success"]:
+        conn = client.get_database(DATABASE)
+        if not conn:
             logger.error("Database: Failed to connect to DB.")
             return False
     except Exception as e:
@@ -261,7 +222,7 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
             update_operations.append(update_operation)
 
         if update_operations:
-            result = conn["db"][SCRAPE_COLLECTION].bulk_write(update_operations)
+            result = conn[SCRAPE_COLLECTION].bulk_write(update_operations)
             return result.modified_count
 
     except Exception as e:
@@ -271,11 +232,11 @@ def update_listing_scores(cars_array, new_scores, model_number, model_version):
     return True
 
 
-def update_db_risk_scores(cars_array):
+def update_db_risk_scores(client, cars_array):
     logger.debug(f"Database: Bulk updating {len(cars_array)} risk scores.")
     try:
-        conn = get_conn(DATABASE)
-        if not conn["success"]:
+        conn = client.get_database(DATABASE)
+        if not conn:
             logger.error("Database: Failed to connect to DB.")
             return False
     except Exception as e:
@@ -302,7 +263,7 @@ def update_db_risk_scores(cars_array):
             update_operations.append(update_operation)
 
         if update_operations:
-            result = conn["db"][SCRAPE_COLLECTION].bulk_write(update_operations)
+            result = conn[SCRAPE_COLLECTION].bulk_write(update_operations)
             return result.modified_count
 
     except Exception as e:
@@ -312,10 +273,10 @@ def update_db_risk_scores(cars_array):
     return True
 
 
-def find_pending_risk_update():
+def find_pending_risk_update(client):
     try:
-        conn = get_conn(DATABASE)
-        if not conn["success"]:
+        conn = client.get_database(DATABASE)
+        if not conn:
             logger.error("Database: Failed to connect to DB.")
             return False
     except Exception as e:
@@ -323,47 +284,10 @@ def find_pending_risk_update():
         return False
 
     try:
-        return [decode(car) for car in conn["db"][SCRAPE_COLLECTION].find({"pending_risk_update": True, "stage": "clean"})]
+        return [decode(car) for car in conn[SCRAPE_COLLECTION].find({"pending_risk_update": True, "stage": "clean"})]
     except Exception as e:
         logger.error(f"Database: Failed to find cars pending a risk score update. Error: {e}")
         return None
-
-
-def post_log(
-    conn,
-    time,
-    level,
-    message,
-    file_name,
-    file_path,
-    line_number,
-    function_name,
-    function_module,
-    source=None,
-    exception=None,
-    long_message=None,
-):
-    log = {
-        "date": time,
-        "level": level,
-        "message": message,
-        "file_name": file_name,
-        "file_path": file_path,
-        "line_number": line_number,
-        "function_name": function_name,
-        "function_module": function_module,
-        "source": source,
-        "exception": exception,
-        "long_message": long_message,
-    }
-
-    try:
-        result = conn["db"][LOG_COLLECTION].insert_one(log)
-    except Exception as e:
-        logger.error(f"Database: Failed to post log to the db. Error: {e}")
-        return False
-
-    return result.acknowledged
 
 
 def encode(obj):

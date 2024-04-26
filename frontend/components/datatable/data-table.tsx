@@ -125,7 +125,7 @@ export function DataTable<TData, TValue>({
                           {cell.column.id === "riskscore" && (
                             <CollapsibleTrigger asChild>
                               <TableCell className="flex justify-center items-center h-[3.45rem] px-0">
-                                <MagnifyingGlassIcon className="cursor-pointer h-5 w-5 -translate-x-2" />
+                                <MagnifyingGlassIcon className="cursor-pointer h-5 w-5 translate-x-5" />
                               </TableCell>
                             </CollapsibleTrigger>
                           )}

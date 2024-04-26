@@ -18,22 +18,38 @@ DONT_DECODE = ["link", "_id", "price", "odometer", "images"]
 logger = SmareLogger()
 
 
-def get_conn(db=DATABASE):
-    # load environment variable containing db uri
-    # (which includes username and password)
+def connect(db=DATABASE):
     try:
         load_dotenv()
     except Exception as e:
         logger.critical(f"Database: Failed to load .env file. Error: {e}")
         return {"success": False, "db": 0}
 
-    # create a mongodb connection
     try:
         db_uri = os.environ.get("DB_URI")
-        # deepcode ignore Ssrf: .env's content is controlled by the developer
         client = MongoClient(db_uri)
 
-    # return a friendly error if a URI error is thrown
+    except ConfigurationError:
+        logger.critical(
+            "Database: "
+            "An Invalid URI host error was received."
+            " Is your Atlas host name correct in your connection string (found the .env)?"
+        )
+        return {"success": False, "client": 0}
+
+    return {"success": True, "client": client}
+
+def get_conn(db=DATABASE):
+    try:
+        load_dotenv()
+    except Exception as e:
+        logger.critical(f"Database: Failed to load .env file. Error: {e}")
+        return {"success": False, "db": 0}
+
+    try:
+        db_uri = os.environ.get("DB_URI")
+        client = MongoClient(db_uri)
+
     except ConfigurationError:
         logger.critical(
             "Database: "
@@ -129,22 +145,20 @@ def find_unanalyzed_cars(current_versions):
             "stage": "clean",
             "$or": [
                 {"$or": [
-                    {"model_scores.model_1": -1},
+                    # {"model_scores.model_1": -1},
                     {"model_scores.model_2": -1},
                     {"model_scores.model_3": -1},
                     {"model_scores.model_4": -1},
                     {"model_scores.model_5": -1},
                     {"model_scores.model_6": -1},
-                    {"model_scores.model_7": -1},
                 ]},
                 {"$or": [
-                    {"model_versions.model_1": {"$not": {"$eq": current_versions[0]}}},
+                    # {"model_versions.model_1": {"$not": {"$eq": current_versions[0]}}},
                     {"model_versions.model_2": {"$not": {"$eq": current_versions[1]}}},
                     {"model_versions.model_3": {"$not": {"$eq": current_versions[2]}}},
                     {"model_versions.model_4": {"$not": {"$eq": current_versions[3]}}},
                     {"model_versions.model_5": {"$not": {"$eq": current_versions[4]}}},
                     {"model_versions.model_6": {"$not": {"$eq": current_versions[5]}}},
-                    {"model_versions.model_7": {"$not": {"$eq": current_versions[6]}}},
                 ]}
             ],
         }

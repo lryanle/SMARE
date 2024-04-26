@@ -45,6 +45,13 @@ def run(termination_timestamp, website, scraper_version):
     city_urls = scraper.setup_urls(2011)
     browser = setup_browser(is_proxy_enabled)
 
+    try:
+        db_client = db.get_conn()
+    except Exception as e:
+        logger.critical(f"Failed to connect to DB. Quitting Scraper...")
+        return None
+
+
     for url in city_urls:
         if datetime.now() >= termination_timestamp:
                 logger.info("Scraping process is done.")

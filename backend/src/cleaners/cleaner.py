@@ -78,9 +78,6 @@ def check(car):
 
     logger.debug(f"Checks: {required_checks}")
 
-    if car["post_body"] == car["attributes"][0]:
-        db.delete_with_id(car["_id"])
-
     return False not in required_checks
 
 

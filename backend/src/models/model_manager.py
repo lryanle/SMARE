@@ -191,25 +191,25 @@ def run(termination_timestamp):
     # here...
 
     # Model 2: GPT Vision Model
-    try:
-        try:
-            model_2_cars = filter_on_model(all_cars, 2)
-        except Exception as e:
-            logger.error(
-                f"Model Manager: Model 2 failed to filter listings. Error: {e}"
-            )
-            return None
+    # try:
+    #     try:
+    #         model_2_cars = filter_on_model(all_cars, 2)
+    #     except Exception as e:
+    #         logger.error(
+    #             f"Model Manager: Model 2 failed to filter listings. Error: {e}"
+    #         )
+    #         return None
 
-        input_size = len(model_2_cars)
+    #     input_size = len(model_2_cars)
 
-        logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
-        batch_process(model_2_cars, m2_riskscores, 2)
+    #     logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
+    #     batch_process(model_2_cars, m2_riskscores, 2)
 
-        logger.success("Model Manager: Model 2 successfully processed listings")
-    except RateLimitError as e:
-        logger.critical(f"Model Manager: Model 2 failed to process listings. Ran out of OpenAI credits {e}")
-    except Exception as e:
-        logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
+    #     logger.success("Model Manager: Model 2 successfully processed listings")
+    # except RateLimitError as e:
+    #     logger.critical(f"Model Manager: Model 2 failed to process listings. Ran out of OpenAI credits {e}")
+    # except Exception as e:
+    #     logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 
 
     # Model 3: KBB Price Model
@@ -234,7 +234,17 @@ def run(termination_timestamp):
             logger.success("Model Manager: Model 3 successfully processed listings")
     except Exception as e:
         logger.error(f"Model Manager: Model 3 failed to process listings. Error: {e}")
-  
+
+
+    try:
+        update_count, new_updated_listings = update_risk_scores()
+
+        logger.success(f"Updated {update_count} risk scores")
+    except Exception as e:
+        logger.error(f"Failed updating risk scores. Error: {e}")
+
+
+    updated_listings = updated_listings + new_updated_listings
 
     # Send daily email report
     #recipient_emails = ['dawsen_richins@yahoo.com','alsimone00@gmail.com','caitlynary@gmail.com', 'tadero230@gmail.com']

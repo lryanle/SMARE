@@ -61,27 +61,6 @@ def get_conn(db=DATABASE):
     return {"success": True, "db": client.get_database(db)}
 
 
-def delete_with_id(id):
-    try:
-        conn = get_conn(DATABASE)
-
-        logger.info(f"Deleting listing with id {id}")
-
-        return conn["db"][SCRAPE_COLLECTION].delete_one({"_id": id})
-    except Exception as e:
-        logger.error(f"Database: Failed to delete listing with id {id}. Error: {e}")
-        return None
-
-
-def delete_all_invlaid(year):
-    try:
-        conn = get_conn(DATABASE)
-
-        return conn["db"][SCRAPE_COLLECTION].delete_many({"$or": [{"year": None}, {"year": {"$lt": year}}]})
-    except Exception as e:
-        logger.error(f"Database: Failed to delete listings older than {year}. Error: {e}")
-        return None
-
 def extract_id_from_link(link):
     try:
         id = re.search(r"^\d+$", link)
@@ -101,18 +80,6 @@ def extract_id_from_link(link):
         return None
 
 
-def find_post_with_link(link):
-    try:
-        conn = get_conn(DATABASE)
-
-        return conn["db"][SCRAPE_COLLECTION].find_one(
-            {"_id": extract_id_from_link(link)}
-        )
-    except Exception as e:
-        logger.error(f"Database: Failed to find post with link. Error: {e}")
-        return None
-
-
 def find_cars_in_stage(stage):
     try:
         conn = get_conn(DATABASE)
@@ -122,18 +89,6 @@ def find_cars_in_stage(stage):
         ]
     except Exception as e:
         logger.error(f"Database: Failed to find cars in stage. Error: {e}")
-        return None
-
-
-def find_all_cars():
-    try:
-        conn = get_conn(DATABASE)
-
-        return [
-            decode(car) for car in conn["db"][SCRAPE_COLLECTION].find()
-        ]
-    except Exception as e:
-        logger.error(f"Database: Failed to find all cars. Error: {e}")
         return None
 
 
@@ -341,43 +296,6 @@ def find_pending_risk_update():
     except Exception as e:
         logger.error(f"Database: Failed to find cars pending a risk score update. Error: {e}")
         return None
-
-
-def post_log(
-    conn,
-    time,
-    level,
-    message,
-    file_name,
-    file_path,
-    line_number,
-    function_name,
-    function_module,
-    source=None,
-    exception=None,
-    long_message=None,
-):
-    log = {
-        "date": time,
-        "level": level,
-        "message": message,
-        "file_name": file_name,
-        "file_path": file_path,
-        "line_number": line_number,
-        "function_name": function_name,
-        "function_module": function_module,
-        "source": source,
-        "exception": exception,
-        "long_message": long_message,
-    }
-
-    try:
-        result = conn["db"][LOG_COLLECTION].insert_one(log)
-    except Exception as e:
-        logger.error(f"Database: Failed to post log to the db. Error: {e}")
-        return False
-
-    return result.acknowledged
 
 
 def encode(obj):

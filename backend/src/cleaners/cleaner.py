@@ -78,14 +78,20 @@ def check(car):
 
     logger.debug(f"Checks: {required_checks}")
 
-    if car["post_body"] == car["attributes"][0]:
-        db.delete_with_id(car["_id"])
-
     return False not in required_checks
 
 
 def run(termination_timestamp, version):
-    cars = db.find_cars_in_stage("scrape")
+    try:
+        conn = db.connect()
+
+        if not conn:
+            raise Exception("Failed openning connection for cleaner")
+
+        cars = db.find_cars_in_stage(conn, "scrape")
+    except Exception as e:
+        logger.critical(f"Error: {e}")
+        return None
 
     logger.info("Began cleaners")
     logger.info(f"Found {len(cars)} unclean cars")
@@ -108,7 +114,7 @@ def run(termination_timestamp, version):
                     clean_fields["model_versions"][f"model_{i}"] = -1
                 clean_fields["risk_score"] = -1
 
-                is_update_sucess = db.update(car["link"], clean_fields)
+                is_update_sucess = db.update(conn, car["link"], clean_fields)
 
                 if not is_update_sucess:
                     raise ValueError("Failed updating the database.")
@@ -131,6 +137,7 @@ def run(termination_timestamp, version):
 
         if datetime.now() >= termination_timestamp:
             logger.info("Cleaning process is done.")
+            conn.close()
             break
 
     logger.info(

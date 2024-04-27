@@ -159,7 +159,7 @@ pipenv run facebook
 
 ![Metrics](/github-metrics.svg)
 ![Pagespeed](/metrics.plugin.pagespeed.svg)
-![SMAREScreenShot](/metrics.plugin.screenshot.svg)
+[![SMAREScreenShot](/metrics.plugin.screenshot.svg)](https://smare.lryanle.com/)
 
 ## 📄 License
 

@@ -30,7 +30,7 @@ async function getTopMakeModels() {
         $sort: { count: -1 }
       },
       {
-        $limit: 20
+        $limit: 4500
       }
     ]).toArray();
 

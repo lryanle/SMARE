@@ -37,13 +37,19 @@ export async function GET(request: NextRequest) {
     const listing = await getRandomCleanListing();
     return new Response(JSON.stringify({ success: true, data: listing }), {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       }
     });
   } catch (error) {
     return new Response(JSON.stringify({ success: false, error: error.message }), {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       }
     });
   }

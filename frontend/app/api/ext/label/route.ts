@@ -56,14 +56,20 @@ export async function POST(request: NextRequest) {
     await updateListingLabel(listingId, label);
     return new Response(JSON.stringify({ success: true }), {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
       status: 200
     });
   } catch (error) {
     return new Response(JSON.stringify({ success: false, error: error.message }), {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
       status: 400
     });

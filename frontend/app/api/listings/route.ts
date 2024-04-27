@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   let max = parseInt(request.nextUrl.searchParams.get("max") as string);
 
   if (isNaN(max)) {
-    max = 1000;
+    max = 4500;
   }
 
   try {

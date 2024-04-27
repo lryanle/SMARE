@@ -1,8 +1,8 @@
 "use client";
 
-import { promises as fs } from "fs"
-import path from "path"
-import { z } from "zod"
+import { promises as fs } from "fs";
+import path from "path";
+import { z } from "zod";
 import React, { useEffect, useState } from "react";
 import { CalendarDateRangePicker } from "@/components/dashboard/date-range-picker";
 import { Overview } from "@/components/dashboard/overview";
@@ -23,6 +23,23 @@ import DownloadCSV from "@/components/dashboard/DownloadCSV";
 import { DataTable } from "@/components/datatable/data-table";
 import { rawListingSchema, listingSchema } from "@/components/datatable/schema";
 import { columns } from "@/components/datatable/columns";
+import {
+  Area,
+  Bar,
+  BarChart,
+  Brush,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  Rectangle,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { capitalize } from "@/lib/utils";
 
 type Props = {};
 
@@ -33,7 +50,7 @@ interface Listing {
   year: string;
   riskscore: string;
   url: string;
-  marketplace: string,
+  marketplace: string;
   date: string;
 
   model_scores: {
@@ -59,7 +76,9 @@ interface Listing {
 
 export default function Dashboard({}: Props) {
   const localTime = new Date();
-  const today = new Date(localTime.getTime() + (localTime.getTimezoneOffset() * 60000));
+  const today = new Date(
+    localTime.getTime() + localTime.getTimezoneOffset() * 60000
+  );
 
   const [date, setDate] = useState<DateRange | undefined>({
     from: addDays(today, -30),
@@ -70,11 +89,11 @@ export default function Dashboard({}: Props) {
 
   useEffect(() => {
     async function fetchTasks() {
-      const response = await fetch('/api/listings');
+      const response = await fetch("/api/listings");
       const data = await response.json();
       const validTasks = z.array(rawListingSchema).parse(data.data);
-  
-      const transformedTasks = validTasks.map(task => ({
+
+      const transformedTasks = validTasks.map((task) => ({
         url: task.link,
         make: task.make,
         model: task.model,
@@ -99,19 +118,39 @@ export default function Dashboard({}: Props) {
           model_4: task.model_versions.model_4,
           model_5: task.model_versions.model_5,
           model_6: task.model_versions.model_6,
-        
         },
         cleaner_version: task.cleaner_version,
         scraper_version: task.scraper_version,
         // human_flag: task.human_flag,
         price: task.price,
       }));
-  
+
       setListings(transformedTasks);
     }
-  
+
     fetchTasks().catch(console.error);
-  }, []);  
+  }, []);
+
+  const [flaggedData, setflaggedData] = useState([]);
+
+  useEffect(() => {
+    const fetchflaggedData = async () => {
+      const response = await fetch(`/api/flagged`);
+      if (!response.ok) {
+        console.error("Failed to fetch data");
+        return;
+      }
+
+      const result = await response.json();
+      const mergedData = result.data.map((item: any) => ({
+        ...item,
+        make_model: `${capitalize(item.make)} ${capitalize(item.model)}`,
+      }));
+      setflaggedData(mergedData);
+    };
+
+    fetchflaggedData();
+  }, [date]);
 
   return (
     <div className="flex-1 space-y-4 md:p-8 pt-24 md:pt-6">
@@ -127,12 +166,8 @@ export default function Dashboard({}: Props) {
       <Tabs defaultValue="overview" className="space-y-4 flex-col md:flex-row">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="listings">
-            Listings
-          </TabsTrigger>
-          <TabsTrigger value="reports" disabled>
-            Reports
-          </TabsTrigger>
+          <TabsTrigger value="listings">Listings</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="notifications" disabled>
             Notifications
           </TabsTrigger>
@@ -148,7 +183,7 @@ export default function Dashboard({}: Props) {
                 <CardTitle>Flagged Listings</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
-                <Overview date={date}/>
+                <Overview date={date} />
               </CardContent>
             </Card>
             <Card className="col-span-4 md:col-span-3">
@@ -168,13 +203,52 @@ export default function Dashboard({}: Props) {
           <Card className="h-full flex-1 flex-col space-y-8 md:p-8 md:flex">
             <div className="flex items-center justify-between space-y-2">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold tracking-tight">Listings View</CardTitle>
+                <CardTitle className="text-2xl font-bold tracking-tight">
+                  Listings View
+                </CardTitle>
                 <CardDescription className="text-muted-foreground">
                   View and filter through all social marketplace listings
                 </CardDescription>
               </CardHeader>
             </div>
             <DataTable data={listings} columns={columns} />
+          </Card>
+        </TabsContent>
+        <TabsContent value="reports" className="space-y-4">
+          <Card className="h-full flex-1 flex-col space-y-8 md:p-8 md:flex">
+            <div className="flex items-center justify-between space-y-2">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold tracking-tight">
+                  Flagged Listings View
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  View the most flagged make-model combinations
+                </CardDescription>
+              </CardHeader>
+            </div>
+            <ResponsiveContainer width="100%" height={384}>
+              <BarChart
+                width={500}
+                height={400}
+                data={flaggedData}
+                margin={{
+                  top: 20,
+                  right: 40,
+                  bottom: 150,
+                  left: 40,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="make_model" angle={-45} textAnchor="end" />
+                <YAxis />
+                <Tooltip />
+                <Bar
+                  dataKey="count"
+                  fill="red"
+                  activeBar={<Rectangle fill="red" stroke="black" />}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </Card>
         </TabsContent>
       </Tabs>

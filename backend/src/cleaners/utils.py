@@ -22,7 +22,7 @@ def clean_currency(price_str):
 
 def clean_odometer(odometer_str):
     try:
-        clean_str = odometer_str.lower().replace("k", "000").replace(",", "").replace("miles", "").replace("mi", "").replace(" ", "")
+        clean_str = odometer_str.lower().replace("k", "000").replace(",", "").replace("miles", "").replace("mi", "").replace("m", "").replace(" ", "")
         return int(clean_str)
     except ValueError as e:
         logger.error(f"Error converting odometer to int: {odometer_str} | Error: {e}")

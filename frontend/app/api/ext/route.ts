@@ -23,7 +23,7 @@ async function getRandomCleanListing() {
     ]).toArray();
 
     if (results.length > 0) {
-      return results[0];
+      return results[0].link;
     } else {
       throw new Error('No suitable listing found');
     }

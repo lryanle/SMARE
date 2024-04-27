@@ -28,7 +28,7 @@ async function getTopMakeModels() {
       },
       {
         $sort: { count: -1 }
-      }
+      },
     ]).toArray();
 
     return results.map(({ _id, count }) => ({

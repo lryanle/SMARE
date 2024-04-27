@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SMARE Car Listing Analysis</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <img src="assets/smare.png" class="logo" alt="SMARE Logo">
+        <h1>Social Marketplace Automotive Risk Engine</h1>
+        <p>Calculating Automotive Risk On online Social Media Marketplaces.</p>
+        <nav>
+            <!-- Add your navigation items if needed -->
+        </nav>
+    </header>
+
+    <main>
+        <form id="carListingForm">
+            <input type="text" id="make" placeholder="Car Make">
+            <input type="text" id="model" placeholder="Car Model">
+            <input type="number" id="year" placeholder="Year">
+            <input type="number" id="mileage" placeholder="Mileage">
+            <input type="number" id="imageCount" placeholder="Number of Images">
+            <input type="number" id="listingPrice" placeholder="Listing Price">
+            <button type="button" id="analyzeButton">Analyze Listing</button>
+            <button type="button" id="checkPriceButton">Check KBB Price</button>
+        </form>
+
+        <div id="analysisResult">
+            <h3>Analysis Result:</h3>
+            <div id="analysisContent" class="response"></div>
+        </div>
+
+        <div id="loadingSpinner" class="spinner" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <p>Powered by OpenAI</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

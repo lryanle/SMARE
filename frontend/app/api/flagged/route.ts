@@ -29,9 +29,6 @@ async function getTopMakeModels() {
       {
         $sort: { count: -1 }
       },
-      {
-        $limit: 20
-      }
     ]).toArray();
 
     return results.map(({ _id, count }) => ({

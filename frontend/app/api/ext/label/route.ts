@@ -28,8 +28,6 @@ async function updateListingLabel(listingId: ObjectId, label: string) {
       updateDoc
     );
 
-    console.log(result)
-
     if (result.matchedCount === 0) {
       throw new Error("No listing found with the provided ID.");
     }

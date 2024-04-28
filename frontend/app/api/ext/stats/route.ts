@@ -17,7 +17,8 @@ async function getCleanListingsWithLabel() {
       {
         $match: {
           stage: 'clean',
-          label: { $exists: true }
+          label: { $exists: true },
+          // "model_scores.model_3": { $ne: -1 }
         }
       },
       {
@@ -33,12 +34,6 @@ async function getCleanListingsWithLabel() {
           totalWithLabel: [
             { $count: "count" }
           ],
-          totalLabelFlagged: [
-            { $count: "count" }
-          ],
-          totalLabelNotFlagged: [
-            { $count: "count" }
-          ]
         }
       }
     ];
@@ -48,11 +43,13 @@ async function getCleanListingsWithLabel() {
       flagged: result[0].flagged.map((item: any) => item._id),
       notflagged: result[0].notflagged.map((item: any) => item._id)
     };
+
     const stats = {
-      totalLabel: result[0].totalWithLabel[0]?.count || 0,
-      totalFlagged: result[0].totalLabelFlagged[0]?.count || 0,
-      totalNotFlagged: result[0].totalLabelNotFlagged[0]?.count || 0
+      totalLabel: result[0].totalWithLabel[0].count ?? 0,
+      totalFlagged: result[0].flagged.length ?? 0,
+      totalNotFlagged: result[0].notflagged.length ?? 0,
     };
+
 
     return { listings, stats };
   } catch (error) {

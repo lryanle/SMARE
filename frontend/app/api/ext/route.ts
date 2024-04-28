@@ -17,14 +17,14 @@ async function getRandomCleanListing() {
       {
         $match: {
           stage: 'clean',
-          label: { $exists: false }
+          label: { $exists: false },
         }
       },
       { $sample: { size: 1 } }
     ]).toArray();
 
     if (results.length > 0) {
-      return results[0].link;
+      return results[0];
     } else {
       throw new Error('No suitable listing found');
     }

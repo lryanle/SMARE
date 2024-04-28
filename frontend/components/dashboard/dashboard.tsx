@@ -40,6 +40,7 @@ import {
   YAxis,
 } from "recharts";
 import { capitalize } from "@/lib/utils";
+import DataLabeling from "@/components/dashboard/datalabeling";
 
 type Props = {};
 
@@ -168,11 +169,11 @@ export default function Dashboard({}: Props) {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="listings">Listings</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
+          <TabsTrigger value="labeling">
+            Data Labeling
+          </TabsTrigger>
           <TabsTrigger value="notifications" disabled>
             Notifications
-          </TabsTrigger>
-          <TabsTrigger value="search" disabled>
-            Search
           </TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
@@ -249,6 +250,21 @@ export default function Dashboard({}: Props) {
                 />
               </BarChart>
             </ResponsiveContainer>
+          </Card>
+        </TabsContent>
+        <TabsContent value="labeling" className="space-y-4">
+          <Card className="h-full flex-1 flex-col space-y-8 md:p-8 md:flex">
+            <div className="flex items-center justify-between space-y-2">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold tracking-tight">
+                  Data Labeling View
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  {`"Tinder" for social marketplace automotive listings`}
+                </CardDescription>
+              </CardHeader>
+            </div>
+            <DataLabeling />
           </Card>
         </TabsContent>
       </Tabs>

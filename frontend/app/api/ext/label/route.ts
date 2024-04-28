@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from "mongodb";
 import dynamic from "next/dynamic";
+export const fetchCache = 'force-no-store';
 
 type Data = {
   success: boolean;
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'no-store, max-age=0',
+        'Cache-Control': 'no-store, no-store, must-revalidate, max-age=0',
       },
       status: 200
     });
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'no-store, max-age=0',
+        'Cache-Control': 'no-store, no-store, must-revalidate, max-age=0',
       },
       status: 400
     });

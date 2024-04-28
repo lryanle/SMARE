@@ -479,7 +479,7 @@ export default function DataLabeling({}: Props) {
           <span className="text-lg font-semibold">Odometer:</span>
           <span className="text-md">{`${listingData?.odometer} miles`}</span>
         </div>
-        <div className="flex justify-between items-center gap-2 flex-wrap mt-2">
+        <div className="flex justify-start items-center gap-2 flex-wrap mt-2">
           {listingData?.link &&
             listingData?.source &&
             listingData?.make &&

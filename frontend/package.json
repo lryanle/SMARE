@@ -73,7 +73,7 @@
     "remark": "^15.0.1",
     "remark-mdx": "^3.0.0",
     "swr": "^2.2.4",
-    "tailwind-merge": "^2.2.1",
+    "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
     "xlsx": "^0.18.5",
     "zod": "^3.22.4"

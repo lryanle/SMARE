@@ -30,6 +30,8 @@ loguru = "*"
 openai = "*"
 urllib3 = "*"
 sendgrid = "*"
+jupyter = "*"
+missingno = "*"
 
 [dev-packages]
 isort = "*"
@@ -37,6 +39,7 @@ black = "*"
 flake8 = "*"
 mypy = "*"
 pylint = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.11"

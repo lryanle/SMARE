@@ -18,7 +18,7 @@ async function getCleanListingsWithLabel() {
         $match: {
           stage: 'clean',
           label: { $exists: true },
-          // "model_scores.model_3": { $ne: -1 }
+          "model_scores.model_3": { $ne: -1 }
         }
       },
       {

@@ -18,6 +18,7 @@ async function getRandomCleanListing() {
         $match: {
           stage: 'clean',
           label: { $exists: false },
+          "model_scores.model_3": { $ne: -1 }
         }
       },
       { $sample: { size: 1 } }

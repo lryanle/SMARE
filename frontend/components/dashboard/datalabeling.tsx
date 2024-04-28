@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/carousel";
 import { capitalize } from "@/lib/utils";
 import Link from "next/link";
+export const fetchCache = 'force-no-store';
 
 type Props = {};
 
@@ -98,7 +99,7 @@ export default function DataLabeling({}: Props) {
 
   const fetchStatsData = async () => {
     console.log("Fetching a Stats Data");
-    const response = await fetch("/api/ext/stats");
+    const response = await fetch("/api/ext/stats", { cache: "no-store" });
     if (!response.ok) {
       console.error("Failed to fetch statsData");
       return;
@@ -202,6 +203,7 @@ export default function DataLabeling({}: Props) {
         listingId: listingData._id,
         label: "label-flagged",
       }),
+      cache: "no-store"
     });
     fetchListingData();
   }, [fetchListingData, listingData]);
@@ -218,6 +220,7 @@ export default function DataLabeling({}: Props) {
         listingId: listingData._id,
         label: "label-notflagged",
       }),
+      cache: "no-store"
     });
     fetchListingData();
   }, [fetchListingData, listingData]);

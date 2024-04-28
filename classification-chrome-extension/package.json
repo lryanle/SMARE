@@ -1,0 +1,25 @@
+{
+  "name": "smare-label-assistant",
+  "version": "1.0.0",
+  "description": "SMARE-LA is an internal tooling assistant for the SMARE team to help with labeling/flagging listings from Social Marketplaces as suspicious or not.",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run prep",
+    "prep": "npm run exp && node out.js",
+    "exp": "next build && next export",
+    "run": "next start",
+    "dev": "next dev"
+  },
+  "keywords": [],
+  "author": {
+    "name": "lryanle",
+    "github": "https://github.com/lryanle"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^10.3.12",
+    "next": "^13.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

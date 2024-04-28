@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import clientPromise from '@/lib/mongodb';
 import dynamic from "next/dynamic";
+export const fetchCache = 'force-no-store';
 
 type Data = {
   success: boolean;

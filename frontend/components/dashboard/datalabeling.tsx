@@ -32,7 +32,7 @@ export const revalidate = 0;
 type Props = {};
 
 export default function DataLabeling({}: Props) {
-  const { toast } = useToast()
+  const { toast } = useToast();
   const [listingData, setListingData] = useState<
     Listing & {
       _id: number;
@@ -185,8 +185,10 @@ export default function DataLabeling({}: Props) {
     }
     toast({
       title: `Going back to previous listing`,
-      description: `Now viewing ${capitalize(listingData?.make)} ${capitalize(listingData?.model)} (${capitalize(listingData?.year)})`,
-    })
+      description: `Now viewing ${capitalize(listingData?.make)} ${capitalize(
+        listingData?.model
+      )} (${capitalize(listingData?.year)})`,
+    });
     setHistoryStack((prevHistory) => {
       if (prevHistory.length > 0) {
         if (prevHistory[0].id === listingData?.id) {
@@ -216,12 +218,14 @@ export default function DataLabeling({}: Props) {
     }
     console.log(`Flagging ${listingData?._id} as sus`);
     toast({
-      title: `Flagged listing ${capitalize(listingData?.make)} ${capitalize(listingData?.model)} (${capitalize(listingData?.year)}) as Suspicious`,
+      title: `Flagged listing ${capitalize(listingData?.make)} ${capitalize(
+        listingData?.model
+      )} (${capitalize(listingData?.year)}) as Suspicious`,
       description: `There are ${statsData.totalFlagged} flagged listings now`,
-    })
+    });
     fetch("/api/ext/label", {
       method: "POST",
-      headers: { secret: "oI6S1wwFSY4cltXGtsGUkb7rOhGdQ5SgvluijEBOtX0" },
+      headers: { secret: process.env.EXTENSION_SECRET ?? "" },
       body: JSON.stringify({
         listingId: listingData._id,
         label: "label-flagged",
@@ -240,12 +244,14 @@ export default function DataLabeling({}: Props) {
     }
     console.log(`Flagging ${listingData?._id} as not sus`);
     toast({
-      title: `Marked listing ${capitalize(listingData?.make)} ${capitalize(listingData?.model)} (${capitalize(listingData?.year)}) as NOT Suspicious`,
+      title: `Marked listing ${capitalize(listingData?.make)} ${capitalize(
+        listingData?.model
+      )} (${capitalize(listingData?.year)}) as NOT Suspicious`,
       description: `There are ${statsData.totalNotFlagged} listings marked as NOT Suspicious now`,
-    })
+    });
     fetch("/api/ext/label", {
       method: "POST",
-      headers: { secret: "oI6S1wwFSY4cltXGtsGUkb7rOhGdQ5SgvluijEBOtX0" },
+      headers: { secret: process.env.EXTENSION_SECRET ?? "" },
       body: JSON.stringify({
         listingId: listingData._id,
         label: "label-notflagged",
@@ -263,9 +269,9 @@ export default function DataLabeling({}: Props) {
     toast({
       title: `Fetching new listing`,
       description: `This will not have any effect on the previous listing (Doesn't count as a flag)`,
-    })
+    });
     fetchListingData();
-  }, [fetchListingData]);
+  }, [fetchListingData, listingData]);
 
   useEffect(() => {
     const handleKeydown = (e: any) => {
@@ -479,7 +485,7 @@ export default function DataLabeling({}: Props) {
           <span className="text-lg font-semibold">Odometer:</span>
           <span className="text-md">{`${listingData?.odometer} miles`}</span>
         </div>
-        <div className="flex justify-between items-center gap-2 flex-wrap mt-2">
+        <div className="flex justify-start items-center gap-2 flex-wrap mt-2">
           {listingData?.link &&
             listingData?.source &&
             listingData?.make &&

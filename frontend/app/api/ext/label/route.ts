@@ -32,7 +32,7 @@ async function updateListingLabel(listingId: ObjectId, label: string) {
       throw new Error("No listing found with the provided ID.");
     }
 
-    return;
+    return result;
   } catch (error) {
     throw error;
   }
@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
       throw new Error("Missing listingId or label in the request body.");
     }
 
-    await updateListingLabel(listingId, label);
-    return new Response(JSON.stringify({ success: true }), {
+    const result = await updateListingLabel(listingId, label);
+    return new Response(JSON.stringify({ success: true, data: result }), {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',

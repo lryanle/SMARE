@@ -24,6 +24,8 @@ import {
 import { capitalize } from "@/lib/utils";
 import Link from "next/link";
 export const fetchCache = 'force-no-store';
+export const dynamic = "force-dynamic"
+export const revalidate = 0;
 
 type Props = {};
 

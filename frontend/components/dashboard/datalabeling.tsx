@@ -169,6 +169,10 @@ export default function DataLabeling({}: Props) {
     return `https://www.edmunds.com/${make}/${model}/${year}/?ref=smare`;
   };
 
+  const createGoogleLink = (make: string, model: string, year: string) => {
+    return `https://www.google.com/search?q=${make}+${model}+${year}`;
+  }
+
   const removeQRCode = (text: string) => {
     return text.replace("QR Code Link to This Post", "");
   };
@@ -273,7 +277,7 @@ export default function DataLabeling({}: Props) {
 
   return (
     <div className="h-full w-full flex justify-between items-start gap-2 border p-4 rounded-lg">
-      <div className="h-full w-1/2 flex flex-col justify-center items-between gap-4 p-2">
+      <div className="h-full w-1/2 flex flex-col justify-center items-between gap-4">
         <div className="h-full flex justify-between items-center">
           <div className="w-full">
             <Carousel setApi={setApi} className="w-full">
@@ -386,7 +390,7 @@ export default function DataLabeling({}: Props) {
           </div>
         </div>
       </div>
-      <div className="h-[32rem] flex flex-1 border-l w-0.5"></div>
+      <div className="h-[33.25rem] flex flex-1 border-l w-0.5"></div>
       <div className="w-1/2 flex flex-col justify-start items-between wrap p-4 gap-1 border rounded-lg">
         <span className="text-lg font-semibold">
           {decodeString(listingData?.title as string)}
@@ -429,7 +433,7 @@ export default function DataLabeling({}: Props) {
         <div className="flex justify-start items-center gap-1">
           {listingData?.link && (
             <Link href={listingData.link} target="_blank" className="mt-2">
-              <Button className="flex justify-center items-center gap-2 px-3 text-md">
+              <Button className="flex justify-center items-center gap-2 px-3">
                 View Listing
               </Button>
             </Link>
@@ -444,8 +448,8 @@ export default function DataLabeling({}: Props) {
               target="_blank"
               className="mt-2"
             >
-              <Button className="flex justify-center items-center gap-2 px-3 text-md">
-                View on KBB
+              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
+                KBB Search
               </Button>
             </Link>
           )}
@@ -459,8 +463,23 @@ export default function DataLabeling({}: Props) {
               target="_blank"
               className="mt-2"
             >
-              <Button className="flex justify-center items-center gap-2 px-3 text-md">
-                View on Edmunds
+              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
+                Edmunds Search
+              </Button>
+            </Link>
+          )}
+          {listingData?.make && listingData?.model && listingData?.year && (
+            <Link
+              href={createGoogleLink(
+                listingData?.make,
+                listingData?.model,
+                listingData?.year
+              )}
+              target="_blank"
+              className="mt-2"
+            >
+              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
+                Google Search
               </Button>
             </Link>
           )}

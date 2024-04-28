@@ -11,6 +11,7 @@ import "./globals.css";
 
 import { Inter as FontSans } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/toaster";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -48,7 +49,7 @@ export default async function RootLayout({
         <main className="flex min-h-screen w-full flex-col items-center justify-center">
           {children}
         </main>
-
+        <Toaster />
         <Footer />
         <Analytics />
       </body>

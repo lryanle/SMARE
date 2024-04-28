@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/carousel";
 import { capitalize } from "@/lib/utils";
 import Link from "next/link";
-import { set } from "lodash";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "../ui/toast";
 export const fetchCache = "force-no-store";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -31,6 +32,7 @@ export const revalidate = 0;
 type Props = {};
 
 export default function DataLabeling({}: Props) {
+  const { toast } = useToast()
   const [listingData, setListingData] = useState<
     Listing & {
       _id: number;
@@ -132,7 +134,6 @@ export default function DataLabeling({}: Props) {
     return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  // enhanced uri decode that utilizes uridecode but also 3A, 3b, 2C, 3f, 26 right after the uri decode
   const decodeString = (uri: string) => {
     return decodeURI(uri).replace(
       /%3A|%3B|%2C|%3F|%26|%23|%3D|%24/gi,
@@ -170,8 +171,8 @@ export default function DataLabeling({}: Props) {
   };
 
   const createGoogleLink = (make: string, model: string, year: string) => {
-    return `https://www.google.com/search?q=${make}+${model}+${year}`;
-  }
+    return `https://www.google.com/?q=${make}+${model}+${year}`;
+  };
 
   const removeQRCode = (text: string) => {
     return text.replace("QR Code Link to This Post", "");
@@ -182,6 +183,10 @@ export default function DataLabeling({}: Props) {
     if (listingData?._id === undefined) {
       return;
     }
+    toast({
+      title: `Going back to previous listing`,
+      description: `Now viewing ${capitalize(listingData?.make)} ${capitalize(listingData?.model)} (${capitalize(listingData?.year)})`,
+    })
     setHistoryStack((prevHistory) => {
       if (prevHistory.length > 0) {
         if (prevHistory[0].id === listingData?.id) {
@@ -210,6 +215,10 @@ export default function DataLabeling({}: Props) {
       return;
     }
     console.log(`Flagging ${listingData?._id} as sus`);
+    toast({
+      title: `Flagged listing ${capitalize(listingData?.make)} ${capitalize(listingData?.model)} (${capitalize(listingData?.year)}) as Suspicious`,
+      description: `There are ${statsData.totalFlagged} flagged listings now`,
+    })
     fetch("/api/ext/label", {
       method: "POST",
       headers: { secret: "oI6S1wwFSY4cltXGtsGUkb7rOhGdQ5SgvluijEBOtX0" },
@@ -230,6 +239,10 @@ export default function DataLabeling({}: Props) {
       return;
     }
     console.log(`Flagging ${listingData?._id} as not sus`);
+    toast({
+      title: `Marked listing ${capitalize(listingData?.make)} ${capitalize(listingData?.model)} (${capitalize(listingData?.year)}) as NOT Suspicious`,
+      description: `There are ${statsData.totalNotFlagged} listings marked as NOT Suspicious now`,
+    })
     fetch("/api/ext/label", {
       method: "POST",
       headers: { secret: "oI6S1wwFSY4cltXGtsGUkb7rOhGdQ5SgvluijEBOtX0" },
@@ -247,6 +260,10 @@ export default function DataLabeling({}: Props) {
       return;
     }
     console.log("Sending to new listing");
+    toast({
+      title: `Fetching new listing`,
+      description: `This will not have any effect on the previous listing (Doesn't count as a flag)`,
+    })
     fetchListingData();
   }, [fetchListingData]);
 
@@ -264,6 +281,38 @@ export default function DataLabeling({}: Props) {
           break;
         case "ArrowRight":
           rightHandler();
+          break;
+        case "1":
+          if (listingData?._id === undefined) {
+            return;
+          }
+          window.open(listingData?.link, "_blank");
+          break;
+        case "2":
+          if (listingData?._id === undefined) {
+            return;
+          }
+          window.open(
+            createKBBLink(
+              listingData?.make as string,
+              listingData?.model as string,
+              listingData?.year as string
+            ),
+            "_blank"
+          );
+          break;
+        case "3":
+          if (listingData?._id === undefined) {
+            return;
+          }
+          window.open(
+            createEdmundsLink(
+              listingData?.make as string,
+              listingData?.model as string,
+              listingData?.year as string
+            ),
+            "_blank"
+          );
           break;
       }
     };
@@ -430,59 +479,77 @@ export default function DataLabeling({}: Props) {
           <span className="text-lg font-semibold">Odometer:</span>
           <span className="text-md">{`${listingData?.odometer} miles`}</span>
         </div>
-        <div className="flex justify-start items-center gap-1">
-          {listingData?.link && (
-            <Link href={listingData.link} target="_blank" className="mt-2">
-              <Button className="flex justify-center items-center gap-2 px-3">
-                View Listing
-              </Button>
-            </Link>
-          )}
-          {listingData?.make && listingData?.model && listingData?.year && (
-            <Link
-              href={createKBBLink(
-                listingData?.make,
-                listingData?.model,
-                listingData?.year
-              )}
-              target="_blank"
-              className="mt-2"
-            >
-              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
-                KBB Search
-              </Button>
-            </Link>
-          )}
-          {listingData?.make && listingData?.model && listingData?.year && (
-            <Link
-              href={createEdmundsLink(
-                listingData?.make,
-                listingData?.model,
-                listingData?.year
-              )}
-              target="_blank"
-              className="mt-2"
-            >
-              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
-                Edmunds Search
-              </Button>
-            </Link>
-          )}
-          {listingData?.make && listingData?.model && listingData?.year && (
-            <Link
-              href={createGoogleLink(
-                listingData?.make,
-                listingData?.model,
-                listingData?.year
-              )}
-              target="_blank"
-              className="mt-2"
-            >
-              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
-                Google Search
-              </Button>
-            </Link>
-          )}
+        <div className="flex justify-between items-center gap-2 flex-wrap mt-2">
+          {listingData?.link &&
+            listingData?.source &&
+            listingData?.make &&
+            listingData?.model &&
+            listingData?.year && (
+              <>
+                <Link href={listingData.link} target="_blank">
+                  <Button className="flex justify-center items-center gap-2 px-3">
+                    <span className="text-sm border-[2px] rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      1
+                    </span>
+                    {`${capitalize(listingData.source)} ->`}
+                  </Button>
+                </Link>
+                <Link
+                  href={createKBBLink(
+                    listingData?.make,
+                    listingData?.model,
+                    listingData?.year
+                  )}
+                  target="_blank"
+                >
+                  <Button
+                    className="flex justify-center items-center gap-2 px-3"
+                    variant="outline"
+                  >
+                    <span className="text-sm border-[2px] border-foreground rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      2
+                    </span>
+                    {"KBB ->"}
+                  </Button>
+                </Link>
+                <Link
+                  href={createEdmundsLink(
+                    listingData?.make,
+                    listingData?.model,
+                    listingData?.year
+                  )}
+                  target="_blank"
+                >
+                  <Button
+                    className="flex justify-center items-center gap-2 px-3"
+                    variant="outline"
+                  >
+                    <span className="text-sm border-[2px] border-foreground rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      3
+                    </span>
+                    {"Edmunds ->"}
+                  </Button>
+                </Link>
+                {/* <Link
+                  href={createGoogleLink(
+                    listingData?.make,
+                    listingData?.model,
+                    listingData?.year
+                  )}
+                  target="_blank"
+                >
+                  <Button
+                    className="flex justify-center items-center gap-2 px-3"
+                    variant="outline"
+                  >
+                    <span className="text-sm border-[2px] border-foreground rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      4
+                    </span>
+                    {"Google ->"}
+                  </Button>
+                </Link> */}
+              </>
+            )}
         </div>
       </div>
     </div>

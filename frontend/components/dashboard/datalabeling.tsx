@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/carousel";
 import { capitalize } from "@/lib/utils";
 import Link from "next/link";
-export const fetchCache = 'force-no-store';
-export const dynamic = "force-dynamic"
+import { set } from "lodash";
+export const fetchCache = "force-no-store";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 type Props = {};
@@ -77,6 +78,7 @@ export default function DataLabeling({}: Props) {
 
   const fetchListingData = useCallback(async () => {
     console.log("Fetching a New Listing's Data");
+    setListingData(undefined);
     // no caching
     const response = await fetch("/api/ext/", { cache: "no-store" });
     if (!response.ok) {
@@ -173,6 +175,9 @@ export default function DataLabeling({}: Props) {
 
   const leftHandler = useCallback(() => {
     console.log(`Sending back a listing`);
+    if (listingData?._id === undefined) {
+      return;
+    }
     setHistoryStack((prevHistory) => {
       if (prevHistory.length > 0) {
         if (prevHistory[0].id === listingData?.id) {
@@ -194,6 +199,9 @@ export default function DataLabeling({}: Props) {
   }, [listingData]);
 
   const upHandler = useCallback(async () => {
+    if (listingData?._id === undefined) {
+      return;
+    }
     if (!listingData) {
       return;
     }
@@ -205,12 +213,15 @@ export default function DataLabeling({}: Props) {
         listingId: listingData._id,
         label: "label-flagged",
       }),
-      cache: "no-store"
+      cache: "no-store",
     });
     fetchListingData();
   }, [fetchListingData, listingData]);
 
   const downHandler = useCallback(async () => {
+    if (listingData?._id === undefined) {
+      return;
+    }
     if (!listingData) {
       return;
     }
@@ -222,12 +233,15 @@ export default function DataLabeling({}: Props) {
         listingId: listingData._id,
         label: "label-notflagged",
       }),
-      cache: "no-store"
+      cache: "no-store",
     });
     fetchListingData();
   }, [fetchListingData, listingData]);
 
   const rightHandler = useCallback(async () => {
+    if (listingData?._id === undefined) {
+      return;
+    }
     console.log("Sending to new listing");
     fetchListingData();
   }, [fetchListingData]);
@@ -258,9 +272,9 @@ export default function DataLabeling({}: Props) {
   }, [downHandler, leftHandler, rightHandler, upHandler]);
 
   return (
-    <div className="h-full w-full flex justify-between items-center gap-2 border p-4 rounded-lg">
-      <div className="w-1/2 flex flex-col justify-center items-between gap-4 p-2">
-        <div className="flex justify-center items-center">
+    <div className="h-full w-full flex justify-between items-start gap-2 border p-4 rounded-lg">
+      <div className="h-full w-1/2 flex flex-col justify-center items-between gap-4 p-2">
+        <div className="h-full flex justify-between items-center">
           <div className="w-full">
             <Carousel setApi={setApi} className="w-full">
               <CarouselContent>
@@ -313,55 +327,62 @@ export default function DataLabeling({}: Props) {
             </div>
           </div>
         </div>
-        <div className="flex justify-center items-center gap-2">
-          <div className="flex justify-center items-center gap-1 border p-1 rounded-lg">
-            <Flag />
-            {statsData.totalFlagged}
+        <div className="flex flex-col justify-center items-center gap-4 flex-1 h-full">
+          <div className="flex justify-center items-center gap-2">
+            <div className="flex justify-center items-center gap-1 border p-1 rounded-lg">
+              <Flag />
+              {statsData.totalFlagged}
+            </div>
+            <div className="flex justify-center items-center gap-1 border p-1 rounded-lg">
+              <FlagOff />
+              {statsData.totalNotFlagged}
+            </div>
+            <div className="flex justify-center items-center gap-1 border p-1 rounded-lg">
+              <Sigma />
+              {statsData.totalLabel}
+            </div>
           </div>
-          <div className="flex justify-center items-center gap-1 border p-1 rounded-lg">
-            <FlagOff />
-            {statsData.totalNotFlagged}
-          </div>
-          <div className="flex justify-center items-center gap-1 border p-1 rounded-lg">
-            <Sigma />
-            {statsData.totalLabel}
-          </div>
-        </div>
-        <div className="flex justify-center items-end gap-1 border p-4 rounded-lg">
-          <div className="flex flex-col justify-center items-center">
-            <Button
-              onClick={leftHandler}
-              className="w-32 flex justify-start items-center gap-2 px-3 text-md"
-              disabled={historyStack?.length === 0}
-            >
-              <SquareChevronLeft size={28} />
-              Back
-            </Button>
-          </div>
-          <div className="flex flex-col justify-center items-stretch gap-1">
-            <Button
-              onClick={upHandler}
-              className="w-32 flex justify-start items-center gap-2 px-3 text-md"
-            >
-              <SquareChevronUp size={28} />
-              Sus
-            </Button>
-            <Button
-              onClick={downHandler}
-              className="w-32 flex justify-start items-center gap-2 px-3 text-md"
-            >
-              <SquareChevronDown size={28} />
-              Not Sus
-            </Button>
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <Button
-              onClick={rightHandler}
-              className="w-32 flex justify-start items-center gap-2 px-3 text-md"
-            >
-              <SquareChevronRight size={28} />
-              New
-            </Button>
+          <div className="flex justify-center items-end gap-1 border p-4 rounded-lg">
+            <div className="flex flex-col justify-center items-center">
+              <Button
+                onClick={leftHandler}
+                className="w-32 flex justify-start items-center gap-2 px-3 text-md"
+                disabled={
+                  historyStack?.length === 0 || listingData?._id === undefined
+                }
+              >
+                <SquareChevronLeft size={28} />
+                Back
+              </Button>
+            </div>
+            <div className="flex flex-col justify-center items-stretch gap-1">
+              <Button
+                onClick={upHandler}
+                className="w-32 flex justify-start items-center gap-2 px-3 text-md"
+                disabled={listingData?._id === undefined}
+              >
+                <SquareChevronUp size={28} />
+                Sus
+              </Button>
+              <Button
+                onClick={downHandler}
+                className="w-32 flex justify-start items-center gap-2 px-3 text-md"
+                disabled={listingData?._id === undefined}
+              >
+                <SquareChevronDown size={28} />
+                Not Sus
+              </Button>
+            </div>
+            <div className="flex flex-col justify-center items-center">
+              <Button
+                onClick={rightHandler}
+                className="w-32 flex justify-start items-center gap-2 px-3 text-md"
+                disabled={listingData?._id === undefined}
+              >
+                <SquareChevronRight size={28} />
+                New
+              </Button>
+            </div>
           </div>
         </div>
       </div>

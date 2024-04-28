@@ -85,12 +85,12 @@ def m3_riskscores(car_listings):
                     if kbb_price is None:
                         logger.error(f"Model 3: KBB price not found for {make} {model} {year}")
                         risk_scores.append(-1)
-                        continue    
-            try:               
+                        continue
+            try:
                 kbb_price = float(kbb_price)
                 price = float(price)
-                a = 20000  
-                b = (1.06) ** (1 / 10000)  
+                a = 20000
+                b = (1.06) ** (1 / 10000)
                 rd_kbb = a * (b ** (1.19 * kbb_price)) - a
                 if price > kbb_price:
                     risk_score = 0.0
@@ -98,7 +98,7 @@ def m3_riskscores(car_listings):
                     delta_p = np.abs(price - kbb_price)
                     x = delta_p / rd_kbb
                     y = 0.26 * x ** 2 + 0.07 * x
-                    y = max(0, min(1, y))  
+                    y = max(0, min(1, y))
                     risk_score = y
                 risk_scores.append(risk_score)
             except ValueError:

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from "mongodb";
+import dynamic from "next/dynamic";
 
 type Data = {
   success: boolean;
@@ -26,8 +27,6 @@ async function updateListingLabel(listingId: ObjectId, label: string) {
       { _id: listingId },
       updateDoc
     );
-
-    console.log(result)
 
     if (result.matchedCount === 0) {
       throw new Error("No listing found with the provided ID.");
@@ -60,6 +59,7 @@ export async function POST(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        'Cache-Control': 'no-store, max-age=0',
       },
       status: 200
     });
@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        'Cache-Control': 'no-store, max-age=0',
       },
       status: 400
     });

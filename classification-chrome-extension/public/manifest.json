@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "smare-label-assistant",
+  "short_name": "SMARELA",
+  "version": "1.0.0",
+  "description": "SMARE-LA is an internal tooling assistant for the SMARE team to help with labeling/flagging listings from Social Marketplaces as suspicious or not.",
+  "icons": {
+    "16": "/icons/icon16.png",
+    "32": "/icons/icon32.png",
+    "48": "/icons/icon48.png",
+    "192": "/icons/icon192.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["inject.js"]
+    }
+  ],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "new-listing": {
+      "suggested_key": {
+        "default": "Alt+Right"
+      },
+      "description": "Open a new listing"
+    },
+    "flag-listing": {
+      "suggested_key": {
+        "default": "Alt+Up"
+      },
+      "description": "Mark the current listing as flagged"
+    },
+    "notflag-listing": {
+      "suggested_key": {
+        "default": "Alt+Down"
+      },
+      "description": "Mark the current listing as not flagged"
+    },
+    "back-listing": {
+      "suggested_key": {
+        "default": "Alt+Left"
+      },
+      "description": "Go back to the previous listing"
+    }
+  }
+}

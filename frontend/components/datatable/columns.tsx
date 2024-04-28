@@ -252,7 +252,6 @@ export const columns: ColumnDef<Listing>[] = [
           timeZoneName: "short",
         }
       );
-      console.log(dateValue.toLowerCase().includes(filterValue.toLowerCase()));
       return dateValue.toLowerCase().includes(filterValue.toLowerCase());
     },
   },

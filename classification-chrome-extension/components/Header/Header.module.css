@@ -1,0 +1,14 @@
+.head {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    font-size: 2rem;
+    line-height: 0;
+    font-weight: bold;
+    color: white;
+    height: 4rem;
+    background-color: #FF151F;
+    margin: 0;
+    padding-top: 1rem;
+}

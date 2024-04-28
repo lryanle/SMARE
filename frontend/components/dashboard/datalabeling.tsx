@@ -170,8 +170,8 @@ export default function DataLabeling({}: Props) {
   };
 
   const createGoogleLink = (make: string, model: string, year: string) => {
-    return `https://www.google.com/search?q=${make}+${model}+${year}`;
-  }
+    return `https://www.google.com/?q=${make}+${model}+${year}`;
+  };
 
   const removeQRCode = (text: string) => {
     return text.replace("QR Code Link to This Post", "");
@@ -264,6 +264,38 @@ export default function DataLabeling({}: Props) {
           break;
         case "ArrowRight":
           rightHandler();
+          break;
+        case "1":
+          if (listingData?._id === undefined) {
+            return;
+          }
+          window.open(listingData?.link, "_blank");
+          break;
+        case "2":
+          if (listingData?._id === undefined) {
+            return;
+          }
+          window.open(
+            createKBBLink(
+              listingData?.make as string,
+              listingData?.model as string,
+              listingData?.year as string
+            ),
+            "_blank"
+          );
+          break;
+        case "3":
+          if (listingData?._id === undefined) {
+            return;
+          }
+          window.open(
+            createEdmundsLink(
+              listingData?.make as string,
+              listingData?.model as string,
+              listingData?.year as string
+            ),
+            "_blank"
+          );
           break;
       }
     };
@@ -430,59 +462,77 @@ export default function DataLabeling({}: Props) {
           <span className="text-lg font-semibold">Odometer:</span>
           <span className="text-md">{`${listingData?.odometer} miles`}</span>
         </div>
-        <div className="flex justify-start items-center gap-1">
-          {listingData?.link && (
-            <Link href={listingData.link} target="_blank" className="mt-2">
-              <Button className="flex justify-center items-center gap-2 px-3">
-                View Listing
-              </Button>
-            </Link>
-          )}
-          {listingData?.make && listingData?.model && listingData?.year && (
-            <Link
-              href={createKBBLink(
-                listingData?.make,
-                listingData?.model,
-                listingData?.year
-              )}
-              target="_blank"
-              className="mt-2"
-            >
-              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
-                KBB Search
-              </Button>
-            </Link>
-          )}
-          {listingData?.make && listingData?.model && listingData?.year && (
-            <Link
-              href={createEdmundsLink(
-                listingData?.make,
-                listingData?.model,
-                listingData?.year
-              )}
-              target="_blank"
-              className="mt-2"
-            >
-              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
-                Edmunds Search
-              </Button>
-            </Link>
-          )}
-          {listingData?.make && listingData?.model && listingData?.year && (
-            <Link
-              href={createGoogleLink(
-                listingData?.make,
-                listingData?.model,
-                listingData?.year
-              )}
-              target="_blank"
-              className="mt-2"
-            >
-              <Button className="flex justify-center items-center gap-2 px-3" variant="secondary">
-                Google Search
-              </Button>
-            </Link>
-          )}
+        <div className="flex justify-between items-center gap-2 flex-wrap mt-2">
+          {listingData?.link &&
+            listingData?.source &&
+            listingData?.make &&
+            listingData?.model &&
+            listingData?.year && (
+              <>
+                <Link href={listingData.link} target="_blank">
+                  <Button className="flex justify-center items-center gap-2 px-3">
+                    <span className="text-sm border-[2px] rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      1
+                    </span>
+                    {`${capitalize(listingData.source)} ->`}
+                  </Button>
+                </Link>
+                <Link
+                  href={createKBBLink(
+                    listingData?.make,
+                    listingData?.model,
+                    listingData?.year
+                  )}
+                  target="_blank"
+                >
+                  <Button
+                    className="flex justify-center items-center gap-2 px-3"
+                    variant="outline"
+                  >
+                    <span className="text-sm border-[2px] border-foreground rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      2
+                    </span>
+                    {"KBB ->"}
+                  </Button>
+                </Link>
+                <Link
+                  href={createEdmundsLink(
+                    listingData?.make,
+                    listingData?.model,
+                    listingData?.year
+                  )}
+                  target="_blank"
+                >
+                  <Button
+                    className="flex justify-center items-center gap-2 px-3"
+                    variant="outline"
+                  >
+                    <span className="text-sm border-[2px] border-foreground rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      3
+                    </span>
+                    {"Edmunds ->"}
+                  </Button>
+                </Link>
+                {/* <Link
+                  href={createGoogleLink(
+                    listingData?.make,
+                    listingData?.model,
+                    listingData?.year
+                  )}
+                  target="_blank"
+                >
+                  <Button
+                    className="flex justify-center items-center gap-2 px-3"
+                    variant="outline"
+                  >
+                    <span className="text-sm border-[2px] border-foreground rounded w-[1.25rem] h-[1.25rem] m-0 p-0 flex justify-center items-center leading-none font-bold">
+                      4
+                    </span>
+                    {"Google ->"}
+                  </Button>
+                </Link> */}
+              </>
+            )}
         </div>
       </div>
     </div>

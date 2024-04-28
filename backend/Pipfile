@@ -32,6 +32,7 @@ urllib3 = "*"
 sendgrid = "*"
 jupyter = "*"
 missingno = "*"
+plotly = "*"
 
 [dev-packages]
 isort = "*"

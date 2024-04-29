@@ -47,7 +47,7 @@ def get_fair_price_avg(table):
 def scrape_car(url, car):
     time.sleep(4)
     try:
-        browser = setup_browser()
+        browser = setup_browser(True)
 
         logger.info(f"Going to {url}")
         browser.get(url)
@@ -68,9 +68,9 @@ def scrape_car(url, car):
         logger.debug(f"price: {avg}")
         browser.quit()
 
-        with open('checkpoint.csv', 'a', newline='') as file:
+        with open('/var/task/src/scrapers/checkpoint.csv', 'a', newline='') as file:
             writer = csv.writer(file)
-            
+
             writer.writerow([car, avg])
 
         return avg

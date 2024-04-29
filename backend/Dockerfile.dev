@@ -25,6 +25,5 @@ WORKDIR /var/task
 COPY orchestrator.py ./
 COPY src ./src
 COPY .env ./
-COPY src/scrapers/missing_prices.txt ./src/scrapers/missing_prices.txt
 
 CMD [ "app.craigslist" ]

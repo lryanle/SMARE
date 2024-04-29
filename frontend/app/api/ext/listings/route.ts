@@ -27,14 +27,11 @@ async function getCleanListingsWithLabel() {
         $facet: {
           flagged: [
             { $match: { label: 'label-flagged' } },
-            { $project: { _id: 1 } }
+            { $project: { _id: 1, title: 1, price: 1, odometer: 1, post_body: 1, year: 1, make: 1, model: 1, source: 1, images: 1 } }
           ],
           notflagged: [
             { $match: { label: 'label-notflagged' } },
-            { $project: { _id: 1 } }
-          ],
-          totalWithLabel: [
-            { $count: "count" }
+            { $project: { _id: 1, title: 1, price: 1, odometer: 1, post_body: 1, year: 1, make: 1, model: 1, source: 1, images: 1 } }
           ],
         }
       }
@@ -42,18 +39,17 @@ async function getCleanListingsWithLabel() {
 
     const result = await db.collection('listings').aggregate(pipeline).toArray();
     const listings = {
-      flagged: result[0].flagged.map((item: any) => item._id),
-      notflagged: result[0].notflagged.map((item: any) => item._id)
+      flagged: result[0].flagged.map((item: any) => ({
+        ...item,
+        imageCount: item.images?.length
+      })),
+      notflagged: result[0].notflagged.map((item: any) => ({
+        ...item,
+        imageCount: item.images?.length
+      }))
     };
 
-    const stats = {
-      totalLabel: result[0].totalWithLabel[0].count ?? 0,
-      totalFlagged: result[0].flagged.length ?? 0,
-      totalNotFlagged: result[0].notflagged.length ?? 0,
-    };
-
-
-    return { listings, stats };
+    return listings;
   } catch (error) {
     throw error;
   }
@@ -61,8 +57,8 @@ async function getCleanListingsWithLabel() {
 
 export async function GET(request: NextRequest) {
   try {
-    const { listings, stats } = await getCleanListingsWithLabel();
-    return new Response(JSON.stringify({ success: true, data: listings, stats: stats }), {
+    const listings = await getCleanListingsWithLabel();
+    return new Response(JSON.stringify({ success: true, data: listings }), {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',

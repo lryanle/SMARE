@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from "mongodb";
-import dynamic from "next/dynamic";
+export const fetchCache = 'force-no-store';
+export const dynamic = "force-dynamic"
+export const revalidate = 0;
 
 type Data = {
   success: boolean;
@@ -32,7 +34,7 @@ async function updateListingLabel(listingId: ObjectId, label: string) {
       throw new Error("No listing found with the provided ID.");
     }
 
-    return;
+    return result;
   } catch (error) {
     throw error;
   }
@@ -44,22 +46,22 @@ export async function POST(request: NextRequest) {
     const { listingId, label } = body;
     const extensionSecret = request.headers.get('secret');
 
-    if (extensionSecret !== process.env.EXTENSION_SECRET) {
-      throw new Error("Invalid extension secret.");
-    }
+    // if (extensionSecret !== process.env.EXTENSION_SECRET) {
+    //   throw new Error("Invalid extension secret.");
+    // }
 
     if (!listingId || !label) {
       throw new Error("Missing listingId or label in the request body.");
     }
 
-    await updateListingLabel(listingId, label);
-    return new Response(JSON.stringify({ success: true }), {
+    const result = await updateListingLabel(listingId, label);
+    return new Response(JSON.stringify({ success: true, data: result }), {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'no-store, max-age=0',
+        'Cache-Control': 'no-store, no-store, must-revalidate, max-age=0',
       },
       status: 200
     });
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'no-store, max-age=0',
+        'Cache-Control': 'no-store, no-store, must-revalidate, max-age=0',
       },
       status: 400
     });

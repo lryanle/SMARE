@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from ..utilities import logger
 from .utils import find_by_class, click_on, setup_browser
 
+import csv
 logger = logger.SmareLogger()
 
 def make_link(line):
@@ -43,7 +44,7 @@ def get_fair_price_avg(table):
         return None
 
 
-def scrape_car(url):
+def scrape_car(url, car):
     time.sleep(4)
     try:
         browser = setup_browser()
@@ -67,6 +68,11 @@ def scrape_car(url):
         logger.debug(f"price: {avg}")
         browser.quit()
 
+        with open('checkpoint.csv', 'a', newline='') as file:
+            writer = csv.writer(file)
+            
+            writer.writerow([car, avg])
+
         return avg
     except Exception as e:
         logger.error(f"Failed scraping {url}: {e}")
@@ -75,7 +81,7 @@ def run():
     df = setup_url_df()
 
     logger.info(f"scraping {len(df)} listings...")
-    df["kbb_price"] = df.apply(lambda row: scrape_car(row["link"]), axis=1)
+    df["kbb_price"] = df.apply(lambda row: scrape_car(row["link"], row["car"]), axis=1)
 
     print(df.head())
 

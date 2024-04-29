@@ -93,7 +93,7 @@ def run(termination_timestamp):
 
         if not conn:
              raise Exception("Failed connecting to DB for model manager")
-        
+
         all_cars = find_unanalyzed_cars(conn, MODEL_VERSIONS)
     except Exception as e:
         logger.critical(
@@ -102,7 +102,7 @@ def run(termination_timestamp):
         return
     logger.success("Model Manager: Data successfully imported from MongoDB")
 
-    
+
     # Model 4: Car Frequency Model
     try:
         success=1
@@ -196,25 +196,25 @@ def run(termination_timestamp):
     # here...
 
     # Model 2: GPT Vision Model
-    # try:
-    #     try:
-    #         model_2_cars = filter_on_model(all_cars, 2)
-    #     except Exception as e:
-    #         logger.error(
-    #             f"Model Manager: Model 2 failed to filter listings. Error: {e}"
-    #         )
-    #         return None
+    try:
+        try:
+            model_2_cars = filter_on_model(all_cars, 2)
+        except Exception as e:
+            logger.error(
+                f"Model Manager: Model 2 failed to filter listings. Error: {e}"
+            )
+            return None
 
-    #     input_size = len(model_2_cars)
+        input_size = len(model_2_cars)
 
-    #     logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
-    #     batch_process(model_2_cars, m2_riskscores, 2)
+        logger.info(f"Model Manager: Model 2 started processing {input_size} listings")
+        batch_process(model_2_cars, m2_riskscores, 2)
 
-    #     logger.success("Model Manager: Model 2 successfully processed listings")
-    # except RateLimitError as e:
-    #     logger.critical(f"Model Manager: Model 2 failed to process listings. Ran out of OpenAI credits {e}")
-    # except Exception as e:
-    #     logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
+        logger.success("Model Manager: Model 2 successfully processed listings")
+    except RateLimitError as e:
+        logger.critical(f"Model Manager: Model 2 failed to process listings. Ran out of OpenAI credits {e}")
+    except Exception as e:
+        logger.error(f"Model Manager: Model 2 failed to process listings. Error: {e}")
 
 
     # Model 3: KBB Price Model
@@ -234,7 +234,7 @@ def run(termination_timestamp):
             input_size = len(model_3_cars)
 
             logger.info(f"Model Manager: Model 3 started processing {input_size} listings")
-            batch_process(model_3_cars, m3_riskscores, 3)
+            batch_process(conn, model_3_cars, m3_riskscores, 3)
 
             logger.success("Model Manager: Model 3 successfully processed listings")
     except Exception as e:

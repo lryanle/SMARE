@@ -129,13 +129,13 @@ def post_raw(client, scraper_version, source, car):
     try:
         conn = client.get_database(DATABASE)
 
-        if not conn:
+        if conn is not None:
             logger.error("Database (post_raw): Failed to connect to DB.")
             return False
     except Exception as e:
         logger.error(f"Database: Failed to connect to DB. Error: {e}")
         return False
-    
+
     logger.success("Database: Connected to DB")
 
     encoded_car = encode(car)
@@ -177,7 +177,7 @@ def update_listing_scores(client, cars_array, new_scores, model_number, model_ve
     logger.debug(f"Database: Bulk updating listing scores. new scores: {new_scores}")
     try:
         conn = client.get_database(DATABASE)
-        if not conn:
+        if conn is not None:
             logger.error("Database: Failed to connect to DB.")
             return False
     except Exception as e:
@@ -236,7 +236,7 @@ def update_db_risk_scores(client, cars_array):
     logger.debug(f"Database: Bulk updating {len(cars_array)} risk scores.")
     try:
         conn = client.get_database(DATABASE)
-        if not conn:
+        if conn is not None:
             logger.error("Database: Failed to connect to DB.")
             return False
     except Exception as e:
@@ -270,13 +270,13 @@ def update_db_risk_scores(client, cars_array):
         logger.error(f"Database: Failed to update risk scores. Error: {e}")
         return False
 
-    return True
+    return 0
 
 
 def find_pending_risk_update(client):
     try:
         conn = client.get_database(DATABASE)
-        if not conn:
+        if conn is not None:
             logger.error("Database: Failed to connect to DB.")
             return False
     except Exception as e:

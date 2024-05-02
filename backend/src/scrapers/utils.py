@@ -14,6 +14,14 @@ def scroll_to(x, driver):
     )
 
 
+def find_by_class(driver, classname):
+    try:
+        elem = driver.find_element("css selector", classname)
+        return elem
+    except Exception as e:
+        logger.warning(f"Did not find element with classname '{classname}'.")
+        return None
+
 def click_on(elem, driver):
     driver.execute_script("arguments[0].click();", elem)
 
@@ -30,6 +38,8 @@ def create_driver_options(use_proxy=False):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-dev-tools")
     options.add_argument("--no-zygote")
+
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
 
     options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
 

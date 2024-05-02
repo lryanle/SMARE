@@ -15,6 +15,7 @@ clean = "pipenv run exec python3 -c 'import orchestrator; orchestrator.clean()'"
 model = "pipenv run exec python3 -c 'import orchestrator; orchestrator.model()'"
 cl_app = "pipenv run exec python3 -c 'import orchestrator; orchestrator.smare_craigslist()'"
 fb_app = "pipenv run exec python3 -c 'import orchestrator; orchestrator.smare_facebook()'"
+kbb = "pipenv run exec python3 -c 'import orchestrator; orchestrator.kbb()'"
 
 [packages]
 selenium = "*"
@@ -33,6 +34,9 @@ sendgrid = "*"
 jupyter = "*"
 missingno = "*"
 plotly = "*"
+emoji = "*"
+textblob = "*"
+nltk = "*"
 
 [dev-packages]
 isort = "*"

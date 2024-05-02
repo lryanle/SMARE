@@ -7,6 +7,7 @@ from src.cleaners.cleaner import run as run_cleaner
 from src.models.model_manager import run as run_analyzer
 from src.scrapers.scraper import run as run_scraper
 from src.utilities.logger import SmareLogger
+from src.scrapers.kbb import run as run_kbb
 
 load_dotenv()
 
@@ -92,3 +93,6 @@ def smare_facebook(event="", context=""):
         smare("facebook")
     except Exception as e:
         logger.critical(f"SMARE failed running the facebook pipeline. Error: {e}")
+
+def kbb():
+    run_kbb()

@@ -60,7 +60,7 @@ soupsieve==2.5
 starkbank-ecdsa==2.2.0
 threadpoolctl==3.4.0
 tomlkit==0.12.4
-tqdm==4.66.2
+tqdm==4.66.3
 trio==0.25.0
 trio-websocket==0.11.1
 typer==0.12.3

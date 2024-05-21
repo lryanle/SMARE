@@ -46,7 +46,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-http-client==3.3.7
 pytz==2024.1
-requests==2.31.0
+requests==2.32.0
 rich==13.7.1
 scikit-learn==1.4.2
 scipy==1.13.0
